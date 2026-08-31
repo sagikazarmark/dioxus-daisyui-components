@@ -1,7 +1,10 @@
 use std::{cell::Cell, rc::Rc};
 
 use dioxus::prelude::*;
-use dioxus_field::{ChangeOrigin, testing::FocusExitOrderProbe};
+use dioxus_field::{
+    Binding, ChangeOrigin,
+    testing::{FocusExitOrderProbe, FocusExitProbe},
+};
 use dioxus_html::SerializedFocusData;
 
 use dioxus_daisyui_components::components::{
@@ -56,6 +59,39 @@ fn focus_exit_app(harness: FocusExitHarness) -> Element {
 
 fn focus_exit_dom(harness: FocusExitHarness) -> InteractionDom {
     InteractionDom::mount(VirtualDom::new_with_props(focus_exit_app, harness), "input")
+}
+
+#[derive(Clone)]
+struct UnchangedFocusExitHarness {
+    binding_probe: FocusExitProbe,
+    binding_commits: Rc<Cell<usize>>,
+    prop_commits: Rc<Cell<usize>>,
+}
+
+fn unchanged_focus_exit_app(harness: UnchangedFocusExitHarness) -> Element {
+    let value = use_signal(String::new);
+    let binding_commits = Rc::clone(&harness.binding_commits);
+    let prop_commits = Rc::clone(&harness.prop_commits);
+    let binding = Binding::new(
+        ReadSignal::from(value),
+        Callback::new(|_| {}),
+        Callback::new(move |()| binding_commits.set(binding_commits.get() + 1)),
+    )
+    .with_focus_exit(harness.binding_probe.on_focus_exit());
+
+    rsx! {
+        Input {
+            binding,
+            on_commit: move |()| prop_commits.set(prop_commits.get() + 1),
+        }
+    }
+}
+
+fn unchanged_focus_exit_dom(harness: UnchangedFocusExitHarness) -> InteractionDom {
+    InteractionDom::mount(
+        VirtualDom::new_with_props(unchanged_focus_exit_app, harness),
+        "input",
+    )
 }
 
 fn resolution_app(harness: ResolutionHarness<String>) -> Element {
@@ -160,6 +196,23 @@ fn changed_focus_session_reports_binding_then_direct_focus_exit_once() {
 
     harness.probe.assert_write_and_commit_before_focus_exit();
     assert_eq!(harness.direct_calls.get(), 1);
+}
+
+#[test]
+fn unchanged_focus_session_reports_focus_exit_without_commit() {
+    let harness = UnchangedFocusExitHarness {
+        binding_probe: FocusExitProbe::new(),
+        binding_commits: Rc::new(Cell::new(0)),
+        prop_commits: Rc::new(Cell::new(0)),
+    };
+    let dom = unchanged_focus_exit_dom(harness.clone());
+
+    dom.dispatch("focusin", SerializedFocusData::default());
+    dom.dispatch("focusout", SerializedFocusData::default());
+
+    assert_eq!(harness.binding_commits.get(), 0);
+    assert_eq!(harness.prop_commits.get(), 0);
+    harness.binding_probe.assert_focus_exit_once();
 }
 
 #[test]

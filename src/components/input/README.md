@@ -39,12 +39,12 @@ value produced by native input, and `on_commit` observes the native `change` eve
 commits still reach the resolved Binding. The browser fires `change` on blur after editing and when
 an Enter-driven interaction commits, so that event defines the end of one interaction unit.
 
-The complete logical focus scope is the native input itself. A native `change` Commit marks that
-focus session as committed; its following focus exit does not duplicate the Commit. Leaving after
-an unchanged session synthesizes one Commit before Focus Exit. Typing alone only writes. Each actual
-exit calls the resolved Binding's Focus Exit capability and then the optional dependency-free
-`on_focus_exit` prop. Focus Exit remains independent from Commit and does not itself infer touched,
-blurred, or validation semantics.
+The complete logical focus scope is the native input itself. Commit and Focus Exit stay independent:
+the native `change` event is the only thing that commits, so leaving an unchanged session reports
+Focus Exit alone rather than synthesizing a Commit, which would run Commit validation over a value
+the reader never edited. Typing alone only writes. Each actual exit reports once, calling the
+resolved Binding's Focus Exit capability and then the optional dependency-free `on_focus_exit` prop.
+Focus Exit does not itself infer touched, blurred, or validation semantics.
 
 The resolved Field focus request calls `set_focus` on the native input handle captured at mount.
 Global and native input attributes continue to spread onto that same control.
