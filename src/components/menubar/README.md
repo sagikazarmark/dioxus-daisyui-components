@@ -19,7 +19,7 @@ The primitive's `Menubar` has no controlled open prop and no change callback: wh
 lives in a context of its own, and no wrapper can read it or write it. So the trigger's open look
 cannot be `btn-active`, which would have to be emitted from Rust. What the primitive *does* report
 is `data-state` on each menu's wrapper element, so the trigger's ring is written as a variant of
-that attribute (`group-data-[state=open]:â¦`) on the element below it. Nothing is recomputed, and
+that attribute (`group-data-[state=open]:…`) on the element below it. Nothing is recomputed, and
 the primitive stays the only owner of the state, which is what makes it a Bridged utility rather
 than either tier.
 

@@ -26,7 +26,7 @@ This is forced by daisyUI's selectors, all four of which reach across the tree t
 would otherwise build:
 
 - `.tab:is(.tabs > .tab)` styles a tab only where it is a **direct child** of the tabs element.
-- `.tab:is(.tab-active, [aria-selected=true], â¦) + .tab-content` reveals a panel only from the
+- `.tab:is(.tab-active, [aria-selected=true], …) + .tab-content` reveals a panel only from the
   **adjacent** active tab, and `.tab-content` is `display: none` in daisyUI's base rule, so a
   panel that rule never reaches is permanently invisible.
 - `.tabs-lift > .tab-content` and `.tabs-box > .tab-content` key the joined borders on the panel

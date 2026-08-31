@@ -119,7 +119,7 @@ focus workaround while making Field focus requests reach the same control.
 **daisyUI's size classes cannot reach this element.** Every one of them is written
 
 ```css
-.toggle-sm[type=checkbox], .toggle-sm:has([type=checkbox]) { --size: â¦ }
+.toggle-sm[type=checkbox], .toggle-sm:has([type=checkbox]) { --size: … }
 ```
 
 and the primitive renders a `button` with `role="switch"`, with the hidden input that makes the

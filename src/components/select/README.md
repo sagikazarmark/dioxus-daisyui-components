@@ -60,7 +60,7 @@ and each row is wrapped in an `<li>`:
 The same three constraints force it. `SelectList` renders a hardcoded `div` and has no `as`
 prop. `SelectContext` is private, so a replacement list component could never reach the open
 state, the option collection or the typeahead buffer. And every visual rule daisyUI's `.menu`
-applies to a row is of the form `.menu :where(li:not(.menu-title)>â¦)`, so literal `li` elements
+applies to a row is of the form `.menu :where(li:not(.menu-title)>…)`, so literal `li` elements
 are required.
 
 Both wrappers carry `role="none"`, so they are out of the accessibility tree and the listbox

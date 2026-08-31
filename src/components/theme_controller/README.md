@@ -10,7 +10,7 @@ to do so, and ADR-0019 records why.
 daisyUI switches the theme in CSS. Every theme it emits is written against two selectors:
 
 ```css
-:root:has(input.theme-controller[value=dark]:checked), [data-theme=dark] { â¦ }
+:root:has(input.theme-controller[value=dark]:checked), [data-theme=dark] { … }
 ```
 
 So a checked input with the class and the theme's name in its `value` re-declares the whole
@@ -70,8 +70,8 @@ axis value and the browser specs assert computed styles over the same rendered s
 of the four scales are gated on it:
 
 ```css
-.toggle-lg[type=checkbox], .toggle-lg:has([type=checkbox]) { --size: â¦ }
-.radio-lg[type=radio]                                      { --size: â¦ }
+.toggle-lg[type=checkbox], .toggle-lg:has([type=checkbox]) { --size: … }
+.radio-lg[type=radio]                                      { --size: … }
 ```
 
 So a `radio`-painted checkbox would carry size classes that cannot match, which is exactly the
@@ -109,14 +109,14 @@ set of themes to choose between is therefore radios sharing a `name`, where the 
 checked, rather than a row of checkboxes.
 
 **A theme belongs to one control.** The rule above settles what looks like a layout question: a
-quick lightâdark switch beside a full theme list means two controls offering the same theme, and
+quick light–dark switch beside a full theme list means two controls offering the same theme, and
 there is no honest way to render that. One radio group leaves the browser able to check only one
 of the two, so the control the reader did not use shows nothing, or is painted as though it were
 checked, which lies to everything reading the page rather than looking at it. A group each leaves
 two themes checked at once, which is the paragraph above. So the two controls are a partition:
 each theme is offered exactly once, and the browser's single checked input is the answer for the
 paint, for the theme and for the accessibility tree at the same time. The preview's own header is
-one such menu, and the only theme control on the page; a quick lightâdark switch beside it would
+one such menu, and the only theme control on the page; a quick light–dark switch beside it would
 be a second control over two themes the menu already offers, which is the case above.
 
 The same rule is what a `swap`-shaped controller runs into. It is a checkbox, so it cannot join a

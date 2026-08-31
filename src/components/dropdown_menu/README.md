@@ -37,7 +37,7 @@ on a single `<ul>`; here `dropdown-content` and the box's utilities go on the pr
 Three things force it. `DropdownMenuContent` renders a hardcoded `div` and, unlike the trigger,
 has no `as` prop. `DropdownMenuContext` is private, so a replacement content component could
 never reach the open state, the trigger id or the focus collection. And every visual rule
-daisyUI's `.menu` applies to an item is of the form `.menu :where(li:not(.menu-title)>â¦)`, so
+daisyUI's `.menu` applies to an item is of the form `.menu :where(li:not(.menu-title)>…)`, so
 literal `li` elements are required. Given two elements are unavoidable, each class goes on the
 element whose layout it was written to drive.
 

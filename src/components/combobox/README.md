@@ -38,10 +38,10 @@ is wrapped in an `li`:
 
 ```html
 <div class="dropdown dropdown-bottom dropdown-start dropdown-open">
-  <input class="input" role="combobox" aria-expanded="true" aria-activedescendant="â¦">
+  <input class="input" role="combobox" aria-expanded="true" aria-activedescendant="…">
   <div class="dropdown-content bg-base-100 rounded-box shadow-sm" role="listbox">
     <ul role="none" class="menu w-full">
-      <li role="none" class="empty:hidden"><div role="option" class="â¦">Orange</div></li>
+      <li role="none" class="empty:hidden"><div role="option" class="…">Orange</div></li>
     </ul>
   </div>
 </div>
