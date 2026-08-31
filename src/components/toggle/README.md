@@ -3,9 +3,8 @@
 A button that stays pressed, styled with daisyUI's `btn` classes, wrapping the
 `dioxus-primitives` toggle.
 
-```rust
-Toggle { color: ToggleColor::Primary, aria_label: "Bold", "B" }
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/toggle) ·
+[their sources](docs/examples/)
 
 One toggle is one button. A row of them that behave as a set (one pressed at a time, or several,
 joined into a single shape) is the toggle group instead; this is the case where the control

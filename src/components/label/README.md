@@ -3,10 +3,8 @@
 A caption naming a form control, styled with daisyUI's label classes, wrapping the
 `dioxus-primitives` label.
 
-```rust
-Label { html_for: "collector", "Ship logs to the collector" }
-Switch { id: "collector" }
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/label) ·
+[their sources](docs/examples/)
 
 `html_for` is required, because the association is the whole reason to reach for a component here
 rather than write `label` by hand: clicking the caption moves focus to the control, and a screen

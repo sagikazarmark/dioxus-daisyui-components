@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use dioxus_field::{Binding, FieldContext, FieldMetaValues, use_field_meta_state};
 
 use crate::components::checkbox::{Checkbox, CheckboxState};
-use crate::components::field::{Field, FieldDescription, FieldError, FieldLabel};
+use crate::components::field::{Field, FieldDescription, FieldError, FieldLabel, FieldRow};
 
 /// Field metadata associates the Compound parts with a primitive-backed Checkbox.
 #[component]
@@ -21,8 +21,10 @@ pub fn Example() -> Element {
 
     rsx! {
         Field { id: "product-updates-field", context, class: "max-w-sm",
-            FieldLabel { id: "product-updates-label", "Product updates" }
-            Checkbox {}
+            FieldRow {
+                Checkbox {}
+                FieldLabel { id: "product-updates-label", "Product updates" }
+            }
             FieldDescription {
                 "Receive a short email when a release ships."
             }

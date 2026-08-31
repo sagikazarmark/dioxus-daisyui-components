@@ -6,28 +6,8 @@ arrow-key navigation, the `combobox` and `listbox` roles, the `aria-activedescen
 `aria-expanded` and `aria-controls` wiring and the dismissal on Escape and on a blur are all the
 primitive's rather than reimplemented here.
 
-```rust
-rsx! {
-    Combobox::<String> {
-        on_change: move |value| tracing::info!("chose {value:?}"),
-        on_commit: move |()| tracing::info!("selection committed"),
-        on_focus_exit: move |()| tracing::info!("focus left the combobox"),
-
-        ComboboxInput { color: ComboboxColor::Primary, placeholder: "Pick a fruit" }
-        ComboboxList {
-            ComboboxOption::<String> { value: "orange".to_string(), index: 0usize, "Orange" }
-            ComboboxOption::<String> { value: "lemon".to_string(), index: 1usize, "Lemon" }
-            ComboboxOption::<String> {
-                value: "currant".to_string(),
-                index: 2usize,
-                disabled: true,
-                "Currant"
-            }
-            ComboboxEmpty { "No fruit by that name" }
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/combobox) ·
+[their sources](docs/examples/)
 
 An option's `index` is its position in the keyboard navigation order, and it is explicit because
 the primitive's focus collection is ordered by it rather than by the DOM, which is what makes the

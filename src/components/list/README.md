@@ -2,27 +2,8 @@
 
 A daisyUI-styled list: rows of content in a vertical stack.
 
-```rust
-List {
-    ListRow {
-        div { "01" }
-        img { src: "/cover.jpg", alt: "", class: "size-10 rounded-box" }
-        ListColumn { grow: ListColumnGrow::Grow,
-            div { class: "font-semibold", "Aster" }
-            div { class: "text-xs uppercase opacity-60", "Field notes" }
-        }
-        button { class: "btn btn-ghost", "Open" }
-    }
-    ListRow {
-        img { src: "/cover.jpg", alt: "", class: "size-10 rounded-box" }
-        div { "Lantern" }
-        ListColumn { wrap: ListColumnWrap::Wrap,
-            "A description on its own line below the row."
-        }
-        button { class: "btn btn-ghost", "Open" }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/list) ·
+[their sources](docs/examples/)
 
 This is a Presentational component and wraps no Primitive. Its Compound parts follow daisyUI's
 documented markup: `List` renders the `ul.list`, `ListRow` renders each `li.list-row`, and

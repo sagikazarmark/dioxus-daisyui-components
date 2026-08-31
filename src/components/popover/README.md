@@ -3,15 +3,8 @@
 A panel of your own content opened from a button, styled with daisyUI's `dropdown` classes,
 wrapping the `dioxus-primitives` popover.
 
-```rust
-Popover {
-    PopoverTrigger { "Filters" }
-    PopoverContent {
-        h3 { class: "font-semibold", "Filters" }
-        p { class: "text-sm opacity-70", "Anything you like goes in here." }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/popover) ·
+[their sources](docs/examples/)
 
 This is the dropdown menu's structure with nothing prescribed inside the box: no `menu`, no items,
 no selection. What the primitive adds over a `details` element is dismissal (Escape and a click

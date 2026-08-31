@@ -5,7 +5,7 @@ use dioxus_field::{FieldContext, FieldMetaValues, use_field_meta_state};
 
 use crate::components::field::{
     Field, FieldAppearance, FieldDescription, FieldDescriptionAppearance, FieldError,
-    FieldErrorAppearance,
+    FieldErrorAppearance, FieldRow, FieldRowAppearance,
 };
 
 /// Every utility-backed appearance axis. Each `None` value emits nothing.
@@ -36,6 +36,15 @@ pub fn Example() -> Element {
                             appearance,
                             "Supporting prose wraps"
                         }
+                    }
+                }
+            }
+
+            div { "data-axis": "row-appearance", class: "flex flex-wrap items-start gap-6",
+                for appearance in FieldRowAppearance::ALL.iter().copied() {
+                    FieldRow { appearance,
+                        span { "{appearance:?}" }
+                        span { "Row content" }
                     }
                 }
             }

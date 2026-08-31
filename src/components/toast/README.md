@@ -3,27 +3,8 @@
 Toasts styled with daisyUI's `toast` and `alert` classes, wrapping the `dioxus-primitives` toast
 provider.
 
-```rust
-// Once, around everything that dispatches:
-ToastProvider { inline: ToastInline::End, block: ToastBlock::Bottom,
-    App {}
-}
-
-// And anywhere under it, in a component of its own:
-let toast = use_toast();
-
-rsx! {
-    Button {
-        onclick: move |_| {
-            toast.success(
-                "Deployed".to_string(),
-                ToastOptions::new().description("Live in eu-west-1"),
-            );
-        },
-        "Deploy"
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/toast) ·
+[their sources](docs/examples/)
 
 This is the only component in the registry that is not written where it appears. A caller mounts
 the provider once and dispatches from anywhere below it; the toasts are rendered through a portal,

@@ -2,22 +2,8 @@
 
 A daisyUI-styled chronological list with connected events.
 
-```rust
-Timeline { direction: TimelineDirection::Vertical,
-    TimelineItem {
-        TimelineStart { "2024" }
-        TimelineMiddle { aria_hidden: "true", span { class: "size-3 rounded-full bg-primary" } }
-        TimelineEnd { appearance: TimelineContentAppearance::Box, "First release" }
-        TimelineConnector { aria_hidden: "true" }
-    }
-    TimelineItem {
-        TimelineConnector { aria_hidden: "true" }
-        TimelineStart { "2025" }
-        TimelineMiddle { aria_hidden: "true", span { class: "size-3 rounded-full bg-primary" } }
-        TimelineEnd { appearance: TimelineContentAppearance::Box, "Stable release" }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/timeline) ·
+[their sources](docs/examples/)
 
 This is a Presentational component and wraps no Primitive. Its six Compound parts reproduce
 daisyUI's documented structure. `Timeline` renders `ul.timeline`; every `TimelineItem` renders a

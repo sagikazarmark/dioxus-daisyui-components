@@ -5,23 +5,8 @@ group: the chips a filter bar, a label list or a token field is made of. They ta
 under the arrow keys, select with Enter and Space, clear on Escape, and remove with Delete or
 with a button of their own, none of which daisyUI's badge has, since a badge is a decoration.
 
-```rust
-TagGroupMulti::<String> {
-    default_values: vec!["bug".to_string()],
-    TagGroupLabel { "Labels" }
-    TagList {
-        TagGroupEmpty { "Every label removed." }
-        TagOption::<String> {
-            value: "bug".to_string(),
-            index: 0usize,
-            color: TagColor::Error,
-            "bug"
-            TagRemoveButton { "×" }
-        }
-        TagOption::<String> { value: "docs".to_string(), index: 1usize, "docs" }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/tag_group) ·
+[their sources](docs/examples/)
 
 ## Composition
 

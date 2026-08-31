@@ -3,17 +3,8 @@
 A circular daisyUI progress indicator with value semantics from the `dioxus-primitives` progress
 Primitive.
 
-```rust
-RadialProgress { value: 70.0, aria_label: "Upload progress", "70%" }
-
-RadialProgress {
-    value: 45.0,
-    class: "text-primary",
-    style: "--size: 7rem; --thickness: 0.5rem;",
-    aria_label: "Upload progress",
-    "45%"
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/radial_progress) ·
+[their sources](docs/examples/)
 
 `value` is required and uses a fixed range from `0` through `100`. Finite values below zero clamp
 to `0`, and values above 100 clamp to `100`. Negative and positive infinity clamp to the

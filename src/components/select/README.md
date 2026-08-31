@@ -5,37 +5,8 @@ wrapping the `dioxus-primitives` select. Typeahead, arrow-key navigation, the `l
 `option` roles, the `aria-selected` and `aria-controls` wiring and the dismissal on Escape, on a
 blur and on a choice are all the primitive's rather than reimplemented here.
 
-```rust
-rsx! {
-    Select::<String> {
-        default_value: "lemon".to_string(),
-        on_change: move |value| tracing::info!("chose {value:?}"),
-        on_commit: move |()| tracing::info!("selection committed"),
-        on_focus_exit: move |()| tracing::info!("focus left the select"),
-
-        SelectTrigger { color: SelectColor::Primary,
-            SelectValue { placeholder: "Pick a fruit" }
-        }
-        SelectList {
-            SelectGroup {
-                SelectGroupLabel { "Citrus" }
-                SelectOption::<String> { value: "orange".to_string(), index: 0usize, "Orange" }
-                SelectOption::<String> { value: "lemon".to_string(), index: 1usize, "Lemon" }
-            }
-            SelectGroup {
-                SelectGroupLabel { "Berries" }
-                SelectOption::<String> { value: "cherry".to_string(), index: 2usize, "Cherry" }
-                SelectOption::<String> {
-                    value: "currant".to_string(),
-                    index: 3usize,
-                    disabled: true,
-                    "Currant"
-                }
-            }
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/select) ·
+[their sources](docs/examples/)
 
 An option's `index` is its position in the keyboard navigation order, and it is explicit because
 the primitive's focus collection is ordered by it rather than by the DOM, which is what makes

@@ -2,12 +2,8 @@
 
 Animated block and text placeholders styled with daisyUI's `skeleton` classes.
 
-```rust
-section { aria_busy: "true", aria_live: "polite",
-    Skeleton { class: "h-32 w-full", aria_hidden: "true" }
-    SkeletonText { aria_hidden: "true", "Account details" }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/skeleton) ·
+[their sources](docs/examples/)
 
 `Skeleton` renders daisyUI's empty `div.skeleton`. `SkeletonText` renders a
 `span.skeleton.skeleton-text` and keeps the caller's text as its children, so the text determines

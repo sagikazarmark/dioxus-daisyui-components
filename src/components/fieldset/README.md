@@ -3,13 +3,8 @@
 A native form group and legend, styled with daisyUI's `fieldset` and `fieldset-legend` classes.
 Labels, controls, descriptions, and actions remain caller content.
 
-```rust
-Fieldset {
-    FieldsetLegend { "Account" }
-    Label { html_for: "email", "Email" }
-    input { id: "email", name: "email" }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/fieldset) ·
+[their sources](docs/examples/)
 
 `Fieldset` renders a real `fieldset`, and `FieldsetLegend` renders a real `legend`. Use the
 standalone Label Component when a control needs an explicitly associated caption. Its required

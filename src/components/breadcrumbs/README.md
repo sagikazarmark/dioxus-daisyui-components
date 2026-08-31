@@ -2,15 +2,8 @@
 
 An accessible daisyUI-styled breadcrumb trail with semantic navigation and ordered-list markup.
 
-```rust
-Breadcrumbs { aria_label: "Breadcrumb",
-    BreadcrumbsList {
-        BreadcrumbsItem { a { href: "/", "Home" } }
-        BreadcrumbsItem { a { href: "/components", "Components" } }
-        BreadcrumbsItem { "Breadcrumbs" }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/breadcrumbs) ·
+[their sources](docs/examples/)
 
 This is a Presentational component and wraps no Primitive. `Breadcrumbs` renders
 `nav.breadcrumbs`, `BreadcrumbsList` renders its direct `ol`, and each `BreadcrumbsItem` renders a

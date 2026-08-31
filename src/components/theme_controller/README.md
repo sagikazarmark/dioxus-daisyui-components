@@ -4,14 +4,8 @@ A control that puts a daisyUI theme on the document, styled with daisyUI's `them
 class. It wraps no primitive and renders the `input` itself, the first component in the registry
 to do so, and ADR-0019 records why.
 
-```rust
-ThemeController {
-    theme: "dark",
-    appearance: ThemeControllerAppearance::Toggle,
-    color: ThemeControllerColor::Primary,
-    aria_label: "Dark theme",
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/theme_controller) ·
+[their sources](docs/examples/)
 
 daisyUI switches the theme in CSS. Every theme it emits is written against two selectors:
 

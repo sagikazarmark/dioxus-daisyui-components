@@ -2,16 +2,8 @@
 
 A daisyUI-styled indicator for the steps in a process.
 
-```rust
-Steps { aria_label: "Account setup",
-    Step { color: StepColor::Success, "Create account" }
-    Step { color: StepColor::Primary, aria_current: "step", "Choose plan" }
-    Step {
-        StepIcon { aria_hidden: "true", "\u{2713}" }
-        "Confirm"
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/steps) ·
+[their sources](docs/examples/)
 
 This is a Presentational component and wraps no Primitive. `Steps` renders `ul.steps`, each
 `Step` renders a direct `li.step`, and `StepIcon` renders `span.step-icon`. Keep `Step` parts as

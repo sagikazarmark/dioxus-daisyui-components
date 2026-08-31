@@ -3,14 +3,8 @@
 A progress bar styled with daisyUI's `progress` classes, wrapping the `dioxus-primitives`
 progress.
 
-```rust
-Progress { color: ProgressColor::Primary, value: Some(40.0), aria_label: "Uploading" }
-
-// Or as its parts, which is how the fill is reached.
-ProgressRoot { value: Some(40.0), aria_label: "Uploading",
-    ProgressIndicator {}
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/progress) ·
+[their sources](docs/examples/)
 
 `value` is required and `None` means indeterminate. `max` defaults to `100`, so a value is a
 percentage unless you say otherwise. The bar is named by `aria_label` or `aria_labelledby`; the

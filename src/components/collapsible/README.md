@@ -5,12 +5,8 @@ collapsible. Its title is a real button that announces what it opens, and its pa
 only while it is open, neither of which daisyUI's CSS-only collapse has, and both of them the
 primitive's rather than reimplemented here.
 
-```rust
-Collapsible { marker: CollapsibleMarker::Arrow,
-    CollapsibleTrigger { "Recent activity" }
-    CollapsibleContent { "Fixed a bug in the collapsible component." }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/collapsible) ·
+[their sources](docs/examples/)
 
 ## Composition
 

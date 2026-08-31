@@ -3,23 +3,8 @@
 An application menu bar styled with daisyUI's `btn` and `menu` classes, wrapping the
 `dioxus-primitives` menubar.
 
-```rust
-Menubar {
-    MenubarMenu { index: 0usize,
-        MenubarTrigger { "File" }
-        MenubarContent {
-            MenubarItem { index: 0usize, value: "new".to_string(), on_select: move |_| {}, "New" }
-            MenubarItem { index: 1usize, value: "open".to_string(), on_select: move |_| {}, "Open" }
-        }
-    }
-    MenubarMenu { index: 1usize,
-        MenubarTrigger { "Edit" }
-        MenubarContent {
-            MenubarItem { index: 0usize, value: "cut".to_string(), on_select: move |_| {}, "Cut" }
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/menubar) ·
+[their sources](docs/examples/)
 
 Menus are identified by `index` and items by an `index` within their menu, which is the keyboard
 order in both cases. The bar is a single tab stop: focus enters it once, the left and right arrows

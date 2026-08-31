@@ -2,25 +2,8 @@
 
 A semantic native table with daisyUI size, zebra, and pinning Axes.
 
-```rust
-div { class: "overflow-x-auto",
-    Table { zebra: TableZebra::Zebra,
-        TableCaption { "Monthly subscriptions by plan" }
-        TableHeader {
-            TableRow {
-                TableHeaderCell { id: "plan", scope: "col", "Plan" }
-                TableHeaderCell { id: "accounts", scope: "col", "Accounts" }
-            }
-        }
-        TableBody {
-            TableRow {
-                TableHeaderCell { id: "starter", scope: "row", "Starter" }
-                TableCell { "headers": "starter accounts", "128" }
-            }
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/table) ·
+[their sources](docs/examples/)
 
 `Table`, `TableCaption`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`,
 `TableHeaderCell`, and `TableCell` render `table`, `caption`, `thead`, `tbody`, `tfoot`, `tr`, `th`,

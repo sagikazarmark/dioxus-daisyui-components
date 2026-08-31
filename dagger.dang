@@ -15,8 +15,8 @@ type DioxusDaisyuiComponents {
       .from("node:" + nodeVersion)
       .withEnvVariable("NPM_CONFIG_CACHE", "/root/.npm")
       .withMountedCache("${NPM_CONFIG_CACHE}", Dagger.cacheVolume("npm"), expand: true)
-      .withMountedDirectory("/work/src", ws.directory("", gitignore: true))
       .withWorkdir("/work/src")
+      .withMountedDirectory("", ws.directory("", gitignore: true))
       .withExec(["npm", "install"])
 
     let assets = node
@@ -116,13 +116,11 @@ type DioxusDaisyuiComponents {
   """
   pinComponentDependencies(
     ws: Workspace!,
-
     """
     The revision to pin to. Defaults to the workspace's checked-out commit,
     which is what a dependent names once the commit it depends on is pushed.
     """
     rev: String! = ws.git.head.commit,
-
     """
     The URL a component dependency on this Registry names.
     """

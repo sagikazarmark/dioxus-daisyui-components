@@ -13,7 +13,7 @@ use pages::{ComponentPage, PAGE_CATALOG, PageDescriptor};
 use shell::Shell;
 use theme::Theme;
 
-const TAILWIND: Asset = asset!("/assets/style.css");
+const STYLE: Asset = asset!("assets/style.css");
 
 fn main() {
     dioxus::launch(Preview);
@@ -89,7 +89,7 @@ pub fn page_url(page: &PageDescriptor, theme: Theme) -> String {
 #[component]
 fn Preview() -> Element {
     rsx! {
-        document::Stylesheet { href: TAILWIND }
+        document::Stylesheet { href: STYLE }
 
         Router::<Route> {}
     }

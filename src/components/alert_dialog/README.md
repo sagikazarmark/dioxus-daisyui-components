@@ -5,28 +5,8 @@ dialog. It is the dialog's markup applied to a decision that has to be taken: it
 announces itself as an `alertdialog` with its title and description, and offers exactly two ways
 out, neither of which is a click on the backdrop.
 
-```rust
-let mut open = use_signal(|| false);
-
-rsx! {
-    Button { color: ButtonColor::Error, onclick: move |_| open.set(true), "Delete the project" }
-
-    AlertDialog {
-        open: Some(open()),
-        on_open_change: move |next| open.set(next),
-        AlertDialogTitle { "Delete the project?" }
-        AlertDialogDescription { "Every deployment goes with it. This cannot be undone." }
-        AlertDialogActions {
-            AlertDialogCancel { "Keep it" }
-            AlertDialogAction {
-                color: AlertDialogButtonColor::Error,
-                on_click: move |_| delete(),
-                "Delete it"
-            }
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/alert_dialog) ·
+[their sources](docs/examples/)
 
 ## Composition
 

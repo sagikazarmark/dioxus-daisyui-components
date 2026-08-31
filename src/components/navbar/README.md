@@ -3,23 +3,8 @@
 A navigation bar styled with daisyUI's `navbar`, `btn`, `dropdown` and `menu` classes, wrapping
 the `dioxus-primitives` navbar.
 
-```rust
-Navbar { aria_label: "Primary",
-    NavbarStart {
-        NavbarNav { index: 0usize,
-            NavbarTrigger { "Products" }
-            NavbarContent {
-                NavbarItem { index: 0usize, value: "new", to: "/new", "New" }
-                NavbarItem { index: 1usize, value: "popular", to: "/popular", "Popular" }
-            }
-        }
-    }
-    NavbarCenter {
-        NavbarItem { index: 1usize, value: "home", to: "/", class: "btn btn-ghost", "Home" }
-    }
-    NavbarEnd { "Account" }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/navbar) ·
+[their sources](docs/examples/)
 
 `NavbarStart`, `NavbarCenter` and `NavbarEnd` are separate parts because daisyUI writes them as
 sibling regions and callers may use any subset. Dropdowns and direct links share the root `index`

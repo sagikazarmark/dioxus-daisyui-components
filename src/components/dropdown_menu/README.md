@@ -5,27 +5,8 @@ A dropdown menu styled with daisyUI's `dropdown` and `menu` classes, wrapping th
 through its items with the arrow keys, skips disabled ones, dismisses on Escape, on a click
 outside and on Tab, all of it the primitive's rather than reimplemented here.
 
-```rust
-rsx! {
-    DropdownMenu {
-        DropdownMenuTrigger { "Actions" }
-        DropdownMenuContent {
-            DropdownMenuItem::<String> {
-                value: "edit".to_string(),
-                index: 0usize,
-                on_select: move |value| tracing::info!("selected {value}"),
-                "Edit"
-            }
-            DropdownMenuItem::<String> {
-                value: "archive".to_string(),
-                index: 1usize,
-                disabled: true,
-                "Archive"
-            }
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/dropdown_menu) ·
+[their sources](docs/examples/)
 
 ## Composition
 

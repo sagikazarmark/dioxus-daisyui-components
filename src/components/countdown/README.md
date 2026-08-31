@@ -2,14 +2,8 @@
 
 A daisyUI countdown whose CSS, visible text and accessible label follow one reactive integer.
 
-```rust
-let mut seconds = use_signal(|| 59_i32);
-
-Countdown { class: "font-mono text-4xl",
-    CountdownValue { value: seconds(), digits: CountdownDigits::Two }
-}
-button { onclick: move |_| seconds -= 1, "Decrease" }
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/countdown) ·
+[their sources](docs/examples/)
 
 `Countdown` renders the outer `span.countdown`. Each `CountdownValue` renders a direct child
 `span`, because daisyUI's animation selector is `.countdown > *`. A root may contain several

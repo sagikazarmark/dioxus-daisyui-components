@@ -5,19 +5,8 @@ navigation, roving focus, the `tab` and `tabpanel` roles and the `aria-selected`
 `aria-controls` wiring are the primitive's rather than reimplemented here, and the panels show
 and hide through daisyUI's own rules rather than through anything this component emits.
 
-```rust
-Tabs {
-    appearance: TabsAppearance::Lift,
-    size: TabsSize::Lg,
-    default_value: "overview".to_string(),
-
-    TabTrigger { value: "overview".to_string(), index: 0usize, "Overview" }
-    TabContent { value: "overview".to_string(), index: 0usize, "How it went." }
-
-    TabTrigger { value: "usage".to_string(), index: 1usize, "Usage" }
-    TabContent { value: "usage".to_string(), index: 1usize, "What it cost." }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/tabs) ·
+[their sources](docs/examples/)
 
 **A trigger and its panel are written as a pair, in order.** That is not a style preference:
 daisyUI reveals a panel only from the tab immediately before it, so a panel written anywhere

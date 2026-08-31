@@ -2,19 +2,8 @@
 
 A daisyUI-styled card: a titled box with a body and a row of actions.
 
-```rust
-Card {
-    size: CardSize::Lg,
-    border: CardBorder::Solid,
-    layout: CardLayout::Side,
-    figure { img { src: "/cover.jpg", alt: "A mountain lake" } }
-    CardBody {
-        CardTitle { "Weekend away" }
-        p { "A quiet place by the water." }
-        CardActions { button { class: "btn btn-primary", "Book" } }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/card) ·
+[their sources](docs/examples/)
 
 This is a Presentational component and wraps no Primitive. Its Compound parts mirror daisyUI's
 documented markup rather than a Primitive tree: `Card`, `CardBody`, `CardTitle` and `CardActions`

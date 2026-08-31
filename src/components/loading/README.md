@@ -2,14 +2,8 @@
 
 An empty loading indicator with daisyUI's animation and size Axes.
 
-```rust
-button { class: "btn btn-primary",
-    Loading { size: LoadingSize::Sm, aria_hidden: "true" }
-    "Save"
-}
-
-Loading { animation: LoadingAnimation::Dots, role: "status", aria_label: "Loading account" }
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/loading) ·
+[their sources](docs/examples/)
 
 `Loading` renders an empty `span.loading`. Animation and size are independent typed Axes. Colour
 remains a caller utility because daisyUI paints the mask with `currentColor`.

@@ -4,22 +4,8 @@ A page drawer styled with daisyUI's `drawer` classes and backed by the `dioxus-p
 dialog. The page stays mounted while the side traps focus, dismisses on Escape or the overlay,
 and returns focus to the trigger.
 
-```rust
-Drawer {
-    DrawerContent {
-        DrawerTrigger { "Open navigation" }
-        // The page remains here while the side is closed.
-    }
-    DrawerSide {
-        DrawerOverlay {}
-        DrawerPanel { class: "min-h-full w-80 bg-base-200 p-4",
-            DrawerTitle { "Navigation" }
-            DrawerDescription { "Choose a section of the application." }
-            // ...
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/drawer) ·
+[their sources](docs/examples/)
 
 ## Composition
 

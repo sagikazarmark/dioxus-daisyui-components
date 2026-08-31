@@ -188,7 +188,8 @@ test.describe("behaviour", () => {
 test("SwitchField composes generated parts and preserves field behaviour", async ({ page }) => {
   const fieldSwitch = switchControl(page, "Anonymous telemetry");
   const form = page.locator("#field-aware-switch-form");
-  const field = fieldSwitch.locator("xpath=..");
+  const row = fieldSwitch.locator("xpath=..");
+  const field = row.locator("xpath=..");
   const formControl = form.locator('input[type="checkbox"][name="telemetry"]');
   const controlId = await fieldSwitch.getAttribute("id");
   const labelId = await fieldSwitch.getAttribute("aria-labelledby");
@@ -211,6 +212,9 @@ test("SwitchField composes generated parts and preserves field behaviour", async
   );
   await expect(error).toHaveAttribute("aria-live", "polite");
   await expect(error).toContainText("Choose whether to send anonymous telemetry.");
+  await expect(row).toHaveCSS("display", "flex");
+  await expect(row.locator("> :first-child")).toHaveAttribute("role", "switch");
+  await expect(row.locator("> :last-child")).toHaveJSProperty("tagName", "LABEL");
   await expect(field).toHaveCSS("display", "grid");
 
   await expect(fieldSwitch).toHaveAttribute("name", "telemetry");

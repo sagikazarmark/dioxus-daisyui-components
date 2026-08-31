@@ -5,35 +5,11 @@ handle is a real control that announces its value, moves with the arrow keys (te
 time with Shift held) and can be dragged. There can be two of them, which a native range cannot
 do.
 
-```rust
-Slider {
-    label: "Volume",
-    color: SliderColor::Primary,
-    default_value: 40.0,
-    on_change: move |value| {},
-    on_commit: move |()| {},
-    class: "w-64",
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/slider) ·
+[their sources](docs/examples/)
 
 `SliderField` and `RangeSliderField` are the closed happy-path compositions over the separate Field
-parts:
-
-```rust
-SliderField {
-    context,
-    label: "Volume",
-    description: "Set the playback volume.",
-    class: "w-64",
-}
-
-RangeSliderField {
-    context: range_context,
-    label: "Price range",
-    description: "Set the acceptable price span.",
-    class: "w-64",
-}
-```
+parts.
 
 Each renders `Field`, `FieldLabel`, its collapsed control, the optional `FieldDescription`, and an
 always-mounted `FieldError`, in that order. They have no children slot. Use `Field` plus its

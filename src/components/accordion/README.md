@@ -5,18 +5,8 @@ accordion. Its triggers are real buttons that announce what they open and move b
 other with the arrow keys, none of which daisyUI's CSS-only collapse has, and all of it the
 primitive's rather than reimplemented here.
 
-```rust
-Accordion {
-    AccordionItem { index: 0usize, marker: AccordionItemMarker::Arrow, default_open: true,
-        AccordionTrigger { "What does the registry install?" }
-        AccordionContent { "One directory per component, copied into your own source tree." }
-    }
-    AccordionItem { index: 1usize, marker: AccordionItemMarker::Arrow,
-        AccordionTrigger { "Does it ship any CSS?" }
-        AccordionContent { "None." }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/accordion) ·
+[their sources](docs/examples/)
 
 ## Composition
 

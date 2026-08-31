@@ -2,14 +2,8 @@
 
 A coloured box stating something the reader needs to know, styled with daisyUI's `alert` classes.
 
-```rust
-Alert {
-    color: AlertColor::Success,
-    appearance: AlertAppearance::Soft,
-    direction: AlertDirection::Vertical,
-    "The deployment completed successfully."
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/alert) ·
+[their sources](docs/examples/)
 
 The component renders one `div.alert`. It does not assign `role="alert"` or any other live-region
 semantics. A standalone alert is normally present when the document is loaded and is read in

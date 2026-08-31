@@ -2,15 +2,8 @@
 
 A separator styled with daisyUI's `divider` classes, wrapping the `dioxus-primitives` separator.
 
-```rust
-Separator { color: SeparatorColor::Primary, "OR" }
-
-div { class: "flex",
-    p { "Before" }
-    Separator { horizontal: false }
-    p { "After" }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/separator) ·
+[their sources](docs/examples/)
 
 Children are optional and land between the two halves of the rule, which is where daisyUI puts a
 divider's text. The primitive's `horizontal` and `decorative` props are passed through.

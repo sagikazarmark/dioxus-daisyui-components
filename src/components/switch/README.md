@@ -2,31 +2,18 @@
 
 A switch styled with daisyUI's `toggle` classes, wrapping the `dioxus-primitives` switch.
 
-```rust
-Switch {
-    color: SwitchColor::Primary,
-    default_value: true,
-    on_change: move |on| {},
-    on_commit: move |()| {},
-    aria_label: "Ship logs to the collector",
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/switch) ·
+[their sources](docs/examples/)
 
-`SwitchField` is the closed happy-path composition over the separate Field parts:
+`SwitchField` is the closed happy-path composition over the separate Field parts.
 
-```rust
-SwitchField {
-    context,
-    label: "Anonymous telemetry",
-    description: "Send anonymous usage data to improve the product.",
-}
-```
-
-It renders `Field`, `FieldLabel`, `Switch`, the optional `FieldDescription`, and an always-mounted
-`FieldError`, in that order. It has no children slot. The surrounding Field keeps its default grid
-layout. Use `Field` plus its Compound parts for an inline switch-and-label row, another custom
-layout, or when content or attributes must land between those elements. Generated part and control
-ids provide the accessible relationships without id props on `SwitchField`.
+It renders `Field`, a `FieldRow` holding `Switch` and `FieldLabel` in that order, the optional
+`FieldDescription`, and an always-mounted `FieldError`. It has no children slot. The surrounding
+Field keeps its default grid layout, and the row lays the switch out beside its label, which is how
+a switch reads rather than as a control stacked under a caption. Use `Field` plus its Compound
+parts for another custom layout, or when content or attributes must land between those elements.
+Generated part and control ids provide the accessible relationships without id props on
+`SwitchField`.
 
 The lower-level `Switch` also renders no children: daisyUI draws the knob itself, so there is
 nothing to put inside. Outside `SwitchField`, a label is the caller's, next to the switch rather than
@@ -46,9 +33,9 @@ attributes win over those metadata values.
 `SwitchField` forwards the complete control surface to its `Switch`: the colour Axis; binding,
 metadata, value, initial state, required, disabled, name, submitted value, change, and commit props;
 and global attributes. Its `class`, ARIA attributes, and data attributes therefore land on the
-switch button, not the surrounding Field. `field_appearance`, `description_appearance`, and
-`error_appearance` forward the corresponding Field-part Axes. Styling another part or choosing an
-inline layout is a signal to use the Compound parts directly.
+switch button, not the surrounding Field. `field_appearance`, `row_appearance`,
+`description_appearance`, and `error_appearance` forward the corresponding Field-part Axes. Styling
+another part or choosing a different arrangement is a signal to use the Compound parts directly.
 
 ## Conformance
 

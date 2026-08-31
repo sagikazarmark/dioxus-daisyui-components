@@ -5,26 +5,8 @@ A date typed into a segmented field or chosen from a calendar, styled with daisy
 typing, the arrow keys that step a value and move between segments, the popover, the calendar and
 the range of dates the picker accepts are all the primitive's rather than reimplemented here.
 
-```rust
-rsx! {
-    DatePicker {
-        selected_date: chosen(),
-        on_value_change: move |date| chosen.set(date),
-
-        DatePickerPopover {
-            DatePickerInput {
-                DatePickerInputValue {}
-
-                DatePickerTrigger { aria_label: "Open the calendar", "📅" }
-            }
-
-            DatePickerContent {
-                DatePickerCalendar {}
-            }
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/date_picker) ·
+[their sources](docs/examples/)
 
 **The field is daisyUI's wrapping `input`, which is the one place daisyUI wrote for this shape.**
 `.input` is a flex row with a border, a radius and a focus outline, laying out whatever is inside

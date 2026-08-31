@@ -3,27 +3,10 @@
 A native multi-line text field styled with daisyUI's `textarea` classes. It renders a real
 `textarea`, accepts native textarea attributes, and wraps no Primitive.
 
-```rust
-Textarea {
-    name: "notes",
-    color: TextareaColor::Primary,
-    rows: 6,
-    placeholder: "Implementation notes",
-    required: true,
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/textarea) ·
+[their sources](docs/examples/)
 
-`TextareaField` is the closed happy-path composition over the separate Field parts:
-
-```rust
-TextareaField {
-    context,
-    label: "Implementation notes",
-    description: "Include constraints and important tradeoffs.",
-    rows: 5,
-    placeholder: "Describe the implementation",
-}
-```
+`TextareaField` is the closed happy-path composition over the separate Field parts.
 
 It renders `Field`, `FieldLabel`, `Textarea`, the optional `FieldDescription`, and an always-mounted
 `FieldError`, in that order. It has no children slot. Use `Field` plus its Compound parts when
@@ -57,12 +40,12 @@ value produced by native input, and `on_commit` observes the native `change` eve
 commits still reach the resolved Binding. The browser fires `change` on blur after editing, so that
 event defines the end of one interaction unit; Enter inserts a newline rather than committing.
 
-The complete logical focus scope is the native textarea itself. A native `change` Commit marks that
-focus session as committed; its following focus exit does not duplicate the Commit. Leaving after
-an unchanged session synthesizes one Commit before Focus Exit. Typing alone only writes. Each actual
-exit calls the resolved Binding's Focus Exit capability and then the optional dependency-free
-`on_focus_exit` prop. Focus Exit remains independent from Commit and does not itself infer touched,
-blurred, or validation semantics.
+The complete logical focus scope is the native textarea itself. Commit and Focus Exit stay
+independent: the native `change` event is the only thing that commits, so leaving an unchanged
+session reports Focus Exit alone rather than synthesizing a Commit, which would run Commit
+validation over a value the reader never edited. Typing alone only writes. Each actual exit reports
+once, calling the resolved Binding's Focus Exit capability and then the optional dependency-free
+`on_focus_exit` prop. Focus Exit does not itself infer touched, blurred, or validation semantics.
 
 The resolved Field focus request calls `set_focus` on the native textarea handle captured at mount.
 Global and native textarea attributes continue to spread onto that same control.
