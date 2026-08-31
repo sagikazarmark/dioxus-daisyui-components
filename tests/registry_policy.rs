@@ -350,3 +350,59 @@ fn skip_slots(props: Vec<Prop>) -> Vec<Prop> {
         .filter(|prop| prop.name != "attributes" && prop.name != "children")
         .collect()
 }
+
+#[test]
+fn focus_handlers_do_not_commit() {
+    let manifest: Value = read_json(&root().join("component.json"));
+    let mut committing = Vec::new();
+
+    for member in manifest["members"].as_array().unwrap() {
+        let path = root().join(member.as_str().unwrap()).join("component.rs");
+        let source = fs::read_to_string(&path).unwrap();
+        for (handler, line) in commits_in_focus_handlers(&source) {
+            committing.push(format!("{}:{line}: inside {handler}", path.display()));
+        }
+    }
+
+    assert!(
+        committing.is_empty(),
+        "Commit and Focus Exit are independent (ADR-0028), so a focus handler cannot Commit: \
+         leaving an unchanged control would run Commit validation over a value no interaction \
+         produced\n{}",
+        committing.join("\n")
+    );
+}
+
+/// Every Commit reached from inside a focus handler, as its handler and line.
+///
+/// A handler runs from its `onfocusin` or `onfocusout` line until its braces
+/// balance again, so a Commit inside a nested closure or a spawned task counts
+/// the same as one written directly in the body.
+fn commits_in_focus_handlers(source: &str) -> Vec<(String, usize)> {
+    let handler_name = Regex::new(r"^\s*(onfocus(?:in|out)):").unwrap();
+    let commit = Regex::new(r"\.commit\(\)|on_commit").unwrap();
+    let mut found = Vec::new();
+    let mut open: Option<(String, isize)> = None;
+
+    for (index, line) in source.lines().enumerate() {
+        if open.is_none() {
+            match handler_name.captures(line) {
+                Some(captures) => open = Some((captures[1].to_string(), 0)),
+                None => continue,
+            }
+        }
+        let Some((name, depth)) = &mut open else {
+            continue;
+        };
+        if commit.is_match(line) {
+            found.push((name.clone(), index + 1));
+        }
+        *depth += line.matches('{').count() as isize;
+        *depth -= line.matches('}').count() as isize;
+        if *depth <= 0 {
+            open = None;
+        }
+    }
+
+    found
+}
