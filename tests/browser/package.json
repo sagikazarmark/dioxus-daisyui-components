@@ -1,0 +1,10 @@
+{
+  "name": "browser-tests",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Seam 2: the preview in a real browser.",
+  "devDependencies": {
+    "@sagikazarmark/dioxus-registry-preview-playwright": "github:sagikazarmark/dioxus-registry-preview#f669725acef7e8bd0cdb6ad35478186e01429e32",
+    "@playwright/test": "1.62.1"
+  }
+}

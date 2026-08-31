@@ -1,0 +1,14 @@
+{
+  "name": "hover_card",
+  "description": "A daisyUI-styled hover card: a panel of content that opens when its trigger is pointed at or focused.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    }
+  ]
+}

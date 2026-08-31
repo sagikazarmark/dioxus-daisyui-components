@@ -1,0 +1,19 @@
+{
+  "name": "date_picker",
+  "description": "A daisyUI-styled date picker: a segmented field, and a calendar in a popover under it.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    },
+    {
+      "name": "time",
+      "version": "0.3.44",
+      "features": ["local-offset"]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+ignore = [".devenv", "target"]
+
+[modules.preview]
+source = "."
+
+[modules.preview.settings]
+rustVersion = "1.98-trixie"
+
+# Seam 2's behavioural specs, driven against the Preview the module above
+# serves rather than against a server this repository starts. The rendering
+# specs are not reached from here: they are only meaningful after the base
+# commit's build has been recorded, which is `./scripts/check-browser.sh`'s
+# job, and they skip themselves outside it. See
+# docs/adr/0007-acceptance-testing-is-fully-automated.md.
+#
+# The image tests run in is derived from the `@playwright/test` version
+# tests/browser/package-lock.json pins, which is the same pin the script names.
+[modules.playwright]
+source = "github.com/dagger/playwright"
+
+[modules.playwright.settings]
+sourcePath = "/tests/browser"
+service = "preview:service"
+serviceHostname = "preview"
+
+[modules.rust]
+source = "github.com/sagikazarmark/daggerverse-beta/rust"
+
+settings.version = "1.98-trixie"
+
+[modules.worker]
+source = "github.com/sagikazarmark/daggerverse-beta/worker"
+
+[modules.worker.settings]
+bundleAsContainer = "preview:worker-bundle-as-container"
+config = "wrangler.toml"
+
+[modules.dagger-gha]
+source = "github.com/sagikazarmark/daggerverse-beta/dagger-gha"

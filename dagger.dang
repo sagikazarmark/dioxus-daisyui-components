@@ -1,0 +1,186 @@
+type DioxusDaisyuiComponents {
+  let dioxus: Dioxus!
+  let rustVersion: String!
+
+  let envFile: File
+
+  new(
+    ws: Workspace!,
+    rustVersion: String!,
+    nodeVersion: String! = "latest",
+    envFile: File,
+  ) {
+    let node = Dagger
+      .container
+      .from("node:" + nodeVersion)
+      .withEnvVariable("NPM_CONFIG_CACHE", "/root/.npm")
+      .withMountedCache("${NPM_CONFIG_CACHE}", Dagger.cacheVolume("npm"), expand: true)
+      .withMountedDirectory("/work/src", ws.directory("", gitignore: true))
+      .withWorkdir("/work/src")
+      .withExec(["npm", "install"])
+
+    let assets = node
+      .withExec(["npm", "run", "build"])
+      .directory("assets")
+      .filter(include: ["style.css"])
+
+    ws = ws.withDirectory("assets", assets)
+
+    self.dioxus = Dagger.dioxus(
+      ws: ws,
+      rustVersion: rustVersion,
+      envFile: envFile,
+    )
+    self.rustVersion = rustVersion
+
+    self
+  }
+
+  """
+  Build the preview application.
+  """
+  build: Directory! @check {
+    self
+      .dioxus
+      .bundle(
+        release: true,
+        debugSymbols: false,
+      )
+  }
+
+  """
+  Serve the preview application.
+  """
+  service: Service! @up {
+    self.dioxus.serve(
+      release: true,
+      debugSymbols: false,
+    )
+  }
+
+  workerBundle: Directory! @check {
+    let client = self
+      .dioxus
+      .bundle(
+        release: true,
+        debugSymbols: false,
+        platform: DioxusPlatform.WEB,
+      )
+
+    Dagger
+      .directory
+      .withDirectory("dist", client)
+  }
+
+  workerBundleAsContainer: Container! {
+    Dagger.container.withDirectory("", self.workerBundle)
+  }
+
+  """
+  Tests that run against the Registry source.
+  """
+  test: Test! { Test(self.dioxus.container) }
+
+  """
+  Cleanly install the Dioxus DaisyUI components in a fresh application.
+  """
+  cleanInstall(ws: Workspace!): Directory! @check {
+    let components = ws
+      .directory("src/components", gitignore: true)
+      .entries
+      .filter { _.hasSuffix("/") }
+      .map { _.trimSuffix("/") }
+
+    let registryPath = "/opt/dioxus-daisyui-components"
+
+    let app = Dagger
+      .dioxus(ws.directory("tests/fixtures/install").asWorkspace, rustVersion: self.rustVersion)
+      .container
+      .withMountedDirectory(registryPath, ws.directory("", gitignore: true))
+      .{
+        components.reduce(_) { _, component =>
+          _.withExec(["dx", "components", "add", "--force", "--path", registryPath, component])
+        }
+      }
+      .withExec(["cargo", "check"])
+      .directory("")
+  }
+
+  """
+  Pin every component dependency naming this Registry to one revision.
+
+  `dx components add` fetches such a dependency from GitHub at the revision the
+  manifest pins, so a change to a Component reaches the Components that depend
+  on it only once they name the commit that carries it. Every other pin, the
+  primitive's included, is left alone.
+  """
+  pinComponentDependencies(
+    ws: Workspace!,
+
+    """
+    The revision to pin to. Defaults to the workspace's checked-out commit,
+    which is what a dependent names once the commit it depends on is pushed.
+    """
+    rev: String! = ws.git.head.commit,
+
+    """
+    The URL a component dependency on this Registry names.
+    """
+    url: String! = "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+  ): Changeset! {
+    let source = ws.directory("", gitignore: true)
+    let quotedUrl = url.replace(".", "\\.")
+
+    # A dependency on this Registry, and the `rev` that follows its `git`.
+    let reference = Regexp(`"git":\s*"${quotedUrl}"`)
+    let pin = Regexp(`("git":\s*"${quotedUrl}",\s*"rev":\s*)"[^"]*"`)
+
+    source
+      .glob("src/components/*/component.json")
+      .reduce(source) { manifests, path =>
+        let contents = source.file(path).contents
+
+        # A reference the pin does not reach is one this would silently leave
+        # behind: a dependency written without a rev, or with it before its git.
+        if (contents.matchAll(reference).length != contents.matchAll(pin).length) {
+          raise `${path}: a component dependency on the Registry has no rev to replace`
+        }
+
+        manifests.withNewFile(path, contents.replaceMatches(pin, with: `$1"${rev}"`))
+      }
+      .changes(source)
+  }
+}
+
+type Test {
+  let container: Container!
+
+  new(
+    """
+    Container with the Rust toolchain and the Registry source.
+    """
+    container: Container!,
+  ) {
+    self.container = container
+
+    self
+  }
+
+  """
+  Every component documents its tier and pins the primitive identically.
+  """
+  registryPolicy: String! @check {
+    self.run("registry_policy")
+  }
+
+  """
+  Form controls honor the field convention.
+  """
+  conformance: String! @check {
+    self.run("conformance")
+  }
+
+  let run(name: String!): String! {
+    self.container.withExec(["cargo", "test", "--locked", "--test", name]).combinedOutput
+  }
+}

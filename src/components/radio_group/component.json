@@ -1,0 +1,18 @@
+{
+  "name": "radio_group",
+  "description": "A daisyUI-styled radio group for choosing one option out of several.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    },
+    {
+      "name": "dioxus-field",
+      "version": "0.6.0"
+    }
+  ]
+}

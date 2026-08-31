@@ -1,0 +1,38 @@
+/* The Preview consumes the root library through `dioxus_daisyui`, so keep its
+   own chrome and the library's Component source as explicit Tailwind inputs.
+   This exercises the same stable-source contract a Cargo consumer configures. */
+@import "tailwindcss" source(none);
+@source "./src/preview";
+@source "./src/components";
+
+/* Every theme daisyUI ships, which has to stay in step with `Theme` in
+   `src/preview/theme.rs`. The preview switches between all of them, so the list it
+   offers is daisyUI's own.
+
+   `all` is daisyUI's own word for it, and it does two things beyond emitting
+   the lot: `light` becomes the default, written against `:where(:root)` so that
+   anything the reader checks outranks it, and `dark` is also emitted under
+   `prefers-color-scheme: dark` for a root with no theme on it. The preview's
+   own theme always beats that, since a checked theme controller is what puts it
+   there: an address renders the same page whatever the machine prefers. */
+@plugin "daisyui" {
+  themes: all;
+}
+
+/* The hatching behind an example's rendered component, which marks that surface
+   as the documentation's rather than the example's, the same pattern daisyUI's
+   own component documentation puts behind every preview, and the same
+   measurements: hairlines a theme apart from the ground they sit on, so the
+   pattern follows the theme the page is rendered under.
+
+   Written as a utility here rather than as an arbitrary value on the element,
+   because a repeating gradient spelled out in a class attribute reads as noise.
+   Only the preview app has a stylesheet at all: a component ships none, ever
+   (ADR-0002). */
+@utility example-preview {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-base-100) 0 13px,
+    var(--color-base-200) 13px 14px
+  );
+}

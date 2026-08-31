@@ -1,0 +1,14 @@
+{
+  "name": "collapsible",
+  "description": "A daisyUI-styled disclosure whose panel opens and closes through daisyUI's own collapse rules.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    }
+  ]
+}

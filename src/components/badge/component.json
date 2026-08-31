@@ -1,0 +1,14 @@
+{
+  "name": "badge",
+  "description": "A daisyUI-styled badge: a small label for a count, status or tag.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    }
+  ]
+}

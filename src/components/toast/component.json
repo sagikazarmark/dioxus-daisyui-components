@@ -1,0 +1,14 @@
+{
+  "name": "toast",
+  "description": "daisyUI-styled toasts, dispatched from anywhere under a provider and stacked in a corner of the viewport.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    }
+  ]
+}

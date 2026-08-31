@@ -1,0 +1,27 @@
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
+
+# Rust
+target/
+
+# Node
+node_modules/
+
+# Generated Tailwind CSS
+assets/style.css
+
+# Playwright's output. The screenshot baselines are rendered from the base
+# commit at the start of every run rather than stored, so they are output too.
+tests/browser/screenshots/
+tests/browser/test-results/
+tests/browser/playwright-report/
+
+.env

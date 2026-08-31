@@ -1,0 +1,14 @@
+{
+  "name": "dropdown_menu",
+  "description": "A daisyUI-styled dropdown menu that opens and closes on its own state rather than on focus.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    }
+  ]
+}

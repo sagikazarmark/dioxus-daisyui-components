@@ -1,0 +1,21 @@
+# The scratch consumer app Seam 1 installs Components into.
+#
+# `dx new` drives its template through an interactive prompt and refuses to run
+# without a TTY, which CI does not have, so the app a Component is installed
+# into is checked in rather than scaffolded. What Seam 1 needs is a fresh crate
+# with dioxus in it: no Component declares dioxus itself, every one of them
+# expects the consumer to already have it.
+
+[package]
+name = "install-fixture"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# The Registry root is a package rather than a workspace, so nothing above this
+# directory claims the fixture today. Declaring an empty workspace keeps that
+# true if the root ever gains one.
+[workspace]
+
+[dependencies]
+dioxus = "0.7"

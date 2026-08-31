@@ -1,0 +1,18 @@
+{
+  "name": "field",
+  "description": "Styled dioxus-field Compound parts for labels, descriptions, errors, and Field context.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    },
+    {
+      "name": "dioxus-field",
+      "version": "0.6.0"
+    }
+  ]
+}
