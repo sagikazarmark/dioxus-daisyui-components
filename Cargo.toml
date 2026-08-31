@@ -1,6 +1,6 @@
 [package]
 name = "dioxus-daisyui-components"
-version = "0.0.0"
+version = "0.1.0"
 description = "Dioxus components pairing dioxus-primitives behaviour with daisyUI class names."
 edition = "2024"
 rust-version = "1.85"
