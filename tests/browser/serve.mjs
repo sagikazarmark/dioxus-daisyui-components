@@ -11,7 +11,7 @@ import { stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, join, resolve } from "node:path";
 
-// Where `dx build --package dioxus-daisyui --bin preview --features preview
+// Where `dx build --package dioxus-daisyui-components --bin preview --features preview
 // --platform web --release` leaves its output, relative to this file's
 // directory, which is where the dev-server block spawns it.
 const dist = resolve(process.env.DIST ?? "../../target/dx/preview/release/web/public");
@@ -49,7 +49,7 @@ const server = createServer(async (request, response) => {
 
   if (!(await isFile(file))) {
     response.writeHead(500, { "content-type": "text/plain; charset=utf-8" });
-    response.end(`no preview build at ${dist}: run dx build --package dioxus-daisyui --bin preview --features preview --platform web --release\n`);
+    response.end(`no preview build at ${dist}: run dx build --package dioxus-daisyui-components --bin preview --features preview --platform web --release\n`);
     return;
   }
 

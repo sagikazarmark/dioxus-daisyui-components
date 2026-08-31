@@ -69,8 +69,8 @@ test("participates in its native form", async ({ page }) => {
   expect(await input.evaluate((node) => (node as HTMLInputElement).form?.id)).toBe("input-form");
   expect(await input.evaluate((node) => (node as HTMLInputElement).checkValidity())).toBe(false);
 
-  await input.fill("dioxus-daisyui");
-  await expect(page.locator("#form-value")).toHaveText("dioxus-daisyui");
+  await input.fill("dioxus-daisyui-components");
+  await expect(page.locator("#form-value")).toHaveText("dioxus-daisyui-components");
   await expect(page.getByTestId("input-commits")).toHaveText("0");
 
   await input.blur();

@@ -7,7 +7,7 @@ use dioxus_field::{
 };
 use dioxus_html::{SerializedFocusData, SerializedPointerData};
 
-use dioxus_daisyui::components::{
+use dioxus_daisyui_components::components::{
     field::Field,
     select::{Select, SelectColor, SelectList, SelectOption, SelectTrigger, SelectValue},
 };

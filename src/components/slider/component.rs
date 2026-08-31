@@ -15,7 +15,7 @@ use crate::components::field::{
 };
 
 const POINTER_CAPTURE_JS: &str = r#"
-    const installed = Symbol.for('dioxus-daisyui.slider.pointer-capture');
+    const installed = Symbol.for('dioxus-daisyui-components.slider.pointer-capture');
     const roots = document.querySelectorAll('[data-slider-pointer-capture="true"]');
     for (const root of roots) {
         if (root[installed]) continue;

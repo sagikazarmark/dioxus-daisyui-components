@@ -1,4 +1,4 @@
-# dioxus-daisyui
+# dioxus-daisyui-components
 
 A `dx components` registry of Dioxus components that apply daisyUI class names to
 `dioxus-primitives` behaviour, native browser behaviour, or presentational markup. The registry

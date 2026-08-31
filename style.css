@@ -1,4 +1,4 @@
-/* The Preview consumes the root library through `dioxus_daisyui`, so keep its
+/* The Preview consumes the root library through `dioxus_daisyui_components`, so keep its
    own chrome and the library's Component source as explicit Tailwind inputs.
    This exercises the same stable-source contract a Cargo consumer configures. */
 @import "tailwindcss" source(none);

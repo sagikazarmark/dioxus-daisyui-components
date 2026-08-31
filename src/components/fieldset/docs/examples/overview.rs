@@ -14,7 +14,7 @@ pub fn Example() -> Element {
                 id: "default-project",
                 class: "input",
                 name: "project",
-                placeholder: "dioxus-daisyui",
+                placeholder: "dioxus-daisyui-components",
             }
         }
     }

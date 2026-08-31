@@ -75,7 +75,7 @@ pub type PageDescriptor = dioxus_registry_preview::PageDescriptor<ComponentGroup
 const HOME_PAGE: PageDescriptor = PageDescriptor::new(
     "home",
     "/",
-    "dioxus-daisyui",
+    "dioxus-daisyui-components",
     "A dx components registry of Dioxus components that pair dioxus-primitives behaviour with daisyUI class names.",
     NavigationPlacement::Standalone("Getting started"),
     ListingPolicy::Unlisted,

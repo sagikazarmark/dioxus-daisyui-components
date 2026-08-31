@@ -1,5 +1,5 @@
 {
-  "name": "dioxus-daisyui",
+  "name": "dioxus-daisyui-components",
   "description": "Dioxus components pairing dioxus-primitives behaviour with daisyUI class names.",
   "members": [
     "src/components/accordion",

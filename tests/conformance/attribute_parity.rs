@@ -3,7 +3,7 @@ use std::{collections::BTreeMap, rc::Rc};
 use dioxus::prelude::*;
 use dioxus_field::{FieldContext, FieldMetaValues, use_field_meta_state};
 
-use dioxus_daisyui::components::{
+use dioxus_daisyui_components::components::{
     checkbox::Checkbox,
     combobox::{Combobox, ComboboxInput, ComboboxList, ComboboxOption},
     field::{Field, FieldDescription, FieldError},

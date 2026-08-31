@@ -7,7 +7,7 @@ use dioxus_field::{
 };
 use dioxus_html::{SerializedFocusData, SerializedMouseData};
 
-use dioxus_daisyui::components::{
+use dioxus_daisyui_components::components::{
     field::Field,
     switch::{Switch, SwitchColor},
 };

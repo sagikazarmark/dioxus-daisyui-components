@@ -11,7 +11,7 @@ use dioxus_html::{
     SerializedFormData, SerializedHtmlEventConverter, SerializedKeyboardData,
 };
 
-use dioxus_daisyui::components::field::{Field, FieldDescription, FieldError};
+use dioxus_daisyui_components::components::field::{Field, FieldDescription, FieldError};
 
 #[derive(Clone)]
 pub(crate) struct InteractionHarness<T> {

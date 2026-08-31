@@ -7,7 +7,7 @@ use dioxus_field::{
 };
 use dioxus_html::{PlatformEventData, SerializedFocusData, SerializedFormData};
 
-use dioxus_daisyui::components::{
+use dioxus_daisyui_components::components::{
     field::Field,
     otp::{Otp, OtpColor},
 };

@@ -64,7 +64,7 @@ pub fn Shell(route: Route, theme: Theme, children: Element) -> Element {
                 Link {
                     class: "text-base font-bold tracking-tight",
                     to: Route::Home { theme },
-                    "dioxus-daisyui"
+                    "dioxus-daisyui-components"
                 }
 
                 // The site navigation, which is the two halves of the

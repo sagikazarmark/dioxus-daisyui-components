@@ -85,7 +85,7 @@ with `cargo vendor`) and add its Component source to `tailwind.css`:
 
 ```css
 @import "tailwindcss";
-@source "./vendor/dioxus-daisyui/src/components";
+@source "./vendor/dioxus-daisyui-components/src/components";
 @plugin "daisyui";
 ```
 
@@ -133,7 +133,7 @@ Install daisyUI, then serve the preview:
 
 ```shell
 npm install
-dx serve --package dioxus-daisyui --bin preview --features preview --platform web
+dx serve --package dioxus-daisyui-components --bin preview --features preview --platform web
 ```
 
 The preview is a documentation site: a sidebar of component pages, a theme switcher in the

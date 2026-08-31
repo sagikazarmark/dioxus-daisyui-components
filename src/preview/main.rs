@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-pub use dioxus_daisyui::components;
+pub use dioxus_daisyui_components::components;
 mod example;
 mod fixtures;
 mod pages;
@@ -62,12 +62,12 @@ impl Route {
     /// and a browser tab go by.
     pub fn title(&self) -> String {
         let Some(descriptor) = self.page() else {
-            return String::from("Not found · dioxus-daisyui");
+            return String::from("Not found · dioxus-daisyui-components");
         };
         if descriptor.id == "home" {
             descriptor.title.to_owned()
         } else {
-            format!("{} · dioxus-daisyui", descriptor.title)
+            format!("{} · dioxus-daisyui-components", descriptor.title)
         }
     }
 

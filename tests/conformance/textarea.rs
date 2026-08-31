@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 use dioxus_field::{ChangeOrigin, testing::FocusExitOrderProbe};
 use dioxus_html::SerializedFocusData;
 
-use dioxus_daisyui::components::{
+use dioxus_daisyui_components::components::{
     field::Field,
     textarea::{Textarea, TextareaColor},
 };

@@ -2,7 +2,7 @@
 
 The single-package workspace and authoring layout in this decision are superseded by ADR-0026.
 
-The repository root is one unpublished Cargo package named `dioxus-daisyui`. Its library
+The repository root is one unpublished Cargo package named `dioxus-daisyui-components`. Its library
 exports the Components authored under `src/components/<name>/`, and its explicit `preview`
 binary lives under `src/preview/` and requires the `preview` feature. There is no Cargo
 workspace and no separate Preview package.
@@ -34,7 +34,7 @@ its feature is enabled. Router support remains in the library graph because Navb
 - A default `cargo check` checks the Component library without enabling web launch support or
   compiling Preview examples.
 - Preview commands name the package, binary, and feature explicitly:
-  `--package dioxus-daisyui --bin preview --features preview`.
+  `--package dioxus-daisyui-components --bin preview --features preview`.
 - The binary name remains `preview`, so Dioxus keeps writing its built site under
   `target/dx/preview/`.
 - `tailwind.css`, npm metadata, and generated `assets/tailwind.css` live at the package root,

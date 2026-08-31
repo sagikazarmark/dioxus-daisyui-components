@@ -7,7 +7,7 @@ use dioxus_field::{
 };
 use dioxus_html::SerializedFocusData;
 
-use dioxus_daisyui::components::{
+use dioxus_daisyui_components::components::{
     field::Field,
     slider::{RangeSlider, SliderColor},
 };

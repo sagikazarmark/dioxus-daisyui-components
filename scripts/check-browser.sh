@@ -132,7 +132,7 @@ container_dist() {
 head_dist_in_container=$(container_dist "$head_dist")
 
 build_preview() {
-    dx build --package dioxus-daisyui --bin preview --features preview --platform web --release
+    dx build --package dioxus-daisyui-components --bin preview --features preview --platform web --release
 }
 
 if [[ -n "$reuse" ]]; then

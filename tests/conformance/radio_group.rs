@@ -7,7 +7,7 @@ use dioxus_field::{
 };
 use dioxus_html::{PlatformEventData, SerializedFocusData, SerializedMouseData};
 
-use dioxus_daisyui::components::{
+use dioxus_daisyui_components::components::{
     field::Field,
     radio_group::{RadioGroup, RadioItem, RadioItemColor},
 };

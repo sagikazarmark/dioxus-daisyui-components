@@ -7,7 +7,7 @@ use dioxus_field::{
 };
 use dioxus_html::{SerializedFocusData, SerializedKeyboardData, SerializedMouseData};
 
-use dioxus_daisyui::components::{
+use dioxus_daisyui_components::components::{
     combobox::{Combobox, ComboboxColor, ComboboxInput, ComboboxList, ComboboxOption},
     field::Field,
 };
