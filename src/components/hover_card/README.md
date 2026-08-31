@@ -6,15 +6,8 @@ focused. It opens on keyboard focus as well as on hover, and describes its trigg
 up, neither of which daisyUI's CSS-only dropdown has, and both of them the primitive's rather than
 reimplemented here.
 
-```rust
-HoverCard {
-    HoverCardTrigger { class: "link", "Ada Lovelace" }
-    HoverCardPanel { class: "w-64", side: HoverCardSide::Bottom,
-        HoverCardTitle { "Ada Lovelace" }
-        p { "Wrote the first algorithm intended for a machine." }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/hover_card) ·
+[their sources](docs/examples/)
 
 ## Composition
 

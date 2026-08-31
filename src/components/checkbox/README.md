@@ -3,26 +3,10 @@
 A checkbox styled with daisyUI's `checkbox` classes, wrapping a temporary local copy of the
 `dioxus-primitives` checkbox.
 
-```rust
-Checkbox {
-    color: CheckboxColor::Primary,
-    size: CheckboxSize::Lg,
-    default_value: CheckboxState::Checked,
-    on_change: move |state| {},
-    on_commit: move |()| {},
-    aria_label: "Accept the terms",
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/checkbox) ·
+[their sources](docs/examples/)
 
-`CheckboxField` is the closed happy-path composition over the separate Field parts:
-
-```rust
-CheckboxField {
-    context,
-    label: "Accept the terms",
-    description: "Required before creating an account.",
-}
-```
+`CheckboxField` is the closed happy-path composition over the separate Field parts.
 
 It renders `Field`, a `FieldRow` holding `Checkbox` and `FieldLabel` in that order, the optional
 `FieldDescription`, and an always-mounted `FieldError`. It has no children slot. The surrounding

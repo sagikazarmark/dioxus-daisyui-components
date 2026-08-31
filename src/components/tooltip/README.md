@@ -5,18 +5,8 @@ opens on hover *and* on keyboard focus, dismisses on Escape, and is announced th
 `aria-describedby`, none of which daisyUI's CSS-only tooltip has, and all of which is the
 primitive's rather than reimplemented here.
 
-```rust
-Tooltip {
-    color: TooltipColor::Primary,
-    side: TooltipSide::Bottom,
-    TooltipTrigger {
-        r#as: move |attributes: Vec<Attribute>| rsx! {
-            Button { attributes, "Deploy" }
-        },
-    }
-    TooltipContent { "Ships the build on main" }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/tooltip) ·
+[their sources](docs/examples/)
 
 ## Composition
 

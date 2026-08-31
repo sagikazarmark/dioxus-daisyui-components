@@ -3,27 +3,10 @@
 A native text field styled with daisyUI's `input` classes. It renders a real `input`, accepts
 native input attributes, and wraps no Primitive.
 
-```rust
-Input {
-    r#type: "email",
-    name: "contact",
-    color: InputColor::Primary,
-    placeholder: "maintainer@example.com",
-    required: true,
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/input) ·
+[their sources](docs/examples/)
 
-`InputField` is the closed happy-path composition over the separate Field parts:
-
-```rust
-InputField {
-    context,
-    label: "Email",
-    description: "Used for account notifications.",
-    r#type: "email",
-    placeholder: "maintainer@example.com",
-}
-```
+`InputField` is the closed happy-path composition over the separate Field parts.
 
 It renders `Field`, `FieldLabel`, `Input`, the optional `FieldDescription`, and an always-mounted
 `FieldError`, in that order. It has no children slot. Use `Field` plus its Compound parts when

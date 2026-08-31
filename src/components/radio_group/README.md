@@ -4,25 +4,8 @@ A radio group styled with daisyUI's `radio` classes, wrapping the `dioxus-primit
 group. One tab stop for the whole group, arrow keys to move the selection, disabled items
 skipped, all of it the primitive's rather than reimplemented here.
 
-```rust
-RadioGroup {
-    default_value: "weekly".to_string(),
-    on_change: move |value| {},
-    on_commit: move |()| {},
-    aria_labelledby: "digest",
-
-    div { class: "flex items-center gap-2",
-        RadioItem {
-            value: "daily".to_string(),
-            index: 0usize,
-            color: RadioItemColor::Primary,
-            aria_labelledby: "digest-daily",
-        }
-        span { id: "digest-daily", "Every day" }
-    }
-    // …
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/radio_group) ·
+[their sources](docs/examples/)
 
 ## Composition
 

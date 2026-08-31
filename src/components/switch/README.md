@@ -2,25 +2,10 @@
 
 A switch styled with daisyUI's `toggle` classes, wrapping the `dioxus-primitives` switch.
 
-```rust
-Switch {
-    color: SwitchColor::Primary,
-    default_value: true,
-    on_change: move |on| {},
-    on_commit: move |()| {},
-    aria_label: "Ship logs to the collector",
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/switch) ·
+[their sources](docs/examples/)
 
-`SwitchField` is the closed happy-path composition over the separate Field parts:
-
-```rust
-SwitchField {
-    context,
-    label: "Anonymous telemetry",
-    description: "Send anonymous usage data to improve the product.",
-}
-```
+`SwitchField` is the closed happy-path composition over the separate Field parts.
 
 It renders `Field`, a `FieldRow` holding `Switch` and `FieldLabel` in that order, the optional
 `FieldDescription`, and an always-mounted `FieldError`. It has no children slot. The surrounding
@@ -134,7 +119,7 @@ focus workaround while making Field focus requests reach the same control.
 **daisyUI's size classes cannot reach this element.** Every one of them is written
 
 ```css
-.toggle-sm[type=checkbox], .toggle-sm:has([type=checkbox]) { --size: … }
+.toggle-sm[type=checkbox], .toggle-sm:has([type=checkbox]) { --size: â¦ }
 ```
 
 and the primitive renders a `button` with `role="switch"`, with the hidden input that makes the

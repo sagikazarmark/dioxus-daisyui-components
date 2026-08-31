@@ -5,16 +5,8 @@ wrapping the `dioxus-primitives` drag and drop list. The dragging, the keyboard 
 same thing without a pointer, the drop targeting, the live-region announcements and the
 `sortable list` role description are all the primitive's rather than reimplemented here.
 
-```rust
-let items = ["Rise", "Ember", "Lantern"]
-    .iter()
-    .map(|track| rsx! { div { class: "list-col-grow", "{track}" } })
-    .collect();
-
-rsx! {
-    DragAndDropList { items, aria_label: "Playlist" }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/drag_and_drop_list) ·
+[their sources](docs/examples/)
 
 The rows are `Element`s rather than values, because the primitive owns the order from the first
 render on: it keeps the list and renders each row wherever it has been moved to.

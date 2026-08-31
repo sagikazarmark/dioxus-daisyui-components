@@ -5,19 +5,8 @@ navigation, roving focus, the `tab` and `tabpanel` roles and the `aria-selected`
 `aria-controls` wiring are the primitive's rather than reimplemented here, and the panels show
 and hide through daisyUI's own rules rather than through anything this component emits.
 
-```rust
-Tabs {
-    appearance: TabsAppearance::Lift,
-    size: TabsSize::Lg,
-    default_value: "overview".to_string(),
-
-    TabTrigger { value: "overview".to_string(), index: 0usize, "Overview" }
-    TabContent { value: "overview".to_string(), index: 0usize, "How it went." }
-
-    TabTrigger { value: "usage".to_string(), index: 1usize, "Usage" }
-    TabContent { value: "usage".to_string(), index: 1usize, "What it cost." }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/tabs) ·
+[their sources](docs/examples/)
 
 **A trigger and its panel are written as a pair, in order.** That is not a style preference:
 daisyUI reveals a panel only from the tab immediately before it, so a panel written anywhere
@@ -37,7 +26,7 @@ This is forced by daisyUI's selectors, all four of which reach across the tree t
 would otherwise build:
 
 - `.tab:is(.tabs > .tab)` styles a tab only where it is a **direct child** of the tabs element.
-- `.tab:is(.tab-active, [aria-selected=true], …) + .tab-content` reveals a panel only from the
+- `.tab:is(.tab-active, [aria-selected=true], â¦) + .tab-content` reveals a panel only from the
   **adjacent** active tab, and `.tab-content` is `display: none` in daisyUI's base rule, so a
   panel that rule never reaches is permanently invisible.
 - `.tabs-lift > .tab-content` and `.tabs-box > .tab-content` key the joined borders on the panel

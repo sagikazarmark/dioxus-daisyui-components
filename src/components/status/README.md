@@ -2,19 +2,8 @@
 
 A small daisyUI indicator for visually showing an element's current status.
 
-```rust
-span { class: "inline-flex items-center gap-2",
-    Status { color: StatusColor::Success, aria_hidden: "true" }
-    "Online"
-}
-
-Status {
-    color: StatusColor::Error,
-    size: StatusSize::Lg,
-    role: "img",
-    aria_label: "Service unavailable",
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/status) ·
+[their sources](docs/examples/)
 
 `Status` renders an empty `span.status`. Colour and size are independent typed Axes. The Component
 does not accept children because daisyUI's status icon is empty; visible meaning belongs beside it,

@@ -5,23 +5,8 @@ menu. It opens on a right click and on a touch long press, pins itself to the po
 on Escape and on an outside click, and moves through its items with the arrow keys, none of
 which daisyUI's CSS-only menu has, and all of it the primitive's rather than reimplemented here.
 
-```rust
-ContextMenu {
-    ContextMenuTrigger { class: "rounded-box border border-dashed p-8",
-        "Right click here"
-    }
-    ContextMenuContent {
-        ContextMenuItem { value: "edit".to_string(), index: 0usize, "Edit" }
-        ContextMenuItem { value: "copy".to_string(), index: 1usize, "Duplicate" }
-        ContextMenuItem {
-            value: "archive".to_string(),
-            index: 2usize,
-            disabled: true,
-            "Archive"
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/context_menu) ·
+[their sources](docs/examples/)
 
 ## Composition
 

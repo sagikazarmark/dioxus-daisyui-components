@@ -2,12 +2,8 @@
 
 A daisyUI indicator: caller content overlaid at a logical position on a container.
 
-```rust
-Indicator {
-    IndicatorItem { class: "badge badge-primary", "New" }
-    button { class: "btn", "Inbox" }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/indicator) ·
+[their sources](docs/examples/)
 
 This is a Presentational component and wraps no Primitive. `Indicator` renders the relatively
 positioned `div.indicator`; one or more `IndicatorItem` parts and the content they decorate are its

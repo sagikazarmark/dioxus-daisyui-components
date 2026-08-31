@@ -3,23 +3,8 @@
 An application menu bar styled with daisyUI's `btn` and `menu` classes, wrapping the
 `dioxus-primitives` menubar.
 
-```rust
-Menubar {
-    MenubarMenu { index: 0usize,
-        MenubarTrigger { "File" }
-        MenubarContent {
-            MenubarItem { index: 0usize, value: "new".to_string(), on_select: move |_| {}, "New" }
-            MenubarItem { index: 1usize, value: "open".to_string(), on_select: move |_| {}, "Open" }
-        }
-    }
-    MenubarMenu { index: 1usize,
-        MenubarTrigger { "Edit" }
-        MenubarContent {
-            MenubarItem { index: 0usize, value: "cut".to_string(), on_select: move |_| {}, "Cut" }
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/menubar) ·
+[their sources](docs/examples/)
 
 Menus are identified by `index` and items by an `index` within their menu, which is the keyboard
 order in both cases. The bar is a single tab stop: focus enters it once, the left and right arrows
@@ -34,7 +19,7 @@ The primitive's `Menubar` has no controlled open prop and no change callback: wh
 lives in a context of its own, and no wrapper can read it or write it. So the trigger's open look
 cannot be `btn-active`, which would have to be emitted from Rust. What the primitive *does* report
 is `data-state` on each menu's wrapper element, so the trigger's ring is written as a variant of
-that attribute (`group-data-[state=open]:…`) on the element below it. Nothing is recomputed, and
+that attribute (`group-data-[state=open]:â¦`) on the element below it. Nothing is recomputed, and
 the primitive stays the only owner of the state, which is what makes it a Bridged utility rather
 than either tier.
 

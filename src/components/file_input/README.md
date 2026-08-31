@@ -3,17 +3,8 @@
 A native file picker styled with daisyUI's `file-input` classes. It renders a real
 `input type="file"` and wraps no Primitive.
 
-```rust
-FileInput {
-    accept: "image/png,image/jpeg",
-    multiple: true,
-    name: "attachments",
-    color: FileInputColor::Primary,
-    onchange: move |event| {
-        // Read the browser-owned FileList from the form event.
-    },
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/file_input) ·
+[their sources](docs/examples/)
 
 Classes passed by the caller concatenate with the Component's own. The input type is fixed because
 the browser's file picker and selected `FileList` belong to a real file input and cannot be moved to

@@ -2,21 +2,8 @@
 
 One daisyUI chat message with an image, header, bubble, and footer.
 
-```rust
-Chat { placement: ChatPlacement::Start,
-    ChatImage { class: "avatar",
-        div { class: "w-10 rounded-full",
-            img { src: "/ada.png", alt: "Ada Lovelace" }
-        }
-    }
-    ChatHeader {
-        "Ada Lovelace"
-        time { class: "opacity-50", datetime: "10:42", "10:42" }
-    }
-    ChatBubble { color: ChatBubbleColor::Primary, "The build is green." }
-    ChatFooter { span { class: "badge badge-ghost badge-sm", "Delivered" } }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/chat) ·
+[their sources](docs/examples/)
 
 This is a Presentational component and wraps no Primitive. All five Compound parts render `div`
 elements carrying daisyUI's documented classes: `Chat` renders `div.chat` with its required

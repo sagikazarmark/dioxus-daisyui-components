@@ -4,28 +4,10 @@ A native one-time-code field styled with daisyUI's `otp` classes. It renders dai
 `label`, one empty `span` per visual character box, and one real `input` containing the complete
 code.
 
-```rust
-Otp {
-    name: "code",
-    length: 6,
-    required: true,
-    color: OtpColor::Primary,
-    appearance: OtpAppearance::Joined,
-    aria_label: "Six-digit verification code",
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/otp) ·
+[their sources](docs/examples/)
 
-`OtpField` is the closed happy-path composition over the separate Field parts:
-
-```rust
-OtpField {
-    context,
-    label: "Verification code",
-    description: "Use the code from your authenticator app.",
-    length: 6,
-    appearance: OtpAppearance::Joined,
-}
-```
+`OtpField` is the closed happy-path composition over the separate Field parts.
 
 It renders `Field`, `FieldLabel`, `Otp`, the optional `FieldDescription`, and an always-mounted
 `FieldError`, in that order. It has no children slot. Use `Field` plus its Compound parts when

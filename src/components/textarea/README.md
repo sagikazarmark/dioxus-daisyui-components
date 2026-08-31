@@ -3,27 +3,10 @@
 A native multi-line text field styled with daisyUI's `textarea` classes. It renders a real
 `textarea`, accepts native textarea attributes, and wraps no Primitive.
 
-```rust
-Textarea {
-    name: "notes",
-    color: TextareaColor::Primary,
-    rows: 6,
-    placeholder: "Implementation notes",
-    required: true,
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/textarea) ·
+[their sources](docs/examples/)
 
-`TextareaField` is the closed happy-path composition over the separate Field parts:
-
-```rust
-TextareaField {
-    context,
-    label: "Implementation notes",
-    description: "Include constraints and important tradeoffs.",
-    rows: 5,
-    placeholder: "Describe the implementation",
-}
-```
+`TextareaField` is the closed happy-path composition over the separate Field parts.
 
 It renders `Field`, `FieldLabel`, `Textarea`, the optional `FieldDescription`, and an always-mounted
 `FieldError`, in that order. It has no children slot. Use `Field` plus its Compound parts when

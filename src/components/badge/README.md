@@ -2,14 +2,8 @@
 
 A small label for a count, status or tag, styled with daisyUI's `badge` classes.
 
-```rust
-Badge {
-    color: BadgeColor::Primary,
-    size: BadgeSize::Lg,
-    appearance: BadgeAppearance::Outline,
-    "New"
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/badge) ·
+[their sources](docs/examples/)
 
 The component reproduces daisyUI's canonical single `span.badge`. It assigns no role or
 announcement behaviour; callers add semantic attributes when their use of the badge requires

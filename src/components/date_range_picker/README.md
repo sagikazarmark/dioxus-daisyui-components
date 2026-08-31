@@ -4,33 +4,15 @@ A run of days chosen from a calendar, styled with daisyUI's `input` and `btn` cl
 the `dioxus-primitives` date range picker. The two-click range selection, the popover, the range
 calendar and the dates the picker accepts are all the primitive's rather than reimplemented here.
 
+[Live examples](https://daisyui-components.dioxus.cc/components/date_range_picker) ·
+[their sources](docs/examples/)
+
 **The primitive's segmented range input is not published**, and that is the one thing to know
 before reaching for this: it never settles once a range exists. See Deviations.
 
 It stands beside the date picker rather than being an axis of it, because what differs is the parts
 rather than the paint: a root of its own, a value that is a range rather than a date, and a calendar
 that selects one. The alert dialog stands beside the dialog for the same reason.
-
-```rust
-rsx! {
-    DateRangePicker {
-        selected_range: chosen(),
-        on_range_change: move |range| chosen.set(range),
-
-        DateRangePickerPopover {
-            DateRangePickerInput {
-                span { "{written(chosen())}" }
-
-                DateRangePickerTrigger { aria_label: "Open the calendar", "📅" }
-            }
-
-            DateRangePickerContent {
-                DateRangePickerCalendar {}
-            }
-        }
-    }
-}
-```
 
 What the field *shows* is the caller's, because there is nothing here to show it with: the range is
 written however that app writes a date, beside the button that opens the calendar.

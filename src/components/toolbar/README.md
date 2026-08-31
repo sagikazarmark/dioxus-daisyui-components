@@ -3,14 +3,8 @@
 A row of grouped controls, styled with daisyUI's `btn` and `divider` classes, wrapping the
 `dioxus-primitives` toolbar.
 
-```rust
-Toolbar { aria_label: "Text formatting",
-    ToolbarButton { index: 0usize, on_click: move |_| {}, "Cut" }
-    ToolbarButton { index: 1usize, on_click: move |_| {}, "Copy" }
-    ToolbarSeparator {}
-    ToolbarButton { index: 2usize, on_click: move |_| {}, "Undo" }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/toolbar) ·
+[their sources](docs/examples/)
 
 Controls are identified by `index`, which is the order the arrow keys move through. It is
 explicit rather than taken from the DOM because the primitive matches a key press to a control by

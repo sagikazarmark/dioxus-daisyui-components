@@ -164,6 +164,13 @@ the module, includes its source, and writes its `ExampleSection` into the genera
 Registry manifest generates the Preview's Component page list, so adding a member there also adds
 its page to the browser-test sweep.
 
+Because the example is where the code lives, a component's `README.md` does not restate it. Each
+one opens on its introduction and then links to its Preview page and its `docs/examples/`
+directory, and the prose below is narrative: composition, state bridging, deviations, and the
+daisyUI classes deliberately left alone. Prose still quotes a fragment where one illustrates the
+argument around it. The policy test fails a README that opens on a synopsis instead. See
+[ADR-0030](docs/adr/0030-a-readme-links-to-its-examples-rather-than-restating-them.md).
+
 An example that renders a theme controller names a theme daisyUI does **not** ship: `parchment`,
 `midnight`, `seafoam`. Since the preview is themed by that component, and offers every theme
 daisyUI has, one naming `dark` would re-theme the site from inside the page documenting it, and

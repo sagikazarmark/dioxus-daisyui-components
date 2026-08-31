@@ -3,13 +3,8 @@
 A group of toggle buttons styled with daisyUI's `join` and `btn` classes, wrapping the
 `dioxus-primitives` toggle group.
 
-```rust
-ToggleGroup { horizontal: true, allow_multiple_pressed: true,
-    ToggleItem { index: 0usize, color: ToggleItemColor::Primary, aria_label: "Bold", "B" }
-    ToggleItem { index: 1usize, color: ToggleItemColor::Primary, aria_label: "Italic", "I" }
-    ToggleItem { index: 2usize, color: ToggleItemColor::Primary, aria_label: "Underline", "U" }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/toggle_group) ·
+[their sources](docs/examples/)
 
 Items are identified by `index`, which is both their keyboard order and how the group names them
 in the pressed set. The group is a single tab stop: focus enters it and the arrow keys move

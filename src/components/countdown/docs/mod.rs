@@ -1,6 +1,5 @@
 dioxus_registry_preview::component! {
     group: "data-display",
-    render_readme: true,
     examples: {
         overview {
             description: "A fixed value and a signal-driven value updating through ordinary Dioxus reactivity.",

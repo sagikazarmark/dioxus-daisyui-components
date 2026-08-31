@@ -2,20 +2,8 @@
 
 An avatar styled with daisyUI's `avatar` classes, wrapping the `dioxus-primitives` avatar.
 
-```rust
-Avatar { label: "Ada Lovelace", status: AvatarStatus::Online,
-    AvatarImage { src: "/ada.jpg", alt: "" }
-    AvatarFallback { "AL" }
-}
-
-// Or as its parts, which is how the outer element is reached.
-AvatarRoot { aria_labelledby: "profile-name",
-    AvatarFrame { class: "w-24",
-        AvatarImage { src: "/ada.jpg", alt: "" }
-        AvatarFallback { "AL" }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/avatar) ·
+[their sources](docs/examples/)
 
 The primitive is what makes this worth wrapping: it watches the image's `load` and `error` events
 (and reconciles an image that was already in the cache), then unmounts the image and mounts the

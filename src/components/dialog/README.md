@@ -5,24 +5,8 @@ It traps focus while it is open, returns focus to whatever opened it, dismisses 
 on a click outside itself, and announces its own title and description, none of which daisyUI's
 CSS-only modal has, and all of which is the primitive's rather than reimplemented here.
 
-```rust
-let mut open = use_signal(|| false);
-
-rsx! {
-    Button { onclick: move |_| open.set(true), "Delete the project" }
-
-    Dialog {
-        open: Some(open()),
-        on_open_change: move |next| open.set(next),
-        DialogTitle { "Delete the project?" }
-        DialogDescription { "Every deployment goes with it. This cannot be undone." }
-        DialogActions {
-            Button { onclick: move |_| open.set(false), "Cancel" }
-            Button { color: ButtonColor::Error, onclick: move |_| open.set(false), "Delete" }
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/dialog) ·
+[their sources](docs/examples/)
 
 ## Composition
 

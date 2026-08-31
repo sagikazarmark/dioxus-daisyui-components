@@ -3,14 +3,8 @@
 Styled Compound parts over `dioxus-field` for connecting one form control to its Binding, Field
 metadata, label, description, errors, and focus behaviour.
 
-```rust
-Field { context,
-    FieldLabel { "Profile name" }
-    Input {}
-    FieldDescription { "Shown on your public profile." }
-    FieldError {}
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/field) ·
+[their sources](docs/examples/)
 
 `Field` accepts a `FieldContext`, `Binding`, or `Signal` and provides the resulting context to its
 children. A field-aware control such as `Input` or `Checkbox` resolves its Binding and metadata

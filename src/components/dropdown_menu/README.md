@@ -5,27 +5,8 @@ A dropdown menu styled with daisyUI's `dropdown` and `menu` classes, wrapping th
 through its items with the arrow keys, skips disabled ones, dismisses on Escape, on a click
 outside and on Tab, all of it the primitive's rather than reimplemented here.
 
-```rust
-rsx! {
-    DropdownMenu {
-        DropdownMenuTrigger { "Actions" }
-        DropdownMenuContent {
-            DropdownMenuItem::<String> {
-                value: "edit".to_string(),
-                index: 0usize,
-                on_select: move |value| tracing::info!("selected {value}"),
-                "Edit"
-            }
-            DropdownMenuItem::<String> {
-                value: "archive".to_string(),
-                index: 1usize,
-                disabled: true,
-                "Archive"
-            }
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/dropdown_menu) ·
+[their sources](docs/examples/)
 
 ## Composition
 
@@ -56,7 +37,7 @@ on a single `<ul>`; here `dropdown-content` and the box's utilities go on the pr
 Three things force it. `DropdownMenuContent` renders a hardcoded `div` and, unlike the trigger,
 has no `as` prop. `DropdownMenuContext` is private, so a replacement content component could
 never reach the open state, the trigger id or the focus collection. And every visual rule
-daisyUI's `.menu` applies to an item is of the form `.menu :where(li:not(.menu-title)>…)`, so
+daisyUI's `.menu` applies to an item is of the form `.menu :where(li:not(.menu-title)>â¦)`, so
 literal `li` elements are required. Given two elements are unavoidable, each class goes on the
 element whose layout it was written to drive.
 

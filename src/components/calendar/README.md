@@ -5,25 +5,8 @@ wrapping the `dioxus-primitives` calendar. The month arithmetic, the arrow keys 
 grid, the month navigation, the dates that are out of range or unavailable and the `application`
 role it is announced under are all the primitive's rather than reimplemented here.
 
-```rust
-rsx! {
-    Calendar {
-        selected_date: chosen(),
-        on_date_change: move |date| chosen.set(date),
-
-        CalendarView {
-            CalendarHeader {
-                CalendarNavigation {
-                    CalendarPreviousMonthButton { size: CalendarButtonSize::Sm, "‹" }
-                    CalendarMonthTitle {}
-                    CalendarNextMonthButton { size: CalendarButtonSize::Sm, "›" }
-                }
-            }
-            CalendarGrid {}
-        }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/calendar) ·
+[their sources](docs/examples/)
 
 **daisyUI's own calendar CSS is unusable here, and ADR-0022 records why**: every rule in it names
 another library's markup: `.cally::part(day)` reaches into a web component's shadow tree, and the

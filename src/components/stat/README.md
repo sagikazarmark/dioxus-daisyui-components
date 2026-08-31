@@ -2,22 +2,8 @@
 
 A daisyUI-styled statistics layout with titles, values, figures, descriptions, and actions.
 
-```rust
-Stats { direction: StatsDirection::Horizontal, class: "bg-base-100 shadow",
-    Stat {
-        StatFigure { class: "text-primary", "24h" }
-        StatTitle { "Page views" }
-        StatValue { "89,400" }
-        StatDescription { "21% more than last month" }
-        StatActions { button { class: "btn btn-xs", "Details" } }
-    }
-    Stat {
-        StatTitle { "Downloads" }
-        StatValue { "31K" }
-        StatDescription { "Jan 1 through Feb 1" }
-    }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/stat) ·
+[their sources](docs/examples/)
 
 This is a Presentational component and wraps no Primitive. All seven Compound parts render `div`
 elements with daisyUI's documented classes: `Stats` renders `div.stats`; `Stat` renders

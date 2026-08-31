@@ -2,14 +2,8 @@
 
 A button styled with daisyUI's `btn` classes.
 
-```rust
-Button {
-    color: ButtonColor::Primary,
-    size: ButtonSize::Lg,
-    onclick: move |_| {},
-    "Save"
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/button) ·
+[their sources](docs/examples/)
 
 `onclick` is the only event handler declared as a prop. Dioxus' `extends` reaches attributes
 but never handlers, so each one has to be declared by hand; the rest are added when something

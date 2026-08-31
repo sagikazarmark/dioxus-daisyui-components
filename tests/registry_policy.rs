@@ -2,7 +2,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use dioxus_registry_preview::validation::{
-    Diagnostic, DiagnosticCode, MarkdownOptions, load_site_from_catalog,
+    Diagnostic, DiagnosticCode, MarkdownOptions, load_site_from_catalog, readme_parts,
 };
 use regex::Regex;
 use serde::Deserialize;
@@ -49,10 +49,43 @@ fn component_documentation_follows_registry_policy() {
                     .at_path(&readme.path),
                 );
             }
+
+            // The Example is where the code lives (ADR-0009), so a README opens
+            // on the links to it rather than on a synopsis nothing compiles.
+            // Prose may still quote a fragment further down, where it is
+            // illustrating the argument around it rather than standing in for
+            // an Example.
+            let expected = readme_links(&readme.member_path);
+            if readme_parts(&readme.source)
+                .is_none_or(|(_, body)| !body.trim_start().starts_with(&expected))
+            {
+                validation.diagnostics.push(
+                    Diagnostic::new(
+                        DiagnosticCode::SectionPatternMismatch,
+                        format!(
+                            "README must follow its introduction with the Preview and Example links, not a synopsis:\n{expected}"
+                        ),
+                    )
+                    .at_path(&readme.path),
+                );
+            }
         }
     }
 
     assert_valid(validation.diagnostics);
+}
+
+/// The links a Component README carries between its introduction and its prose:
+/// its page in the deployed Preview, and the Examples that page is built from.
+fn readme_links(member_path: &Path) -> String {
+    let component = member_path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .expect("every Registry member path names a Component directory");
+
+    format!(
+        "[Live examples](https://daisyui-components.dioxus.cc/components/{component}) ·\n[their sources](docs/examples/)"
+    )
 }
 
 #[test]

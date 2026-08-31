@@ -2,19 +2,8 @@
 
 A native keyboard-input element styled with daisyUI's `kbd` classes.
 
-```rust
-p {
-    "Press "
-    Kbd { "Enter" }
-    " to continue."
-}
-
-div {
-    Kbd { "Ctrl" }
-    " + "
-    Kbd { "K" }
-}
-```
+[Live examples](https://daisyui-components.dioxus.cc/components/kbd) ·
+[their sources](docs/examples/)
 
 `Kbd` renders a native `kbd` element. In HTML, `kbd` denotes textual user input, commonly a key
 or key name. It does not create a button, enter the tab order, handle key presses or add an ARIA
