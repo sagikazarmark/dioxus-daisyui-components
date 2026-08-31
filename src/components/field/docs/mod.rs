@@ -5,11 +5,11 @@ dioxus_registry_preview::component! {
             description: "A complete Input Field whose producer-owned invalidity drives ARIA wiring, error paint, and error visibility.",
         },
         appearance {
-            description: "Every value of the Field layout and FieldError colour appearance axes.",
+            description: "Every value of the Field layout, row layout, and FieldError colour appearance axes.",
         },
         checkbox {
             title: "Checkbox Field",
-            description: "The same Compound parts compose around a field-aware Checkbox.",
+            description: "The same Compound parts compose a row around a field-aware Checkbox.",
         },
         responsive {
             title: "Responsive descriptions",

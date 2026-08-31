@@ -26,6 +26,48 @@ reliably; while invalid it renders one element per producer error, and while val
 Its id joins `aria-describedby` while invalid, whose support is consistent across control roles.
 On controls whose declared surface supports validity, the first error id is also the control's
 `aria-errormessage`.
+
+`FieldRow` is the row a checkable control shares with its label:
+
+```rust
+Field { context,
+    FieldRow {
+        Switch {}
+        FieldLabel { "Product updates" }
+    }
+    FieldDescription { "A short email when a release ships." }
+    FieldError {}
+}
+```
+
+A checkbox or a switch reads as its label's companion rather than as a control stacked under a
+caption, and neither can be nested inside `FieldLabel`, because the Primitive renders a `button`
+and a `label` does not activate one. The part is plain layout: it resolves nothing, so metadata
+still reaches the control and the label from the surrounding `Field`. Controls that fill a line of
+their own, such as `Input` or `Textarea`, keep their label above them and need no row.
+
+The row's default emits no `justify-*`, so the settings-row arrangement is a caller utility on top
+of it rather than a second layout Axis. Put the label first and push the control to the row's end:
+
+```rust
+FieldRow { class: "justify-between",
+    FieldLabel { class: "whitespace-normal", "Product updates" }
+    Switch {}
+}
+```
+
+Sibling Fields of the same width line their controls up in a column this way, because each control
+sits at its own Field's end. Fields of differing widths do not, and aligning across them is a grid
+the page owns rather than something a row can see. The added `whitespace-normal` is worth having
+whenever a label may be long: daisyUI's `label` class sets `white-space: nowrap` for short
+captions, and a pushed-apart row gives a long one room to overflow instead of wrap.
+
+The order of the two children is the caller's, and it is DOM order rather than paint: reversing it
+with `flex-row-reverse` or `order` would leave the label and the control read in one sequence and
+seen in another. `SwitchField` and `CheckboxField` render the control first and expose no
+arrangement prop, because Composition sugar covers the happy path and a different arrangement is
+the signal to compose these parts directly.
+
 `FieldDescription` registers its resolved id for `aria-describedby` for its mounted lifetime.
 It is supporting prose rather than a short control caption, so it wraps by default and can shrink
 inside a constrained grid track. A long description therefore does not widen a full-width control
@@ -45,6 +87,8 @@ behaviour is not repeated by `Field`, whose caller content may be any control.
 ## Axes
 
 - `appearance: FieldAppearance` on `Field` - `grid min-w-0 gap-2`, or no layout utilities.
+- `appearance: FieldRowAppearance` on `FieldRow` - `flex min-w-0 items-center gap-2`, or no layout
+  utilities.
 - `appearance: FieldDescriptionAppearance` on `FieldDescription` - `min-w-0 whitespace-normal`,
   or no wrapping utilities.
 - `appearance: FieldErrorAppearance` on `FieldError` - `text-error`, or no colour utility.

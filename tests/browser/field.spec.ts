@@ -26,6 +26,7 @@ test("skins every headless part and every appearance value", async ({ page }) =>
   await expect(description).toHaveCSS("display", "flex");
   await expectAxisVaries(page, "field-appearance", "display");
   await expectAxisVaries(page, "description-appearance", "white-space");
+  await expectAxisVaries(page, "row-appearance", "display");
   await expectAxisVaries(page, "error-appearance", "color");
 });
 

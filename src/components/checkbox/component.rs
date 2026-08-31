@@ -10,7 +10,7 @@ use std::rc::Rc;
 use super::primitive;
 use crate::components::field::{
     Field, FieldAppearance, FieldDescription, FieldDescriptionAppearance, FieldError,
-    FieldErrorAppearance, FieldLabel,
+    FieldErrorAppearance, FieldLabel, FieldRow, FieldRowAppearance,
 };
 
 pub use dioxus_primitives::checkbox::CheckboxState;
@@ -360,6 +360,9 @@ pub fn CheckboxField(
     /// Whether the surrounding Field emits its default layout utilities.
     #[props(default)]
     field_appearance: FieldAppearance,
+    /// Whether the control-and-label row emits its default layout utilities.
+    #[props(default)]
+    row_appearance: FieldRowAppearance,
     /// Whether supporting text emits its default wrapping utilities.
     #[props(default)]
     description_appearance: FieldDescriptionAppearance,
@@ -400,23 +403,25 @@ pub fn CheckboxField(
 ) -> Element {
     rsx! {
         Field { context, appearance: field_appearance,
-            FieldLabel { {label} }
-            Checkbox {
-                color,
-                size,
-                binding,
-                bool_binding,
-                meta,
-                value,
-                default_value,
-                required,
-                disabled,
-                name,
-                form_value,
-                on_change,
-                on_commit,
-                on_focus_exit,
-                attributes,
+            FieldRow { appearance: row_appearance,
+                Checkbox {
+                    color,
+                    size,
+                    binding,
+                    bool_binding,
+                    meta,
+                    value,
+                    default_value,
+                    required,
+                    disabled,
+                    name,
+                    form_value,
+                    on_change,
+                    on_commit,
+                    on_focus_exit,
+                    attributes,
+                }
+                FieldLabel { {label} }
             }
             if let Some(description) = description {
                 FieldDescription { appearance: description_appearance, {description} }

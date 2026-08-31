@@ -159,7 +159,8 @@ test.describe("behaviour", () => {
 test("CheckboxField composes generated parts and preserves field behaviour", async ({ page }) => {
   const fieldCheckbox = checkbox(page, "Accept the terms");
   const form = page.locator("#field-aware-checkbox-form");
-  const field = fieldCheckbox.locator("xpath=..");
+  const row = fieldCheckbox.locator("xpath=..");
+  const field = row.locator("xpath=..");
   const formControl = form.locator('input[type="checkbox"][name="terms"]');
   const controlId = await fieldCheckbox.getAttribute("id");
   const labelId = await fieldCheckbox.getAttribute("aria-labelledby");
@@ -176,6 +177,9 @@ test("CheckboxField composes generated parts and preserves field behaviour", asy
   await expect(fieldCheckbox).toHaveAccessibleName("Accept the terms");
   await expect(error).toHaveAttribute("aria-live", "polite");
   await expect(error).toBeEmpty();
+  await expect(row).toHaveCSS("display", "flex");
+  await expect(row.locator("> :first-child")).toHaveAttribute("role", "checkbox");
+  await expect(row.locator("> :last-child")).toHaveJSProperty("tagName", "LABEL");
   await expect(field).toHaveCSS("display", "grid");
   await expect(page.getByTestId("field-aware-checkbox-value")).toHaveText(
     "Current state: Unchecked",
