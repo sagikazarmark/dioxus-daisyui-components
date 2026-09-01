@@ -1,0 +1,25 @@
+{
+  "name": "native_select",
+  "description": "A daisyUI-styled native select at native-control weight.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "componentDependencies": [
+    {
+      "name": "field",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "4eb06cf0c89bc008fa23799f6ccbe26c576c95e1"
+    }
+  ],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    },
+    {
+      "name": "dioxus-field",
+      "version": "0.7.0"
+    }
+  ]
+}

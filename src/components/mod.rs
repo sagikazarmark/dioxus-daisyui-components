@@ -30,6 +30,7 @@ pub mod label;
 pub mod list;
 pub mod loading;
 pub mod menubar;
+pub mod native_select;
 pub mod navbar;
 pub mod otp;
 pub mod popover;

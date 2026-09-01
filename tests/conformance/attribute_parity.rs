@@ -8,6 +8,7 @@ use dioxus_daisyui_components::components::{
     combobox::{Combobox, ComboboxInput, ComboboxList, ComboboxOption},
     field::{Field, FieldDescription, FieldError},
     input::Input,
+    native_select::{NativeSelect, NativeSelectOption},
     otp::Otp,
     radio_group::{RadioGroup, RadioItem},
     select::{Select, SelectTrigger, SelectValue},
@@ -192,6 +193,35 @@ fn textarea(phase: Phase) -> Element {
     }
 }
 
+fn native_select(phase: Phase) -> Element {
+    let options = vec![NativeSelectOption::new(String::from("one"), "One")];
+    match phase {
+        Phase::Metadata => rsx! {
+            NativeSelect { options, aria_label: "Attribute parity native select" }
+        },
+        Phase::ExplicitFalse => rsx! {
+            NativeSelect {
+                options,
+                id: EXPLICIT_ID,
+                name: EXPLICIT_NAME,
+                required: false,
+                disabled: false,
+                aria_label: "Attribute parity native select",
+            }
+        },
+        Phase::ExplicitTrue => rsx! {
+            NativeSelect {
+                options,
+                id: EXPLICIT_ID,
+                name: EXPLICIT_NAME,
+                required: true,
+                disabled: true,
+                aria_label: "Attribute parity native select",
+            }
+        },
+    }
+}
+
 fn otp(phase: Phase) -> Element {
     rsx! {
         Otp {
@@ -363,6 +393,14 @@ const CONTROLS: &[ControlSpec] = &[
     ControlSpec {
         name: "textarea",
         control: textarea,
+        listener: "input",
+        surface: Surface::Native,
+        structural_attributes: &["aria-label", "class", "value"],
+        explicit_false_attributes: &[],
+    },
+    ControlSpec {
+        name: "native_select",
+        control: native_select,
         listener: "input",
         surface: Surface::Native,
         structural_attributes: &["aria-label", "class", "value"],

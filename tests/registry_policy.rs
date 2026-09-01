@@ -151,7 +151,7 @@ fn field_aware_components_declare_the_field_dependency_identically() {
     let root = root();
     let expected = serde_json::json!({
         "name": "dioxus-field",
-        "version": "0.6.0"
+        "version": "0.7.0"
     });
 
     for component in [
@@ -159,6 +159,7 @@ fn field_aware_components_declare_the_field_dependency_identically() {
         "src/components/checkbox",
         "src/components/combobox",
         "src/components/field",
+        "src/components/native_select",
         "src/components/otp",
         "src/components/radio_group",
         "src/components/switch",
