@@ -356,10 +356,10 @@ fn mounted_class_attributes(
     })
 }
 
-fn class_of<'a>(
-    classes: &'a HashMap<dioxus_core::ElementId, String>,
+fn class_of(
+    classes: &HashMap<dioxus_core::ElementId, String>,
     element: dioxus_core::ElementId,
-) -> &'a str {
+) -> &str {
     classes.get(&element).map(String::as_str).unwrap_or("")
 }
 
