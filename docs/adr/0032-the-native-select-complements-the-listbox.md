@@ -37,7 +37,10 @@ option.
 A positional string is the wrong thing for a form to submit, so an option may carry an explicit
 `form_value` string that replaces its index — form participation is a headline reason this
 component exists, and submitting an opaque index would undercut it. Without one, the submitted
-value is the index, and the README records it.
+value is the index, and the README records it. The emitted strings are required unique and
+non-empty, asserted at render: the browser reports a pick as the option's value string and
+nothing else, so a `form_value` colliding with another option's index, or with the placeholder's
+reserved empty string, would be ambiguous in the one place the component hears about a pick.
 
 The component drives the browser's selection through both the `value` property on the `select`
 and the `selected` attribute on the matching option. Neither alone is safe: the property write

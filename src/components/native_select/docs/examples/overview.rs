@@ -9,7 +9,8 @@ enum Flavor {
     Cherry,
 }
 
-/// A native enum picker: the browser draws the popup daisyUI's select styles.
+/// A native enum picker: daisyUI styles the real select, and the browser
+/// draws its popup.
 #[component]
 pub fn Example() -> Element {
     let mut value: Signal<Option<Flavor>> = use_signal(|| None);

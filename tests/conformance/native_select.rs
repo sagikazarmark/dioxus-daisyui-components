@@ -66,6 +66,31 @@ fn form_value_dom(harness: InteractionHarness<Option<String>>) -> InteractionDom
     InteractionDom::mount(VirtualDom::new_with_props(form_value_app, harness), "input")
 }
 
+fn colliding_form_value_app() -> Element {
+    rsx! {
+        NativeSelect {
+            // The explicit form value collides with the first option's
+            // positional index.
+            options: vec![
+                NativeSelectOption::new(String::from("orange"), "Orange"),
+                NativeSelectOption::new(String::from("lemon"), "Lemon").form_value("0"),
+            ],
+            aria_label: "Colliding select",
+        }
+    }
+}
+
+fn empty_form_value_app() -> Element {
+    rsx! {
+        NativeSelect {
+            options: vec![
+                NativeSelectOption::new(String::from("orange"), "Orange").form_value(""),
+            ],
+            aria_label: "Empty form value select",
+        }
+    }
+}
+
 #[derive(Clone)]
 struct FocusExitHarness {
     probe: FocusExitOrderProbe,
@@ -241,6 +266,39 @@ fn explicit_form_values_replace_the_positional_mapping() {
     harness
         .changes
         .assert_writes(&[(Some("active".to_owned()), ChangeOrigin::User)]);
+}
+
+#[test]
+fn colliding_and_empty_emitted_values_are_rejected() {
+    use std::panic;
+    use std::sync::{Arc, Mutex};
+
+    // Dioxus catches a component's panic and renders nothing in its place, so
+    // the assertions are observed through the panic hook rather than through
+    // `should_panic`.
+    let messages: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(Vec::new()));
+    let recorded = Arc::clone(&messages);
+    let previous = panic::take_hook();
+    panic::set_hook(Box::new(move |info| {
+        recorded.lock().unwrap().push(info.to_string());
+    }));
+    let _ = VirtualDom::new(colliding_form_value_app).rebuild_to_vec();
+    let _ = VirtualDom::new(empty_form_value_app).rebuild_to_vec();
+    panic::set_hook(previous);
+
+    let messages = messages.lock().unwrap();
+    assert!(
+        messages
+            .iter()
+            .any(|message| message.contains("unique value strings")),
+        "a form value colliding with a positional index must be rejected"
+    );
+    assert!(
+        messages
+            .iter()
+            .any(|message| message.contains("non-empty value strings")),
+        "an empty form value must be rejected"
+    );
 }
 
 #[test]

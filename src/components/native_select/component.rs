@@ -248,6 +248,20 @@ pub fn NativeSelect<T: Clone + PartialEq + 'static>(
                 .unwrap_or_else(|| index.to_string())
         })
         .collect();
+    // The browser reports a pick as the option's value string and nothing
+    // else, so two options speaking the same string would be indistinguishable
+    // exactly where it matters, and the empty string is the placeholder's.
+    let mut seen = std::collections::HashSet::with_capacity(emitted.len());
+    for value in &emitted {
+        assert!(
+            !value.is_empty(),
+            "NativeSelect options must emit non-empty value strings; the empty string is reserved for the placeholder"
+        );
+        assert!(
+            seen.insert(value.as_str()),
+            "NativeSelect options must emit unique value strings; {value:?} appears more than once (an explicit form value may collide with another option's positional index)"
+        );
+    }
     let select_value = selected_index
         .map(|index| emitted[index].clone())
         .unwrap_or_default();

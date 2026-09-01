@@ -1,8 +1,8 @@
 # Native Select
 
 A native single-choice select styled with daisyUI's `select` class. It renders a real `<select>`
-with `option` children, accepts native select attributes, and wraps no Primitive. The browser
-draws the popup daisyUI's class styles, which is the element that class was written for.
+with `option` children, accepts native select attributes, and wraps no Primitive. daisyUI's
+class styles the element it was written for, and the browser draws its popup.
 
 [Live examples](https://daisyui-components.dioxus.cc/components/native_select) ·
 [their sources](docs/examples/)
@@ -25,7 +25,11 @@ values, each carrying the typed value and its visible label; the selected option
 `PartialEq`, first match winning. The string an option speaks — and the string a native form
 submits — is its **position in the list**, unless `NativeSelectOption::form_value` replaces it
 with an explicit string. `T` therefore needs no `Display` or `FromStr`, duplicate values resolve
-deterministically, and a form that needs a meaningful submitted value names one per option.
+deterministically, and a form that needs a meaningful submitted value names one per option. The
+emitted strings must be unique and non-empty, asserted at render: the browser reports a pick as
+the option's value string and nothing else, so an explicit form value colliding with another
+option's index — or with the placeholder's reserved empty string — would be indistinguishable
+exactly where it matters.
 
 A `None` value selects the placeholder: daisyUI's native pattern of a disabled first `option`,
 rendered whenever the `placeholder` prop is set and still listed after a choice is made. Because
