@@ -16,7 +16,9 @@ each one.
 This is the least daisyUI-native component in the registry. daisyUI has no styled listbox at
 all: its `select` is a native `<select>` element, whose popup the browser draws. So the field
 here is daisyUI's `select` on a `button`, and the popup is borrowed from daisyUI's `dropdown`
-and `menu`: the same borrowing, and the same two elements, as the dropdown menu component.
+and `menu`: the same borrowing, and the same two elements, as the dropdown menu component. The
+[native select](../native_select/) is that native element, at native-control weight; this
+listbox earns its place where the popup itself is the point (ADR-0032).
 
 ## Composition
 

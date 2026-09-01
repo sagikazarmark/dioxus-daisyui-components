@@ -120,9 +120,9 @@ A Component that renders a real form control itself and wraps no Primitive, beca
 rule for it names native states or pseudo-elements on that control (`:checked`, `:disabled`,
 `::placeholder`), which no button-based Primitive can stand in for. The browser is then the
 behaviour: focus, editing, the keyboard, validation, grouping and form participation are the
-element's own. Today: the theme controller, file input, input, OTP field and textarea. The OTP
-field is visually several boxes but behaviourally one input; daisyUI draws the boxes around it.
-See ADR-0019.
+element's own. Today: the theme controller, file input, input, native select, OTP field and
+textarea. The OTP field is visually several boxes but behaviourally one input; daisyUI draws the
+boxes around it. See ADR-0019, and ADR-0032 for the native select beside the listbox.
 _Avoid_: raw component, unwrapped component
 
 **Presentational component**:

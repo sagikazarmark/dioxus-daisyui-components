@@ -34,6 +34,7 @@
     "src/components/list",
     "src/components/loading",
     "src/components/menubar",
+    "src/components/native_select",
     "src/components/navbar",
     "src/components/otp",
     "src/components/popover",
