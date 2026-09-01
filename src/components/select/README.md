@@ -28,6 +28,13 @@ the field shows), `SelectList` (the box, with the menu inside it), `SelectOption
 component: the trigger and the list are two elements a caller writes between, so there is
 nothing to collapse.
 
+There is no `SelectField` either, and for the same reason one step out. Field Composition sugar
+under ADR-0028 has no children slot, and this listbox's trigger and list are children by
+construction, so a closed composition over it cannot exist within that pattern. The happy path
+for a plain selection field is [`NativeSelectField`](../native_select/); a caller pairing this
+listbox with a Field writes `Field`, `FieldLabel`, `FieldDescription`, and `FieldError` around
+it, which is the sanctioned parts pattern, not a gap.
+
 `Select` owns field value resolution and the explicit `meta`, `required`, `disabled`, and `name`
 props. It passes that resolved metadata contract to `SelectTrigger` through private Compound
 context; callers do not have to repeat metadata on both parts.
