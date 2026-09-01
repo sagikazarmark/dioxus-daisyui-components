@@ -22,6 +22,29 @@ dioxus_registry_preview::component! {
             title: "Floating label",
             description: "The floating-label class belongs to the Label around the Input.",
         },
+        adornments {
+            description: "prefix and suffix render inside the control box through the span.input wrapper.",
+        },
+        adorned_colors {
+            slug: "adorned-colors",
+            title: "Adorned colours",
+            description: "Every value of the colour axis, relocated to the adorned wrapper.",
+        },
+        adorned_sizes {
+            slug: "adorned-sizes",
+            title: "Adorned sizes",
+            description: "Every value of the size axis on the adorned wrapper, smallest to largest.",
+        },
+        adorned_slot {
+            slug: "adorned-slot",
+            title: "Conditional adornment",
+            description: "A conditional adornment toggles content inside Some; the empty slot stays mounted and hidden.",
+        },
+        adorned_field {
+            slug: "adorned-field",
+            title: "Adorned Text Field",
+            description: "InputField forwards prefix, suffix, and wrapper_attributes; box utilities move to the wrapper.",
+        },
         form {
             title: "Native form control",
             description: "The browser owns editing, constraint validation and form participation.",

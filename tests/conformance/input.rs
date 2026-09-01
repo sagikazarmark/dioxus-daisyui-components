@@ -1,15 +1,21 @@
-use std::{cell::Cell, rc::Rc};
+use std::{
+    cell::{Cell, RefCell},
+    collections::HashMap,
+    rc::Rc,
+};
 
 use dioxus::prelude::*;
 use dioxus_field::{
-    Binding, ChangeOrigin,
+    Binding, ChangeOrigin, FieldContext, FieldMetaValues,
     testing::{FocusExitOrderProbe, FocusExitProbe},
+    use_field_meta_state,
 };
 use dioxus_html::SerializedFocusData;
+use dioxus_primitives::dioxus_attributes::attributes;
 
 use dioxus_daisyui_components::components::{
     field::Field,
-    input::{Input, InputColor},
+    input::{Input, InputColor, InputSize},
 };
 
 use crate::harness::*;
@@ -38,6 +44,7 @@ fn interaction_dom(harness: InteractionHarness<String>) -> InteractionDom {
 struct FocusExitHarness {
     probe: FocusExitOrderProbe,
     direct_calls: Rc<Cell<usize>>,
+    adorned: bool,
 }
 
 fn focus_exit_app(harness: FocusExitHarness) -> Element {
@@ -49,6 +56,7 @@ fn focus_exit_app(harness: FocusExitHarness) -> Element {
     rsx! {
         Input {
             binding,
+            suffix: harness.adorned.then(|| rsx! { "EUR" }),
             on_focus_exit: move |()| {
                 callback_probe.assert_write_and_commit_before_focus_exit();
                 direct_calls.set(direct_calls.get() + 1);
@@ -66,6 +74,7 @@ struct UnchangedFocusExitHarness {
     binding_probe: FocusExitProbe,
     binding_commits: Rc<Cell<usize>>,
     prop_commits: Rc<Cell<usize>>,
+    adorned: bool,
 }
 
 fn unchanged_focus_exit_app(harness: UnchangedFocusExitHarness) -> Element {
@@ -82,6 +91,7 @@ fn unchanged_focus_exit_app(harness: UnchangedFocusExitHarness) -> Element {
     rsx! {
         Input {
             binding,
+            suffix: harness.adorned.then(|| rsx! { "EUR" }),
             on_commit: move |()| prop_commits.set(prop_commits.get() + 1),
         }
     }
@@ -172,6 +182,7 @@ fn native_change_commits_without_focus_exit() {
     let harness = FocusExitHarness {
         probe: FocusExitOrderProbe::new(),
         direct_calls: Rc::new(Cell::new(0)),
+        adorned: false,
     };
     let dom = focus_exit_dom(harness.clone());
 
@@ -186,6 +197,28 @@ fn changed_focus_session_reports_binding_then_direct_focus_exit_once() {
     let harness = FocusExitHarness {
         probe: FocusExitOrderProbe::new(),
         direct_calls: Rc::new(Cell::new(0)),
+        adorned: false,
+    };
+    let dom = focus_exit_dom(harness.clone());
+
+    dom.dispatch("focusin", SerializedFocusData::default());
+    dispatch_input_event(&dom, "input", "changed");
+    dispatch_input_event(&dom, "change", "changed");
+    dom.dispatch("focusout", SerializedFocusData::default());
+
+    harness.probe.assert_write_and_commit_before_focus_exit();
+    assert_eq!(harness.direct_calls.get(), 1);
+}
+
+// The adorned arm keeps the complete logical focus scope on the native input:
+// the same dispatch sequence reports the same observable write/commit/Focus
+// Exit ordering, once. Which element reports it is not pinned (ADR-0031).
+#[test]
+fn adorned_changed_focus_session_reports_binding_then_direct_focus_exit_once() {
+    let harness = FocusExitHarness {
+        probe: FocusExitOrderProbe::new(),
+        direct_calls: Rc::new(Cell::new(0)),
+        adorned: true,
     };
     let dom = focus_exit_dom(harness.clone());
 
@@ -204,6 +237,25 @@ fn unchanged_focus_session_reports_focus_exit_without_commit() {
         binding_probe: FocusExitProbe::new(),
         binding_commits: Rc::new(Cell::new(0)),
         prop_commits: Rc::new(Cell::new(0)),
+        adorned: false,
+    };
+    let dom = unchanged_focus_exit_dom(harness.clone());
+
+    dom.dispatch("focusin", SerializedFocusData::default());
+    dom.dispatch("focusout", SerializedFocusData::default());
+
+    assert_eq!(harness.binding_commits.get(), 0);
+    assert_eq!(harness.prop_commits.get(), 0);
+    harness.binding_probe.assert_focus_exit_once();
+}
+
+#[test]
+fn adorned_unchanged_focus_session_reports_focus_exit_without_commit() {
+    let harness = UnchangedFocusExitHarness {
+        binding_probe: FocusExitProbe::new(),
+        binding_commits: Rc::new(Cell::new(0)),
+        prop_commits: Rc::new(Cell::new(0)),
+        adorned: true,
     };
     let dom = unchanged_focus_exit_dom(harness.clone());
 
@@ -281,6 +333,222 @@ fn binding_resolution_precedence_holds_for_values_and_meta_flags() {
             },
         },
     });
+}
+
+/// Every dynamic `class` written during mount, by element, so a test can read
+/// the wrapper's classes beside the control's own.
+fn mounted_class_attributes(
+    app: fn() -> Element,
+) -> (HashMap<dioxus_core::ElementId, String>, InteractionDom) {
+    InteractionDom::mount_with_edits(VirtualDom::new(app), "input", |edits| {
+        edits
+            .iter()
+            .filter_map(|edit| match edit {
+                dioxus_core::Mutation::SetAttribute {
+                    name: "class",
+                    value: dioxus_core::AttributeValue::Text(value),
+                    id,
+                    ..
+                } => Some((*id, value.clone())),
+                _ => None,
+            })
+            .collect()
+    })
+}
+
+fn class_of<'a>(
+    classes: &'a HashMap<dioxus_core::ElementId, String>,
+    element: dioxus_core::ElementId,
+) -> &'a str {
+    classes.get(&element).map(String::as_str).unwrap_or("")
+}
+
+/// The wrapper's classes: the one non-control element whose class list carries
+/// daisyUI's `input`.
+fn wrapper_class_of(
+    classes: &HashMap<dioxus_core::ElementId, String>,
+    control: dioxus_core::ElementId,
+) -> &str {
+    classes
+        .iter()
+        .find(|(id, value)| {
+            **id != control && value.split_ascii_whitespace().any(|class| class == "input")
+        })
+        .map(|(_, value)| value.as_str())
+        .expect("the adorned mount should write the wrapper's classes")
+}
+
+#[test]
+fn adorned_axis_classes_relocate_to_the_wrapper_and_caller_attributes_stay_native() {
+    fn app() -> Element {
+        rsx! {
+            Input {
+                color: InputColor::Primary,
+                size: InputSize::Lg,
+                class: "tabular",
+                id: "routed-input",
+                suffix: rsx! { "EUR" },
+                wrapper_attributes: attributes!(span { class: "w-full" }),
+                aria_label: "Routed input",
+            }
+        }
+    }
+
+    let (classes, dom) = mounted_class_attributes(app);
+    let control = class_of(&classes, dom.control);
+    let wrapper = wrapper_class_of(&classes, dom.control);
+
+    for class in ["input", "input-primary", "input-lg", "w-full"] {
+        assert!(
+            wrapper.split_ascii_whitespace().any(|value| value == class),
+            "wrapper should carry {class}, got {wrapper:?}"
+        );
+        assert!(
+            !control.split_ascii_whitespace().any(|value| value == class),
+            "the native input should not carry {class}, got {control:?}"
+        );
+    }
+    assert!(dom.attributes.class_contains("tabular"));
+    assert!(
+        !wrapper
+            .split_ascii_whitespace()
+            .any(|value| value == "tabular")
+    );
+    assert_eq!(dom.attributes.get("id"), Some("routed-input"));
+}
+
+#[test]
+fn adorned_field_invalidity_emits_input_error_on_the_wrapper() {
+    fn app() -> Element {
+        let meta = use_field_meta_state(FieldMetaValues {
+            invalid: Some(true),
+            ..FieldMetaValues::default()
+        });
+
+        rsx! {
+            Field { context: FieldContext::empty().with_meta(meta),
+                Input {
+                    suffix: rsx! { "EUR" },
+                    aria_label: "Invalid input",
+                }
+            }
+        }
+    }
+
+    let (classes, dom) = mounted_class_attributes(app);
+    let wrapper = wrapper_class_of(&classes, dom.control);
+
+    assert!(
+        wrapper
+            .split_ascii_whitespace()
+            .any(|value| value == "input-error"),
+        "producer invalidity should emit input-error on the wrapper, got {wrapper:?}"
+    );
+    assert!(!dom.attributes.class_contains("input-error"));
+    assert_eq!(dom.attributes.get("aria-invalid"), Some("true"));
+}
+
+// Adorned is `prefix.is_some() || suffix.is_some()`: an empty `Some` selects
+// the wrapper arm so a conditional adornment keeps a stable slot instead of
+// remounting the native input (ADR-0031).
+#[test]
+fn an_empty_some_selects_the_wrapper_arm_and_the_bare_arm_stays_bare() {
+    fn adorned(harness: ()) -> Element {
+        let () = harness;
+        rsx! {
+            Input {
+                suffix: rsx! {},
+                aria_label: "Empty slot input",
+            }
+        }
+    }
+    fn bare(harness: ()) -> Element {
+        let () = harness;
+        rsx! {
+            Input { aria_label: "Bare input" }
+        }
+    }
+
+    assert!(
+        mounts_wrapper_mousedown(adorned),
+        "an empty Some should render the wrapper and its focus-forward listener"
+    );
+    assert!(
+        !mounts_wrapper_mousedown(bare),
+        "the bare arm should render no wrapper or mousedown listener"
+    );
+}
+
+/// Whether mounting the app registers a `mousedown` listener, which only the
+/// adorned wrapper arm does.
+fn mounts_wrapper_mousedown(app: fn(()) -> Element) -> bool {
+    InteractionDom::mount_with_edits(VirtualDom::new_with_props(app, ()), "input", |edits| {
+        edits.iter().any(|edit| {
+            matches!(
+                edit,
+                dioxus_core::Mutation::NewEventListener { name, .. } if name == "mousedown"
+            )
+        })
+    })
+    .0
+}
+
+#[derive(Clone)]
+struct SlotContentHarness {
+    probe: FocusExitOrderProbe,
+    content: Rc<RefCell<Option<Signal<&'static str>>>>,
+}
+
+fn slot_content_app(harness: SlotContentHarness) -> Element {
+    let value = use_signal(String::new);
+    let binding = harness.probe.binding(ReadSignal::from(value));
+    let content = use_signal(|| "EUR");
+    harness.content.borrow_mut().replace(content);
+
+    rsx! {
+        Input {
+            binding,
+            suffix: rsx! { "{content}" },
+        }
+    }
+}
+
+// Adornment content may change within `Some` mid-session without remounting
+// the native input: the focus session survives the change and still reports
+// its write, commit, and Focus Exit in order, once.
+#[test]
+fn adornment_content_changes_within_some_without_remounting_the_control() {
+    let harness = SlotContentHarness {
+        probe: FocusExitOrderProbe::new(),
+        content: Rc::new(RefCell::new(None)),
+    };
+    let mut dom = InteractionDom::mount(
+        VirtualDom::new_with_props(slot_content_app, harness.clone()),
+        "input",
+    );
+
+    dom.dispatch("focusin", SerializedFocusData::default());
+    harness
+        .content
+        .borrow_mut()
+        .as_mut()
+        .expect("app should expose its slot content signal")
+        .set("USD");
+    let mutations = dom.dom.render_immediate_to_vec();
+    assert!(
+        !mutations
+            .edits
+            .iter()
+            .any(|edit| { matches!(edit, dioxus_core::Mutation::NewEventListener { .. }) }),
+        "slot content changes must not remount the control: {:?}",
+        mutations.edits
+    );
+
+    dispatch_input_event(&dom, "input", "changed");
+    dispatch_input_event(&dom, "change", "changed");
+    dom.dispatch("focusout", SerializedFocusData::default());
+
+    harness.probe.assert_write_and_commit_before_focus_exit();
 }
 
 #[test]

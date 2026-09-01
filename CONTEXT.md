@@ -84,8 +84,9 @@ _Avoid_: flat component, convenience wrapper
 A closed per-control component that renders a common arrangement of existing Components and
 Compound parts. It adds no new state or Field mechanism, has no children slot, and exists only for
 the happy path; callers drop to the composed parts as soon as they need content or attributes the
-sugar does not expose. Today: input, textarea, OTP, checkbox, switch, slider, and range-slider
-Fields.
+sugar does not expose. Closed adornment slots inside the control's own box (`prefix`/`suffix`
+`Element` props, ADR-0031) are not a children slot: no caller markup lands between the parts.
+Today: input, textarea, OTP, checkbox, switch, slider, and range-slider Fields.
 
 **Legal collapse**:
 The condition under which a collapsed component may be offered: daisyUI's markup has no
