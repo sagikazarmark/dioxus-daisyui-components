@@ -43,6 +43,17 @@ daisyUI's placement-shaped classes fall into four different shapes, and each has
 
 `Placement` no longer means three things, and `Position` is not used.
 
+## Adornment slots are `prefix` / `suffix`
+
+The input's adornment slots (ADR-0031) have no daisyUI name to follow: daisyUI shows the wrapper
+markup and names nothing in it. `prefix` / `suffix` is the prevailing web-component slot
+convention (Shoelace, Vaadin) and Ant Design's spelling, so it is what a reader arrives expecting.
+`start` / `end` was considered for consistency with the CSS logical axes, but this table reserves
+the logical-axis vocabulary (`inline` / `block`, and the placement shapes above) for *placement*,
+which a content slot is not, and `start` / `end` would have overloaded it. No collision forced the
+choice either way: `prefix` is not a Rust keyword, and dioxus-html 0.7.10 exposes no `prefix`
+global attribute.
+
 ## Names around the surface
 
 - **Composition sugar is `<Control>Field`**: `InputField`, `TextareaField`, `CheckboxField`,

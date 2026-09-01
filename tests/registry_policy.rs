@@ -286,18 +286,18 @@ fn component_props(source: &str) -> Vec<(String, Vec<Prop>)> {
                 .split(") ->")
                 .next()
                 .filter(|_| inline.contains(") ->"))
-            {
-                for param in params.split(',') {
-                    if let Some(name) = prop_name.captures(param) {
-                        props.push(Prop {
-                            name: name[1].to_string(),
-                            documented: false,
-                        });
-                    }
+        {
+            for param in params.split(',') {
+                if let Some(name) = prop_name.captures(param) {
+                    props.push(Prop {
+                        name: name[1].to_string(),
+                        documented: false,
+                    });
                 }
-                components.push((component, skip_slots(props)));
-                continue;
             }
+            components.push((component, skip_slots(props)));
+            continue;
+        }
 
         for line in lines.by_ref() {
             if line.starts_with(") ->") {

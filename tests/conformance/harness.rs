@@ -343,9 +343,21 @@ impl ControlAttributes {
 }
 
 impl InteractionDom {
-    pub(crate) fn mount(mut dom: VirtualDom, interaction_listener: &str) -> Self {
+    pub(crate) fn mount(dom: VirtualDom, interaction_listener: &str) -> Self {
+        Self::mount_with_edits(dom, interaction_listener, |_| ()).1
+    }
+
+    /// Mounts as [`InteractionDom::mount`] does, handing the mount's raw edits
+    /// to `read` first, for tests that assert on elements other than the
+    /// control itself.
+    pub(crate) fn mount_with_edits<T>(
+        mut dom: VirtualDom,
+        interaction_listener: &str,
+        read: impl FnOnce(&[dioxus_core::Mutation]) -> T,
+    ) -> (T, Self) {
         set_test_event_converter();
         let mutations = dom.rebuild_to_vec();
+        let observed = read(&mutations.edits);
         let control = mutations
             .edits
             .iter()
@@ -361,11 +373,14 @@ impl InteractionDom {
         let mut attributes = ControlAttributes::default();
         attributes.apply(&mutations.edits, control);
 
-        Self {
-            dom,
-            control,
-            attributes,
-        }
+        (
+            observed,
+            Self {
+                dom,
+                control,
+                attributes,
+            },
+        )
     }
 
     pub(crate) fn dispatch(&self, name: &str, data: impl Any) {

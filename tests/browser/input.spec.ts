@@ -121,6 +121,106 @@ test("the native disabled attribute is the state daisyUI styles", async ({ page 
   await expect(disabled).not.toBeFocused();
 });
 
+test("adornments render inside the span.input wrapper with the input as a direct child", async ({ page }) => {
+  const input = page.locator("#suffix-input");
+  const wrapper = input.locator("xpath=..");
+
+  await expect(wrapper).toHaveJSProperty("tagName", "SPAN");
+  await expect(wrapper).toHaveClass(/\binput\b/);
+  await expect(wrapper).toContainText("EUR");
+
+  const inputClasses = ((await input.getAttribute("class")) ?? "").split(/\s+/);
+  expect(inputClasses).not.toContain("input");
+  expect(inputClasses).toContain("tabular-nums");
+
+  const bothWrapper = page.locator("#both-input").locator("xpath=..");
+  await expect(bothWrapper.locator("> span").first()).toHaveText("$");
+  await expect(bothWrapper.locator("> span").last()).toHaveText(".00");
+});
+
+test("every colour renders an adorned wrapper differently", async ({ page }) => {
+  await expectAxisVaries(page, "adorned-color", "border-top-color");
+});
+
+test("every size renders an adorned wrapper at a size of its own", async ({ page }) => {
+  await expectAxisGrows(page, "adorned-size", "height");
+});
+
+test("focus lands on the wrapper's focus-within styling, not the inner input", async ({ page }) => {
+  const input = page.locator("#suffix-input");
+  const wrapper = input.locator("xpath=..");
+
+  const blurred = await wrapper.evaluate((node) => getComputedStyle(node).outlineWidth);
+  await input.focus();
+  await expect(input).toBeFocused();
+  const focused = await wrapper.evaluate((node) => getComputedStyle(node).outlineWidth);
+  expect(focused).not.toBe(blurred);
+  await expect(input).toHaveCSS("outline-style", "none");
+});
+
+test("the disabled adorned wrapper paints through the nested-input rule", async ({ page }) => {
+  const input = page.locator("#disabled-adorned-input");
+  const wrapper = input.locator("xpath=..");
+
+  await expect(input).toBeDisabled();
+  await expect(wrapper).toHaveCSS("cursor", "not-allowed");
+});
+
+test("clicking the adornment or the wrapper padding does not exit the focus session", async ({ page }) => {
+  const input = page.locator("#amount-input");
+  const wrapper = input.locator("xpath=..");
+  const focusExits = page.getByTestId("amount-focus-exits");
+
+  await input.click();
+  await input.pressSequentially("12");
+  await expect(focusExits).toHaveText("0");
+
+  await wrapper.locator("> span").last().click();
+  await expect(input).toBeFocused();
+  await expect(focusExits).toHaveText("0");
+  expect(await input.evaluate((node) => (node as HTMLInputElement).selectionStart)).toBe(2);
+
+  await wrapper.click({ position: { x: 4, y: 4 } });
+  await expect(input).toBeFocused();
+  await expect(focusExits).toHaveText("0");
+  expect(await input.evaluate((node) => (node as HTMLInputElement).selectionStart)).toBe(2);
+
+  await input.blur();
+  await expect(focusExits).toHaveText("1");
+  await expect(page.getByTestId("amount-commits")).toHaveText("1");
+});
+
+test("wrapper attributes reach the wrapper's own box", async ({ page }) => {
+  const wrapper = page.locator("#amount-input").locator("xpath=..");
+
+  await expect(wrapper).toHaveClass(/\bw-full\b/);
+  const [wrapperWidth, parentWidth] = await wrapper.evaluate((node) => {
+    const parent = node.parentElement as HTMLElement;
+    const style = getComputedStyle(parent);
+    return [
+      node.getBoundingClientRect().width,
+      parent.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),
+    ];
+  });
+  expect(wrapperWidth).toBeCloseTo(parentWidth, 0);
+});
+
+test("a conditional adornment keeps a hidden slot and never remounts the input", async ({ page }) => {
+  const input = page.locator("#slot-input");
+  const wrapper = input.locator("xpath=..");
+  const slot = wrapper.locator("> span").last();
+
+  await expect(slot).toBeHidden();
+  await input.evaluate((node) => {
+    (node as HTMLElement).dataset.mounted = "kept";
+  });
+
+  await page.locator("#toggle-slot").click();
+  await expect(slot).toBeVisible();
+  await expect(slot).toContainText("verified");
+  await expect(input).toHaveAttribute("data-mounted", "kept");
+});
+
 test("InputField composes its label, input, and always-mounted error", async ({ page }) => {
   const input = page.locator("#field-aware-input");
 
