@@ -84,10 +84,13 @@ test("participates in its native form", async ({ page }) => {
   await expect(page.getByTestId("textarea-commits")).toHaveText("1");
   await expect(page.getByTestId("textarea-focus-exits")).toHaveText("1");
 
+  // Commit and Focus Exit are independent (ADR-0028): leaving an unchanged
+  // control reports that focus left, and must not Commit a value no
+  // interaction produced.
   await textarea.focus();
   await textarea.blur();
-  await expect(page.getByTestId("textarea-commits")).toHaveText("2");
   await expect(page.getByTestId("textarea-focus-exits")).toHaveText("2");
+  await expect(page.getByTestId("textarea-commits")).toHaveText("1");
 
   expect(
     await form.evaluate((node) =>
