@@ -99,6 +99,19 @@ daisyUI uses neither, since it draws the dim on the modal itself.
 buttons are the caller's to shape through `class`, which concatenates, and the colour is the one
 that changes what the choice *means*.
 
+**Content behind an open alert dialog is marked `inert`.** This one is a behaviour *added*
+rather than inherited: the primitive sets `aria-modal` and traps Tab, and nothing more, so a
+screen reader's browse-mode cursor, a pointer, or a programmatic `focus()` could still reach
+behind the modal. While the dialog is open — unconditionally, where the dialog's marking is
+gated on `is_modal`, because an alert dialog is always modal — this component walks from the
+modal to `<body>` and marks each ancestor's other children `inert`, tagging what it marks with
+the dialog's id (`data-inert-by`) so that stacked modals unwind independently (an alert over a
+dialog being the motivating case) and `inert` the application set itself is never cleared. The
+same two edges the dialog's entry records are deliberate here too: a mounted toast container
+goes inert with everything else, and content mounted behind an already-open dialog is not
+marked until it next opens. The behaviour belongs in the primitive, and this entry goes with it
+once it lands there.
+
 ## daisyUI classes deliberately not used
 
 - `modal-open` is **not** in this list: it is emitted, and it is the whole of Tier 2 here.
