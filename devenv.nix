@@ -13,6 +13,8 @@
     cargo-dist
     cargo-release
     cargo-watch
+
+    dioxus-cli
   ];
 
   languages = {
