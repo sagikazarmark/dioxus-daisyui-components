@@ -88,7 +88,9 @@ test("participates in its native form", async ({ page }) => {
   ).toEqual({ component: "dioxus-field" });
 });
 
-test("changed and unchanged focus sessions commit and focus-exit exactly once", async ({ page }) => {
+test("a changed session commits once; an unchanged one focus-exits without committing", async ({
+  page,
+}) => {
   const input = page.locator("#form-input");
   const commits = page.getByTestId("input-commits");
   const focusExits = page.getByTestId("input-focus-exits");
@@ -101,10 +103,13 @@ test("changed and unchanged focus sessions commit and focus-exit exactly once", 
   await expect(commits).toHaveText("1");
   await expect(focusExits).toHaveText("1");
 
+  // Commit and Focus Exit are independent (ADR-0028): leaving an unchanged
+  // control reports that focus left, and must not Commit a value no
+  // interaction produced.
   await input.focus();
   await input.blur();
-  await expect(commits).toHaveText("2");
   await expect(focusExits).toHaveText("2");
+  await expect(commits).toHaveText("1");
 });
 
 test("the native disabled attribute is the state daisyUI styles", async ({ page }) => {

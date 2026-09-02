@@ -198,6 +198,34 @@ test.describe("behaviour", () => {
     await expect(box).toBeHidden();
     await expect(trigger).toBeFocused();
   });
+
+  test("content behind a modal dialog is inert while it is open", async ({ page }) => {
+    await dismissShowcase(page);
+
+    // The trigger sits outside the dialog it opens, which is what makes it
+    // the probe: the walk from the dialog to the root marked it, or marked an
+    // ancestor of it, and either way it is unreachable through it.
+    const trigger = axisTriggers(page, "placement").first();
+    const box = await openPositioned(page);
+
+    await expect
+      .poll(() => trigger.evaluate((element) => element.closest("[inert]") !== null), {
+        message: "nothing between the trigger and the root went inert",
+      })
+      .toBe(true);
+
+    await page.keyboard.press("Escape");
+    await expect(box).toBeHidden();
+
+    // Closing unwound the marks, and through the dialog's own tags rather
+    // than wholesale: none are left behind for the next open to trip on.
+    await expect
+      .poll(() => trigger.evaluate((element) => element.closest("[inert]") !== null), {
+        message: "the trigger is still inert after the dialog closed",
+      })
+      .toBe(false);
+    await expect(page.locator("[data-inert-by]")).toHaveCount(0);
+  });
 });
 
 test.describe("motion", () => {

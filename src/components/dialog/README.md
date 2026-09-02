@@ -121,6 +121,21 @@ and it is the one that needs no particular element behind it. The top layer and 
 `::backdrop` are given up along with the element; daisyUI does not use either, since it draws
 the dim on the modal itself and sets a `z-index` rather than promoting the element.
 
+**Content behind an open modal dialog is marked `inert`.** This one is a behaviour *added*
+rather than inherited: the primitive sets `aria-modal` and traps Tab, and nothing more, so a
+screen reader's browse-mode cursor, a pointer, or a programmatic `focus()` could still reach
+behind the modal. While the dialog is open and `is_modal`, this component walks from the modal
+to `<body>` and marks each ancestor's other children `inert`, tagging what it marks with the
+dialog's id (`data-inert-by`) so that stacked modals unwind independently and `inert` the
+application set itself is never cleared. Two edges are deliberate. A toast container mounted
+outside the dialog goes inert with everything else, which is what a native
+`<dialog>.showModal()` does to everything outside the top layer; a toast that must outlive a
+modal is the application's layering decision, not this component's. And content mounted behind
+an already-open modal is not marked until the dialog next opens: a limitation of walking at
+open, accepted rather than a `MutationObserver` carried for a case the modal's premise says
+should not happen. The behaviour belongs in the primitive, and this entry goes with it once it
+lands there.
+
 ## daisyUI classes deliberately not used
 
 - `modal-backdrop`: a form or an anchor rendered behind the box to catch clicks and close the

@@ -1,8 +1,74 @@
+use std::sync::atomic::{AtomicUsize, Ordering};
+
 use dioxus::core::AttributeValue;
 use dioxus::prelude::*;
 use dioxus_primitives::alert_dialog;
 use dioxus_primitives::dioxus_attributes::attributes;
 use dioxus_primitives::merge_attributes;
+
+/// Marks everything outside an open alert dialog `inert`, and unwinds it.
+///
+/// The primitive sets `aria-modal` and traps Tab, and that is all: a screen
+/// reader's browse-mode cursor, a pointer, or a programmatic `focus()` can
+/// still reach the content behind the modal. `inert` closes all three at
+/// once. The primitive renders the dialog inline rather than portalling it,
+/// so the walk climbs from the dialog to `<body>`, marking each ancestor's
+/// other children.
+///
+/// Every element marked is tagged with the marking dialog's id in
+/// `data-inert-by`, space-separated when two dialogs mark the same element.
+/// Unwinding removes only that dialog's id and clears `inert` only when no
+/// ids remain, which is what lets this dialog stack over an open `dialog` and
+/// close without freeing the content the one underneath still covers — and
+/// what keeps `inert` the application set itself, which carries no tag,
+/// untouched.
+///
+/// A copy of the dialog's blob rather than an import of it: components
+/// install independently, so each carries its own. Carried at all until the
+/// Primitive grows the behaviour; the README's Deviations entry is where its
+/// edges are recorded.
+const INERT_JS: &str = r#"
+    const id = await dioxus.recv();
+    const mark = await dioxus.recv();
+
+    // Unwind before marking, so a rerun never leaves a tag on an element a
+    // fresh walk would no longer reach.
+    for (const element of document.querySelectorAll("[data-inert-by]")) {
+        const ids = element.getAttribute("data-inert-by").split(" ").filter(Boolean);
+        if (!ids.includes(id)) continue;
+        const rest = ids.filter((other) => other !== id);
+        if (rest.length > 0) {
+            element.setAttribute("data-inert-by", rest.join(" "));
+        } else {
+            element.removeAttribute("data-inert-by");
+            element.inert = false;
+        }
+    }
+
+    if (mark) {
+        let node = document.getElementById(id);
+        while (node && node !== document.body && node.parentElement) {
+            for (const sibling of node.parentElement.children) {
+                if (sibling === node) continue;
+                // Inert with no tag is the application's own; leave it be.
+                if (sibling.inert && !sibling.hasAttribute("data-inert-by")) continue;
+                const ids = (sibling.getAttribute("data-inert-by") ?? "").split(" ").filter(Boolean);
+                if (!ids.includes(id)) ids.push(id);
+                sibling.setAttribute("data-inert-by", ids.join(" "));
+                sibling.inert = true;
+            }
+            node = node.parentElement;
+        }
+    }
+"#;
+
+/// Runs [`INERT_JS`] for one dialog: marks the content outside it when `mark`,
+/// unwinds the dialog's own marks either way.
+fn set_inert(id: String, mark: bool) {
+    let eval = document::eval(INERT_JS);
+    let _ = eval.send(id);
+    let _ = eval.send(mark);
+}
 
 /// daisyUI's placement axis for an alert dialog, which places the box within the
 /// modal.
@@ -192,7 +258,9 @@ pub fn AlertDialogRoot(
     /// The id of this element. Declared rather than left to the attribute
     /// list, because the primitive generates one and then looks the element up
     /// by it; an id that arrived as an attribute would be written over the one
-    /// it is looking for.
+    /// it is looking for. When the caller supplies none, one is generated
+    /// here rather than left to the primitive, whose own id this component
+    /// cannot see and the `inert` walk below has to find the element by.
     #[props(default)]
     id: ReadSignal<Option<String>>,
     /// The controlled open state of the dialog.
@@ -208,6 +276,39 @@ pub fn AlertDialogRoot(
     children: Element,
 ) -> Element {
     let mut uncontrolled = use_signal(|| default_open);
+
+    let generated_id = use_alert_dialog_id();
+    let dialog_id = use_memo(move || id().unwrap_or_else(&*generated_id));
+
+    // The id the last run marked under. The unwind in INERT_JS can only name
+    // the id it is given, so an `id` prop that changes while the dialog is
+    // open would strand marks under the old one unless that one is remembered
+    // and unwound first.
+    let mut marked_id = use_signal(|| None::<String>);
+
+    // While the dialog is open, everything outside it is marked `inert` — the
+    // half of modality the primitive's Tab trap does not cover (see
+    // INERT_JS). Unconditional where the dialog's is gated on `is_modal`,
+    // because an alert dialog is always modal.
+    use_effect(move || {
+        let id = dialog_id();
+        let mark = open().unwrap_or(uncontrolled());
+        if let Some(previous) = marked_id.peek().clone()
+            && previous != id
+        {
+            set_inert(previous, false);
+        }
+        marked_id.set(Some(id.clone()));
+        set_inert(id, mark);
+    });
+
+    // A dialog can leave the document without ever closing; unwinding from
+    // drop keeps its marks from outliving it.
+    use_drop(move || {
+        if let Some(id) = marked_id.peek().clone() {
+            set_inert(id, false);
+        }
+    });
 
     // Both are read here rather than inside the markup, and eagerly rather
     // than only when the other is absent, so that this component subscribes to
@@ -228,7 +329,7 @@ pub fn AlertDialogRoot(
 
     rsx! {
         alert_dialog::AlertDialogRoot {
-            id,
+            id: Some(dialog_id()),
             open: Some(is_open),
             on_open_change: move |open| {
                 uncontrolled.set(open);
@@ -436,6 +537,28 @@ pub fn AlertDialog(
             AlertDialogContent { id, attributes, {children} }
         }
     }
+}
+
+/// Generates a runtime-unique id for an alert dialog the caller left unnamed.
+///
+/// The primitive would generate one itself, but its helper is private and the
+/// `inert` effect has to know the id to find the element by, so the id is
+/// settled here and passed down; the primitive honours a supplied id over its
+/// own. The same idiom as `checkbox/primitive.rs`, `fullstack!` included, so
+/// a server render and its hydration agree on the id.
+fn use_alert_dialog_id() -> Signal<String> {
+    static NEXT_ID: AtomicUsize = AtomicUsize::new(0);
+
+    #[allow(unused_mut)]
+    let mut initial_value = use_hook(|| {
+        let id = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+        format!("daisyui-alert-dialog-{id}")
+    });
+    fullstack! {
+        let server_id = use_server_cached(move || initial_value.clone());
+        initial_value = server_id;
+    }
+    use_signal(|| initial_value)
 }
 
 /// Takes the class out of a merged attribute list, so that it can be passed to
