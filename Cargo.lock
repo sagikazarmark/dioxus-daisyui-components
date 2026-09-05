@@ -3059,7 +3059,7 @@ dependencies = [
 [[package]]
 name = "schemaform"
 version = "0.1.0"
-source = "git+https://github.com/sagikazarmark/schemaform.git?rev=2c32d2840d1eaa501a700bcdda120914c7da84b2#2c32d2840d1eaa501a700bcdda120914c7da84b2"
+source = "git+https://github.com/sagikazarmark/schemaform.git?rev=4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6#4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6"
 dependencies = [
  "jsonptr",
  "jsonschema",
@@ -3074,7 +3074,7 @@ dependencies = [
 [[package]]
 name = "schemaform-dioxus"
 version = "0.1.0"
-source = "git+https://github.com/sagikazarmark/schemaform.git?rev=2c32d2840d1eaa501a700bcdda120914c7da84b2#2c32d2840d1eaa501a700bcdda120914c7da84b2"
+source = "git+https://github.com/sagikazarmark/schemaform.git?rev=4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6#4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6"
 dependencies = [
  "dioxus",
  "dioxus-core",
