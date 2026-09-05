@@ -41,6 +41,7 @@
     "src/components/progress",
     "src/components/radial_progress",
     "src/components/radio_group",
+    "src/components/schemaform_daisyui",
     "src/components/select",
     "src/components/separator",
     "src/components/skeleton",

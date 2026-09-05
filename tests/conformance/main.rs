@@ -8,6 +8,7 @@ mod native_select;
 mod otp;
 mod radio_group;
 mod range_slider;
+mod schemaform_daisyui;
 mod select;
 mod slider;
 mod switch;
