@@ -37,6 +37,10 @@ schemaform-dioxus = { git = "https://github.com/sagikazarmark/schemaform.git", r
 # The `schemaform_daisyui` Examples parse their form data from JSON text.
 serde_json = { version = "1", optional = true }
 time = { version = "0.3.44", features = ["local-offset", "macros"] }
+# Not used directly. The lockfile's wasm-bindgen must match the wasm-bindgen-cli
+# the devenv provides, or `dx build` refuses to bundle the preview locally; this
+# holds the resolution to that release. Bump both together.
+wasm-bindgen = "=0.2.126"
 
 [dev-dependencies]
 dioxus-html = { version = "0.7", features = ["serialize"] }
