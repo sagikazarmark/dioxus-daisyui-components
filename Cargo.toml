@@ -29,11 +29,10 @@ dioxus-code = { version = "0.1.2", default-features = false, optional = true }
 dioxus-field = "0.7.0"
 dioxus-primitives = { version = "0.0.1", git = "https://github.com/DioxusLabs/components", rev = "bf007c15d0cf4d04d3181cc46cf12325aa773955", default-features = false, features = ["router"] }
 dioxus-registry-preview = { version = "0.2.0", optional = true, features = ["syntax-highlighting"] }
-# `schemaform_daisyui` renders `schemaform` forms. Pinned to a commit until the 0.2.0
-# release that ships the renderer seams it is built on; the Component's manifest
-# pins the same commit for installs.
-schemaform = { git = "https://github.com/sagikazarmark/schemaform.git", rev = "4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6" }
-schemaform-dioxus = { git = "https://github.com/sagikazarmark/schemaform.git", rev = "4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6" }
+# `schemaform_daisyui` renders `schemaform` forms. The Component's manifest
+# declares the same requirement for installs.
+schemaform = "0.2.0"
+schemaform-dioxus = "0.2.0"
 # The `schemaform_daisyui` Examples parse their form data from JSON text.
 serde_json = { version = "1", optional = true }
 time = { version = "0.3.44", features = ["local-offset", "macros"] }

@@ -3058,8 +3058,9 @@ dependencies = [
 
 [[package]]
 name = "schemaform"
-version = "0.1.0"
-source = "git+https://github.com/sagikazarmark/schemaform.git?rev=4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6#4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f29a1958a2b90365efe6b98e4122edae447e2b365953d2a5b2c39a471933e2e"
 dependencies = [
  "jsonptr",
  "jsonschema",
@@ -3073,8 +3074,9 @@ dependencies = [
 
 [[package]]
 name = "schemaform-dioxus"
-version = "0.1.0"
-source = "git+https://github.com/sagikazarmark/schemaform.git?rev=4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6#4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "56a6ddc6639cd5feff7f64dea7cd10ac84104968c0561406afedc55ab559c638"
 dependencies = [
  "dioxus",
  "dioxus-core",

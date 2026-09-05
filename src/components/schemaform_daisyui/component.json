@@ -53,14 +53,12 @@
     },
     {
       "name": "schemaform",
-      "git": "https://github.com/sagikazarmark/schemaform.git",
-      "rev": "4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6",
+      "version": "0.2.0",
       "default_features": true
     },
     {
       "name": "schemaform-dioxus",
-      "git": "https://github.com/sagikazarmark/schemaform.git",
-      "rev": "4cbc30aad5ab2236ff9b5c3b3d3dfb2ac63ea1c6",
+      "version": "0.2.0",
       "default_features": true
     }
   ]
