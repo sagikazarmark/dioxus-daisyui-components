@@ -1,0 +1,65 @@
+{
+  "name": "schemaform_daisyui",
+  "description": "schemaform-dioxus renderers for daisyUI: a control renderer presenting string, number, integer, boolean, choice, and constant controls with the registry's Field, Input, Checkbox, NativeSelect, RadioGroup, and Select parts; a structure bundle rendering homogeneous arrays as cards with joined item actions and the form shell with a primary submit button; and a finding presenter framing the summary as an alert.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "componentDependencies": [
+    {
+      "name": "field",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "bb04b3e0d563d21c458fdd050ecd95f671c91408"
+    },
+    {
+      "name": "input",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "bb04b3e0d563d21c458fdd050ecd95f671c91408"
+    },
+    {
+      "name": "checkbox",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "bb04b3e0d563d21c458fdd050ecd95f671c91408"
+    },
+    {
+      "name": "native_select",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "bb04b3e0d563d21c458fdd050ecd95f671c91408"
+    },
+    {
+      "name": "radio_group",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "bb04b3e0d563d21c458fdd050ecd95f671c91408"
+    },
+    {
+      "name": "select",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "bb04b3e0d563d21c458fdd050ecd95f671c91408"
+    },
+    {
+      "name": "button",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "bb04b3e0d563d21c458fdd050ecd95f671c91408"
+    }
+  ],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-field",
+      "version": "0.7.0"
+    },
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    },
+    {
+      "name": "schemaform",
+      "version": "0.2.0",
+      "default_features": true
+    },
+    {
+      "name": "schemaform-dioxus",
+      "version": "0.2.0",
+      "default_features": true
+    }
+  ]
+}
