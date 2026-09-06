@@ -1,4 +1,4 @@
-# Schemaform renderer
+# Schemaform DaisyUI
 
 A `schemaform-dioxus` renderer package that presents a form with the
 `dioxus-daisyui-components` registry and daisyUI classes: a control renderer for
