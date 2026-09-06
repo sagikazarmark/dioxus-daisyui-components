@@ -27,6 +27,71 @@ dependencies = [
 ]
 
 [[package]]
+name = "arborium"
+version = "2.18.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "230e826fe3204178030e420751396c99431e4611fc67af63baf7767b4317bd75"
+dependencies = [
+ "arborium-highlight",
+ "arborium-rust",
+ "arborium-theme",
+ "arborium-tree-sitter",
+ "dlmalloc",
+]
+
+[[package]]
+name = "arborium-highlight"
+version = "2.18.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cee400d694bd935c513c50f9b1fda469b6d9cd192d80fede7bfa9e5851a54cb8"
+dependencies = [
+ "arborium-theme",
+ "arborium-tree-sitter",
+ "streaming-iterator",
+]
+
+[[package]]
+name = "arborium-rust"
+version = "2.18.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8471397c67c4164b93d6a23ae80fb5b7af5dcc00fa9b143015efb1ea927ca8da"
+dependencies = [
+ "arborium-sysroot",
+ "cc",
+ "tree-sitter-language",
+]
+
+[[package]]
+name = "arborium-sysroot"
+version = "2.18.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ddd9d120dd5df8b918cd96676a88f1233a66f10687d415b69f70b3396acddddf"
+dependencies = [
+ "cc",
+ "dlmalloc",
+]
+
+[[package]]
+name = "arborium-theme"
+version = "2.18.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "042f9d025c80b2e625b4f0f10eda56a652444ef916025e855a292937bb8a949a"
+
+[[package]]
+name = "arborium-tree-sitter"
+version = "2.18.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bd8de97695c76508ab780e03bd1db009f5db8567c985f5da5ae91a2ad57ef2bc"
+dependencies = [
+ "arborium-sysroot",
+ "cc",
+ "regex",
+ "regex-syntax",
+ "streaming-iterator",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "async-stream"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -597,6 +662,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "dioxus-code"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "859cbf40e5da690df269d4d1ab01b4ec9921b408cec4cabce2dd1620cc15670e"
+dependencies = [
+ "arborium",
+ "arborium-theme",
+ "dioxus",
+]
+
+[[package]]
 name = "dioxus-config-macro"
 version = "0.7.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -658,6 +734,7 @@ name = "dioxus-daisyui-components"
 version = "0.1.0"
 dependencies = [
  "dioxus",
+ "dioxus-code",
  "dioxus-field",
  "dioxus-html",
  "dioxus-primitives",
@@ -939,20 +1016,21 @@ dependencies = [
 
 [[package]]
 name = "dioxus-registry-preview"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4bf866d1a40b6cc1a8fc449eca563abec067725676770dc3a46b10a49d5e486e"
+checksum = "fc3889e85414f2607bbfa686a0f9e078f2f9967cd3d79db04432eaf4025b742b"
 dependencies = [
  "dioxus",
+ "dioxus-code",
  "dioxus-registry-preview-core",
  "dioxus-registry-preview-macros",
 ]
 
 [[package]]
 name = "dioxus-registry-preview-core"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77517bd99323a0853ed25837952579a07196a2b3ad0fe6973358f582fddaacb8"
+checksum = "ab8858ae58b76de00218e67801b3b394aa666ca28e2b1b72e43008de545472c8"
 dependencies = [
  "proc-macro2",
  "pulldown-cmark",
@@ -964,10 +1042,12 @@ dependencies = [
 
 [[package]]
 name = "dioxus-registry-preview-macros"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "96ccd25583782fda7b4cd116a25e566cab7d4251d7dafae78f92b97b79c28b9f"
+checksum = "a11e039b1d05e5e0dd9f02f74694cf9684a09ae1c30a97ed1307d452e778e8f5"
 dependencies = [
+ "arborium",
+ "arborium-theme",
  "dioxus-registry-preview-core",
  "proc-macro-crate",
  "proc-macro2",
@@ -1117,6 +1197,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 3.0.4",
+]
+
+[[package]]
+name = "dlmalloc"
+version = "0.2.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad5208a115eaba24916f7456929832e310a81518c641f93fee4f89aa93aa3675"
+dependencies = [
+ "cfg-if",
+ "libc",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -2858,6 +2949,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
 
 [[package]]
+name = "streaming-iterator"
+version = "0.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b2231b7c3057d5e4ad0156fb3dc807d900806020c5ffa3ee6ff2c8c76fb8520"
+
+[[package]]
 name = "subsecond"
 version = "0.7.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3211,6 +3308,12 @@ dependencies = [
  "tracing-subscriber",
  "wasm-bindgen",
 ]
+
+[[package]]
+name = "tree-sitter-language"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ca0d1bf6fdd806e43ae5198f82f527056d359def39e54e67a0f478ac09dac081"
 
 [[package]]
 name = "try-lock"

@@ -38,4 +38,6 @@ be the code.
   registered, and the browser tests reach one by the `data-example` slug it is registered under.
 - The generated section names, literal-call guarantee, source inclusion, and marker protocol are
   defined by the pinned external
-  [`dioxus-registry-preview` consumer contract](https://github.com/sagikazarmark/dioxus-registry-preview/blob/f669725acef7e8bd0cdb6ad35478186e01429e32/docs/adr/0001-versioned-consumer-contract.md).
+  [`dioxus-registry-preview` consumer contract](https://github.com/sagikazarmark/dioxus-registry-preview/blob/f11ad519a9c80f606de5c0c5ba414af8a293c61e/docs/adr/0001-versioned-consumer-contract.md).
+- The code tab's highlighting is computed over that same included text when the module is
+  compiled, so it can no more drift from the rendered component than the text can (ADR-0033).

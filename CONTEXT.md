@@ -30,19 +30,22 @@ _Avoid_: story, demo page
 **Example**:
 One file under a Component's excluded `docs/examples/` directory, holding one component that a
 Component page both renders and prints the source of: the same code seen two ways. It is the unit
-a page is built from and the unit a reader copies. See ADR-0009.
+a page is built from and the unit a reader copies. The printed side is highlighted at compile time
+from the same text (ADR-0033). See ADR-0009.
 _Avoid_: snippet, sample, story
 
 **Documentation tooling**:
 The external `dioxus-registry-preview` package, validation library, DOM protocol, isolated default
 chrome, and generic Playwright helpers. The tooling owns discovery, generic validation,
-generated APIs, and protocol definitions; this Registry owns all authoring inputs, Preview routing
-and presentation, themes, and daisyUI acceptance policy. See ADR-0027.
+generated APIs, protocol definitions, and compile-time Example highlighting; this Registry owns all
+authoring inputs, Preview routing and presentation, themes, and daisyUI acceptance policy. See
+ADR-0027.
 
 **Documentation chrome**:
 Consumer-owned Preview source implementing the Example and README adapters and the branded shell.
 The external tooling offers isolated defaults, but this Registry replaces them so its Tailwind and
-daisyUI classes remain visible to the Registry's scan and match its branded Preview.
+daisyUI classes remain visible to the Registry's scan and match its branded Preview. The one
+surface in it that does not follow the theme is the code surface (ADR-0033).
 
 **Component group**:
 The section of the Preview's navigation a Component page is listed under, written as a heading

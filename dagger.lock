@@ -2,6 +2,7 @@
 ["","git-latest",["https://github.com/dagger/playwright"],"refs/heads/main"]
 ["","git-latest",["https://github.com/sagikazarmark/daggerverse-beta"],"refs/heads/main",[["tagPrefix","dagger-gha"]]]
 ["","git-latest",["https://github.com/sagikazarmark/daggerverse-beta"],"refs/heads/main",[["tagPrefix","dioxus"]]]
+["","git-latest",["https://github.com/sagikazarmark/daggerverse-beta"],"refs/heads/main",[["tagPrefix","distro"]]]
 ["","git-latest",["https://github.com/sagikazarmark/daggerverse-beta"],"refs/heads/main",[["tagPrefix","rust"]]]
 ["","git-latest",["https://github.com/sagikazarmark/daggerverse-beta"],"refs/heads/main",[["tagPrefix","worker"]]]
 ["","git-sha",["https://github.com/dagger/playwright","refs/heads/main"],"7a6aa5388fcef513f037d31fb0a3251ad4025ed2"]
