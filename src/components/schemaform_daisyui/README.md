@@ -25,8 +25,8 @@ It fills three seams:
 `structure()`, and `findings()` let a host compose them with its own slots.
 
 Only the structural nodes no seam exists for yet — layouts, groups, and tabs —
-still come from the adapter's built-in renderer. The demo styles those through
-the adapter's `schemaform-*` class hooks with daisyUI classes in its own
+still come from the adapter's built-in renderer. schemaform's demo styles those
+through the adapter's `schemaform-*` class hooks with daisyUI classes in its own
 stylesheet (`demo/src/forms.css`); that theme is the demo's, not this
 component's, and shrinks as further structure seams ship.
 
@@ -40,35 +40,37 @@ rejects input, and the registry's widgets focus their native elements through
 
 ## Layout
 
-The directory is laid out as a `dx components` member so it can later move to a
-registry without changing shape:
+The directory is a `dx components` member like every other component here, only
+larger, so the line between what an install copies and what stays behind is
+worth drawing:
 
 - `component.json` declares the registry components it is built on (`field`,
-  `input`, `checkbox`, `native_select`, `radio_group`, `select`, `button`, each
-  pinned to the one registry revision the copies were taken from, so the parts
-  share a contract) and the Cargo crates it compiles against. `dioxus-field` is
-  pinned to the version the registry's own manifests declare, so the copied
-  widgets and this mapping share one `Binding` and one `FieldMetaValues`. The
-  `schemaform` and `schemaform-dioxus` entries name the release that ships the
-  headless edit hooks and the structure seams; this demo builds them from the
-  workspace instead.
+  `input`, `checkbox`, `native_select`, `radio_group`, `select`, `button`), each
+  pinned to one revision of this registry so an install's parts share one
+  contract: one `Binding` and one `FieldMetaValues`. Within the registry the
+  package compiles against those components as they are in the tree; the pin
+  governs what `dx components add` fetches. The Cargo entries name
+  `dioxus-field` at the version every field-aware manifest here declares, the
+  primitive at the revision they all pin, and the `schemaform` and
+  `schemaform-dioxus` release that ships the headless edit hooks and the
+  structure seams; the registry's own `Cargo.toml` requires the same.
 - `mod.rs`, `component.rs`, `appearance.rs`, `mapping.rs`, `parts.rs`,
   `text.rs`, `boolean.rs`, `choice.rs`, `constant.rs`, `collection.rs`,
   `shell.rs`, and `findings.rs` are what an install copies. None of them
-  contains test code.
-- The component's tests live in the demo's `tests/schemaform_daisyui/`, in two
-  groups. `contract.rs` asserts the adapter's contract through this package as
-  a real consumer and stays with schemaform. The rest move with the component:
-  the binding tests (`mapping.rs`) drive the `dioxus-field` bindings through a
-  capturing renderer without rendering markup and move as they are; the others
-  observe the markup `dioxus-ssr` renders for a form bound through every seam
-  and become browser specs against the component's examples, since the
-  registry does not accept render-to-string tests. The Playwright suite in
-  `demo/e2e/` draws the same line between its `contract-*` and
-  `presentation-*` scenarios.
-- The registry components live beside this one under `src/components/`,
-  copied verbatim from the pinned revision and committed. CI never runs
-  `dx components add`.
+  contains test code. `docs/` holds the page's examples and, with this file and
+  the manifest, is excluded from installs.
+- The tests are split the way the registry splits every form control's. The
+  binding tests in `tests/conformance/schemaform_daisyui.rs` drive the
+  `dioxus-field` bindings through a capturing renderer without rendering
+  markup. Everything observable in markup is a Playwright spec against the
+  page's examples, `tests/browser/schemaform_daisyui.spec.ts`; the registry
+  accepts no render-to-string tests (ADR-0007). The adapter's own contract
+  tests stayed with schemaform, in its demo's `tests/schemaform_daisyui/`,
+  where they exercise `schemaform-dioxus` through that copy of this package as
+  a real consumer.
+- CI installs every component of the registry, this one included, into a fresh
+  application with `dx components add` and checks that it compiles, so the
+  manifest's pins and crate requirements are exercised on every change.
 
 ## What it renders
 
