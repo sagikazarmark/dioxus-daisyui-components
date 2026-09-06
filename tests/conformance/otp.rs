@@ -81,13 +81,14 @@ impl OtpDom {
 
 impl RendersReactiveUpdates for OtpDom {
     fn render_reactive_updates(&mut self) {
-        for _ in 0..2 {
-            let mutations = self.dom.render_immediate_to_vec();
-            self.control_attributes
-                .apply(&mutations.edits, self.control);
-            self.wrapper_attributes
-                .apply(&mutations.edits, self.wrapper);
-        }
+        let control = self.control;
+        let control_attributes = &mut self.control_attributes;
+        let wrapper = self.wrapper;
+        let wrapper_attributes = &mut self.wrapper_attributes;
+        settle(&mut self.dom, |mutations| {
+            control_attributes.apply(&mutations.edits, control);
+            wrapper_attributes.apply(&mutations.edits, wrapper);
+        });
     }
 }
 

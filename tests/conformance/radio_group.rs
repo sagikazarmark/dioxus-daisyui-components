@@ -95,13 +95,16 @@ impl RadioGroupDom {
 
 impl RendersReactiveUpdates for RadioGroupDom {
     fn render_reactive_updates(&mut self) {
-        for _ in 0..2 {
-            let mutations = self.dom.render_immediate_to_vec();
-            self.group_attributes.apply(&mutations.edits, self.group);
-            for (item, attributes) in self.items.iter().zip(&mut self.item_attributes) {
+        let group = self.group;
+        let group_attributes = &mut self.group_attributes;
+        let items = &self.items;
+        let item_attributes = &mut self.item_attributes;
+        settle(&mut self.dom, |mutations| {
+            group_attributes.apply(&mutations.edits, group);
+            for (item, attributes) in items.iter().zip(item_attributes.iter_mut()) {
                 attributes.apply(&mutations.edits, *item);
             }
-        }
+        });
     }
 }
 
