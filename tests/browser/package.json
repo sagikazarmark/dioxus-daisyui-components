@@ -4,7 +4,7 @@
   "private": true,
   "description": "Seam 2: the preview in a real browser.",
   "devDependencies": {
-    "@sagikazarmark/dioxus-registry-preview-playwright": "github:sagikazarmark/dioxus-registry-preview#f669725acef7e8bd0cdb6ad35478186e01429e32",
+    "@sagikazarmark/dioxus-registry-preview-playwright": "github:sagikazarmark/dioxus-registry-preview#f11ad519a9c80f606de5c0c5ba414af8a293c61e",
     "@playwright/test": "1.62.1"
   }
 }

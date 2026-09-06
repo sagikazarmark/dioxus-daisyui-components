@@ -30,7 +30,7 @@ paragraph are omitted because the Preview already gets the heading and catalog d
 the README metadata and manifest.
 
 `docs/mod.rs` invokes `dioxus_registry_preview::component!` under the external tooling's
-[consumer contract](https://github.com/sagikazarmark/dioxus-registry-preview/blob/f669725acef7e8bd0cdb6ad35478186e01429e32/docs/adr/0001-versioned-consumer-contract.md).
+[consumer contract](https://github.com/sagikazarmark/dioxus-registry-preview/blob/f11ad519a9c80f606de5c0c5ba414af8a293c61e/docs/adr/0001-versioned-consumer-contract.md).
 The invocation declares the
 Preview-owned group and listing policy, plus the ordered Examples. By convention the macro reads
 `../component.json`, `../component.rs`, `../README.md`, and `examples/<module>.rs`; only an unusual

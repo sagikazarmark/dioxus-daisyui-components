@@ -3,11 +3,13 @@
 Generic documentation tooling lives in
 [`sagikazarmark/dioxus-registry-preview`](https://github.com/sagikazarmark/dioxus-registry-preview).
 This Registry depends on the published
-[`dioxus-registry-preview`](https://crates.io/crates/dioxus-registry-preview) `0.1.0` facade for the
-Rust side, and pins revision `f669725acef7e8bd0cdb6ad35478186e01429e32` for the matching generic
-Playwright helper, which is not published to a package registry. That revision retains the released
-Rust source and corrects the helper's package version to `0.1.0`. The repository's
-[consumer contract](https://github.com/sagikazarmark/dioxus-registry-preview/blob/f669725acef7e8bd0cdb6ad35478186e01429e32/docs/adr/0001-versioned-consumer-contract.md)
+[`dioxus-registry-preview`](https://crates.io/crates/dioxus-registry-preview) `0.2.0` facade for the
+Rust side, with its `syntax-highlighting` feature on (ADR-0033), and pins revision
+`f11ad519a9c80f606de5c0c5ba414af8a293c61e`, the `v0.2.0` release commit, for the matching generic
+Playwright helper, which is not published to a package registry. The helper itself did not change
+between the `0.1.0` and `0.2.0` releases and its package version still reads `0.1.0`; the pin
+follows the facade regardless, so the pair is one release. The repository's
+[consumer contract](https://github.com/sagikazarmark/dioxus-registry-preview/blob/f11ad519a9c80f606de5c0c5ba414af8a293c61e/docs/adr/0001-versioned-consumer-contract.md)
 is authoritative for:
 
 - the generated pieces and default assembly of `component!`;

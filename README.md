@@ -158,7 +158,12 @@ An example is one file under `src/components/<component>/docs/examples/`, holdin
 The page renders that component and prints that file: the code tab is `include_str!` of the
 same source, so a snippet cannot drift from what it documents and one that stops compiling
 fails the build. See
-[ADR-0009](docs/adr/0009-an-example-is-a-file-that-is-rendered-and-printed.md). A new example
+[ADR-0009](docs/adr/0009-an-example-is-a-file-that-is-rendered-and-printed.md). The tab is
+syntax-highlighted, and the highlighting is worked out over that same text when the module is
+compiled, so nothing is parsed in the browser; the price is that every Preview build compiles
+tree-sitter's C runtime for `wasm32-unknown-unknown` and needs a `clang` that targets it, which
+`devenv.nix` and the Dagger build container both provide. See
+[ADR-0033](docs/adr/0033-example-code-is-highlighted-at-compile-time.md). A new example
 is a new file and an entry in the Component's `docs/mod.rs`; the documentation macro declares
 the module, includes its source, and writes its `ExampleSection` into the generated page. The root
 Registry manifest generates the Preview's Component page list, so adding a member there also adds
@@ -211,7 +216,7 @@ It names the root Registry manifest, stable Component group IDs, and default Com
 Registry's required README sections and state-bridging vocabulary, and checks the Registry-owned
 primitive dependency declaration. Generic layout, manifest, source, README, Example, group, and
 page validation comes from
-[`dioxus-registry-preview`](https://crates.io/crates/dioxus-registry-preview) 0.1.0.
+[`dioxus-registry-preview`](https://crates.io/crates/dioxus-registry-preview) 0.2.0.
 
 `check-browser.sh` builds the preview and runs `tests/browser` against it with Playwright:
 computed styles for every value of every axis, a caller's classes surviving the merge, and

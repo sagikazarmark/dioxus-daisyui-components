@@ -102,6 +102,10 @@ rsx! {
 }"#;
 
 /// One numbered step, as a heading and whatever the step is made of.
+///
+/// The prose is dimmed, and only the prose: a code block in the step sits on
+/// the code surface, which is one colour across the site (ADR-0033) and would
+/// come out a different one under the opacity.
 #[component]
 fn Step(number: u8, title: &'static str, children: Element) -> Element {
     rsx! {
@@ -110,18 +114,21 @@ fn Step(number: u8, title: &'static str, children: Element) -> Element {
                 span { class: "badge badge-neutral badge-sm", "{number}" }
                 "{title}"
             }
-            div { class: "flex flex-col gap-3 text-sm opacity-80", {children} }
+            div { class: "flex flex-col gap-3 text-sm [&>p]:opacity-80", {children} }
         }
     }
 }
 
-/// A block of code, printed the way an example's code tab prints one.
+/// A block of code, on the surface an example's code tab prints on and at the
+/// same measurements, so the two read as one kind of block. It is not
+/// highlighted: the tab's highlighting is worked out at compile time from a
+/// Rust source file, and these are shell, CSS and fragments (ADR-0033).
 #[component]
 fn Code(language: &'static str, source: &'static str) -> Element {
     rsx! {
         pre {
             "data-language": language,
-            class: "overflow-x-auto rounded-box border border-base-300 bg-base-200 p-4 text-xs leading-relaxed",
+            class: "overflow-x-auto rounded-box border border-base-300 bg-code-surface p-4 text-xs leading-relaxed text-code-content",
             code { "{source}" }
         }
     }

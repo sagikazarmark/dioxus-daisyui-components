@@ -6,3 +6,7 @@ include = ["!.devenv", "!.wrangler", "!build", "!dist", "!node_modules", "!targe
 [[dependencies]]
 name = "dioxus"
 source = "github.com/sagikazarmark/daggerverse-beta/dioxus"
+
+[[dependencies]]
+name = "distro"
+source = "github.com/sagikazarmark/daggerverse-beta/distro"

@@ -36,3 +36,25 @@
     var(--color-base-200) 13px 14px
   );
 }
+
+/* The surface code is printed on: an example's Code tab and the installation
+   page's blocks alike, so that the two kinds of block on the site look like
+   one kind. It is the one colour on the site that does not follow the theme.
+   The highlighted tokens are one fixed palette (`PALETTE` in
+   `src/preview/example.rs`), and a palette's colours are drawn against a
+   canvas, so the canvas is fixed with them: GitHub's dark one, which is where
+   these tokens come from (ADR-0033). */
+@theme {
+  --color-code-surface: #0d1117;
+  --color-code-content: #e6edf3;
+}
+
+/* The block `dioxus-code` renders in the Code tab. Its own stylesheets paint
+   the palette's canvas, radius and type onto it and arrive after this one, so
+   a utility on the panel cannot reach in and a utility on the block would lose
+   the tie; this is written as a plain, more specific rule instead. The block
+   is made transparent, since the panel around it is the surface, and it is
+   set at the measurements the installation page's blocks use. */
+.example-code .dxc {
+  @apply rounded-none bg-transparent p-4 font-mono text-xs leading-relaxed text-inherit;
+}

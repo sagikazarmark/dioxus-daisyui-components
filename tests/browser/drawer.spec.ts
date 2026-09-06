@@ -300,7 +300,7 @@ async function dismissPlacementShowcase(page: Page): Promise<void> {
     ).toBeGreaterThan(400);
     await page
       .locator('[data-example="showcase"]')
-      .getByRole("tab", { name: "RSX" })
+      .getByRole("tab", { name: "Code" })
       .click();
     await expect(panels).toHaveCount(0);
   }

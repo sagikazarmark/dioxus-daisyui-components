@@ -30,6 +30,11 @@ type DioxusDaisyuiComponents {
       ws: ws,
       rustVersion: rustVersion,
       envFile: envFile,
+      # The Preview's syntax highlighting brings tree-sitter's C runtime into
+      # the wasm build, and `cc` compiles it with `clang` on a wasm target
+      # (ADR-0033). The official Rust image ships gcc alone, which has no
+      # such target.
+      overlay: Dagger.distro.packages(apt: ["clang"]),
     )
     self.rustVersion = rustVersion
 
