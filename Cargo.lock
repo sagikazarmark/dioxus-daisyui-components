@@ -3082,9 +3082,9 @@ dependencies = [
 
 [[package]]
 name = "schemaform"
-version = "0.3.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a01b3a3504d1e74d28cd2e7a163cfcbddbee8ef01d785fa9fe21c7b38dac1f65"
+checksum = "11ddf577b4989ed3a77807173ed7fdb45de357dde123669dc036ef96db5874a0"
 dependencies = [
  "jsonptr",
  "jsonschema",
@@ -3098,9 +3098,9 @@ dependencies = [
 
 [[package]]
 name = "schemaform-dioxus"
-version = "0.3.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d70f4b7d3ce930a5df7a737f65b05272847bca0c334f239ca06a4463622f0cad"
+checksum = "2fc11c6609ccc1c2b6bf23fff0491e519156fbf1dcfbc398918994f373f84ce6"
 dependencies = [
  "dioxus",
  "dioxus-core",
@@ -3108,8 +3108,6 @@ dependencies = [
  "dioxus-signals",
  "schemaform",
  "serde_json",
- "wasm-bindgen",
- "web-sys",
 ]
 
 [[package]]
