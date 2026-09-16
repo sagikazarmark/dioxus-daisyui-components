@@ -1,4 +1,12 @@
-use std::{any::Any, cell::RefCell, collections::HashMap, future::Future, pin::Pin, rc::Rc};
+use std::{
+    any::Any,
+    cell::RefCell,
+    collections::HashMap,
+    future::Future,
+    pin::{Pin, pin},
+    rc::Rc,
+    task::{Context, Waker},
+};
 
 use dioxus::prelude::*;
 use dioxus_field::{
@@ -151,6 +159,44 @@ pub(crate) fn use_resolution_scaffold_with_ids<T: 'static>(
 
 pub(crate) trait RendersReactiveUpdates {
     fn render_reactive_updates(&mut self);
+}
+
+/// The most render passes [`settle`] makes before it decides the tree is
+/// re-dirtying itself forever.
+const SETTLE_LIMIT: usize = 64;
+
+/// Drives `dom` until it has nothing left to do: no dirty scope, no runnable
+/// task, and no queued effect. This is what a renderer's event loop does
+/// between two events (`wait_for_work`, then `render_immediate`, again until
+/// `wait_for_work` would block), so a test that dispatches an event after
+/// settling observes the same tree the next browser event would.
+///
+/// A fixed number of passes is not the same thing. `render_immediate` only
+/// runs effects on a pass that starts with no dirty scope, and a signal written
+/// by an effect, a memo, or a dropped scope's cleanup dirties scopes for the
+/// pass after, so the count a tree needs is the depth of its reactive chain.
+/// The chain gets deeper exactly when a primitive remounts its items (the
+/// combobox's list does when it opens): the cleanup unregisters the old items
+/// synchronously and the effects that register the new ones are still queued
+/// when a fixed count runs out, which leaves the keyboard nothing to move to.
+///
+/// `wait_for_work` is polled once with a no-op waker: `Ready` means it found
+/// work (and has already run every effect it could), `Pending` means it would
+/// block on the scheduler's channel, which is the quiescent state.
+pub(crate) fn settle(dom: &mut VirtualDom, mut on_mutations: impl FnMut(&dioxus_core::Mutations)) {
+    let mut context = Context::from_waker(Waker::noop());
+    for _ in 0..SETTLE_LIMIT {
+        let has_work = pin!(dom.wait_for_work())
+            .as_mut()
+            .poll(&mut context)
+            .is_ready();
+        if !has_work {
+            return;
+        }
+        let mutations = dom.render_immediate_to_vec();
+        on_mutations(&mutations);
+    }
+    panic!("the VirtualDom kept producing work for {SETTLE_LIMIT} render passes without settling");
 }
 
 pub(crate) struct PrecedencePhase<T, D> {
@@ -392,10 +438,11 @@ impl InteractionDom {
 
 impl RendersReactiveUpdates for InteractionDom {
     fn render_reactive_updates(&mut self) {
-        for _ in 0..2 {
-            let mutations = self.dom.render_immediate_to_vec();
-            self.attributes.apply(&mutations.edits, self.control);
-        }
+        let control = self.control;
+        let attributes = &mut self.attributes;
+        settle(&mut self.dom, |mutations| {
+            attributes.apply(&mutations.edits, control);
+        });
     }
 }
 
@@ -669,13 +716,14 @@ impl SliderInteractionDom {
 
 impl RendersReactiveUpdates for SliderInteractionDom {
     fn render_reactive_updates(&mut self) {
-        for _ in 0..2 {
-            let mutations = self.interaction.dom.render_immediate_to_vec();
-            self.interaction
-                .attributes
-                .apply(&mutations.edits, self.interaction.control);
-            self.root_attributes.apply(&mutations.edits, self.root);
-        }
+        let thumb = self.interaction.control;
+        let thumb_attributes = &mut self.interaction.attributes;
+        let root = self.root;
+        let root_attributes = &mut self.root_attributes;
+        settle(&mut self.interaction.dom, |mutations| {
+            thumb_attributes.apply(&mutations.edits, thumb);
+            root_attributes.apply(&mutations.edits, root);
+        });
     }
 }
 

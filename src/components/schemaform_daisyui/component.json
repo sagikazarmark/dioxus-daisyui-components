@@ -53,12 +53,12 @@
     },
     {
       "name": "schemaform",
-      "version": "0.2.0",
+      "version": "0.4.1",
       "default_features": true
     },
     {
       "name": "schemaform-dioxus",
-      "version": "0.2.0",
+      "version": "0.4.1",
       "default_features": true
     }
   ]
