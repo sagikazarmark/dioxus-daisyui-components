@@ -30,13 +30,25 @@ through the adapter's `schemaform-*` class hooks with daisyUI classes in its own
 stylesheet (`demo/src/forms.css`); that theme is the demo's, not this
 component's, and shrinks as further structure seams ship.
 
-## Browser CSR only
+## Supported targets
 
-This component targets the browser client-side rendering path of
-`schemaform-dioxus`. It is not supported under SSR, hydration, or a desktop
-WebView: the edit hooks it is built on resynchronise the DOM after the core
-rejects input, and the registry's widgets focus their native elements through
-`MountedData` and `document.eval`.
+Browser CSR and desktop/WebView share one code path. The `schemaform` and
+`schemaform-dioxus` 0.4.1 requirements in the manifest and root `Cargo.toml`
+include the platform-neutral DOM bridge from
+[schemaform#29](https://github.com/sagikazarmark/schemaform/issues/29): rejected
+writes resynchronise the DOM and focus moves through `document::eval`. The
+registry's widgets use that same Dioxus API or `MountedData` on both targets.
+
+Browser behavior is checked automatically. Desktop evidence is manual and
+WebView-specific; the [desktop checklist](../../../docs/desktop-smoke.md)
+includes this page's rejected-write resync, blocked-submission focus and array
+mutation focus. Its first interactive run is pending. SSR and hydration remain
+out of scope for this renderer.
+
+The host renderer must provide a Dioxus `Document`. A web host that disables
+`dioxus-web` default features must re-enable `document`; its Content-Security-Policy
+must allow `unsafe-eval` for the bridge's focus and resync scripts. Focus settles
+asynchronously over a few tasks rather than before the event handler returns.
 
 ## Layout
 

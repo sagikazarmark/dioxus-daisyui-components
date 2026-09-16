@@ -15,10 +15,10 @@ preview = [
     "dep:serde_json",
     "dioxus/launch",
     "dioxus/router",
-    "dioxus/web",
-    "dioxus-primitives/web",
 ]
-web = ["preview"]
+# `dx --platform` selects the renderer; documentation and highlighting are shared.
+web = ["preview", "dioxus/web", "dioxus-primitives/web"]
+desktop = ["preview", "dioxus/desktop"]
 
 [dependencies]
 dioxus = { version = "0.7", default-features = false, features = ["lib"] }
