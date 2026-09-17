@@ -13,7 +13,7 @@
     {
       "name": "time",
       "version": "0.3.44",
-      "features": ["local-offset"]
+      "features": ["local-offset", "wasm-bindgen"]
     }
   ]
 }

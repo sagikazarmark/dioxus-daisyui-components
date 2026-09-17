@@ -50,6 +50,7 @@ type DioxusDaisyuiComponents {
       .bundle(
         release: true,
         debugSymbols: false,
+        platform: DioxusPlatform.WEB,
       )
   }
 
@@ -188,7 +189,9 @@ type Install {
     self.source
       .glob("src/components/*/component.json")
       .filter {
-        self.source.file(_).contents.matchAll(Regexp(`"componentDependencies"\s*:\s*\[\s*\{`)).length > 0
+        let manifest = self.source.file(_).contents
+        manifest.matchAll(Regexp(`"componentDependencies"\s*:\s*\[\s*\{`)).length > 0 or
+          manifest.matchAll(Regexp(`"name"\s*:\s*"time"`)).length > 0
       }
       .map { path =>
         let component = path.trimPrefix("src/components/").trimSuffix("/component.json")

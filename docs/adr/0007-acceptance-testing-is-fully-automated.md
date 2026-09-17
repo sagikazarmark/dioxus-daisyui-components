@@ -1,4 +1,4 @@
-# Acceptance testing is fully automated
+# Browser acceptance is automated; desktop evidence is manual
 
 Browser acceptance is checked in CI rather than by eye, across exactly two application
 seams. Desktop/WebView support adds manual evidence at the Preview seam, recorded per WebView

@@ -1,6 +1,7 @@
 # Desktop/WebView smoke checklist
 
-The Registry supports browser CSR and desktop/WebView through the same Dioxus DOM APIs.
+The Registry supports browser CSR. Desktop/WebView support is pending its first interactive
+smoke run; native compilation is verified and uses the same Dioxus DOM APIs.
 Browser evidence is automated (Playwright, axe, and Chromium screenshot comparisons).
 Desktop evidence is **manual**, per OS and WebView: there is no automated desktop run or
 desktop screenshot diff. A native build or a Playwright WebKit pass is not a WebView smoke pass.
@@ -95,3 +96,10 @@ desktop focus/resync no-op implementations.
   `schemaform_daisyui.spec.ts` passed on Chromium, Firefox, and WebKit with retries disabled.
   The focused command used `--timeout=300000` to allow the served Preview to finish compiling.
   Screenshot comparison and interactive desktop smoke remain outstanding.
+- 2026-09-17 review follow-up: date Component manifests now supply `time/wasm-bindgen`;
+  the install fixture supplies only Dioxus. Both install checks passed again, including each
+  date Component on its own for host and wasm. The schemaform closure now pins a published
+  revision whose nested Field dependencies provide `FieldRow`. The Preview build explicitly
+  selects web; `preview:build`, `preview:worker-bundle`, and `dagger-gha:generate` all passed,
+  along with all 131 Rust tests and formatting checks. Desktop support remains pending manual
+  verification.

@@ -32,7 +32,8 @@ component's, and shrinks as further structure seams ship.
 
 ## Supported targets
 
-Browser CSR and desktop/WebView share one code path. The `schemaform` and
+Browser CSR is supported; desktop/WebView support is pending manual verification.
+Both targets share one code path. The `schemaform` and
 `schemaform-dioxus` 0.4.1 requirements in the manifest and root `Cargo.toml`
 include the platform-neutral DOM bridge from
 [schemaform#29](https://github.com/sagikazarmark/schemaform/issues/29): rejected
