@@ -14,6 +14,15 @@ dioxus_registry_preview::component! {
         arrays {
             description: "Two homogeneous arrays: string items and fixed-object items, with insert, move and remove on each card, append below, and the container's presence operations.",
         },
+        formats {
+            description: "The adapter's format-to-widget mapping: email, URL, date and time inputs, with text fallbacks and password precedence for write-only values.",
+        },
+        multiple_choice {
+            description: "A checkbox per option, with array presence actions and an incompatible-value readout. Reset shows the checkboxes following the form's node; submit shows the host's received data.",
+        },
+        advisory {
+            description: "The host accepts data with findings in advisory mode. Switch to gated mode to see the same findings block submission and use error presentation.",
+        },
         composition {
             description: "The seams composed by hand: the daisyUI collection and shell around the adapter's built-in controls, with the daisyUI presenter in both slots.",
         },

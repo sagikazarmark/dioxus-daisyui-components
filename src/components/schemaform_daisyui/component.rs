@@ -5,13 +5,13 @@ use std::{rc::Rc, sync::Arc};
 
 use dioxus::prelude::*;
 use schemaform::{
-    SubmissionSnapshot, WidgetSymbol,
+    AdvisorySubmission, SubmissionSnapshot, WidgetSymbol,
     definition::{DefinitionNodeView, SemanticKind},
 };
 use schemaform_dioxus::{
-    BUILTIN_CONTROL_PRIORITY, BuiltinControlRenderer, ControlKind, ControlMatcher, ControlRegistry,
-    ControlRenderContext, ControlRenderer, FindingCollectionPresenter, FormHandle, HandleError,
-    RenderConfiguration, SchemaForm, StructureRenderers,
+    BUILTIN_CONTROL_PRIORITY, ControlKind, ControlMatcher, ControlRegistry, ControlRenderContext,
+    ControlRenderer, FindingCollectionPresenter, FormHandle, HandleError, RenderConfiguration,
+    SchemaForm, StructureRenderers, SubmissionMode,
 };
 
 use super::Appearance;
@@ -20,6 +20,7 @@ use super::choice::{NativeSelectControl, RadioGroupControl, SelectControl};
 use super::collection::DaisyuiCollection;
 use super::constant::ConstantControl;
 use super::findings::DaisyuiFindings;
+use super::multiple_choice::MultipleChoiceControl;
 use super::shell::DaisyuiShell;
 use super::text::TextControl;
 
@@ -40,6 +41,12 @@ pub fn SchemaformDaisyui(
     form: FormHandle,
     /// Receives the submission snapshot of a submission that passed preparation.
     on_submit: EventHandler<SubmissionSnapshot>,
+    /// Whether submission is gated on validity or delivered with advisory findings.
+    #[props(default)]
+    submission_mode: SubmissionMode,
+    /// Receives data and findings in advisory mode, on a separate channel from validated snapshots.
+    #[props(default)]
+    on_advisory_submit: EventHandler<AdvisorySubmission>,
     /// Receives adapter operation failures; failures are dropped when it is not set.
     #[props(default)]
     on_error: EventHandler<HandleError>,
@@ -53,7 +60,7 @@ pub fn SchemaformDaisyui(
         Err(error) => return Err(dioxus::core::CapturedError::from_display(error).into()),
     };
     rsx! {
-        SchemaForm { form: bound, on_submit, on_error }
+        SchemaForm { form: bound, on_submit, submission_mode, on_advisory_submit, on_error }
     }
 }
 
@@ -157,17 +164,18 @@ struct DaisyuiControls;
 
 impl ControlMatcher for DaisyuiControls {
     fn matches(&self, definition: DefinitionNodeView<'_>) -> bool {
-        matches!(
-            definition.semantic_kind(),
-            Some(
-                SemanticKind::String
-                    | SemanticKind::Number
-                    | SemanticKind::Integer
-                    | SemanticKind::Boolean
-                    | SemanticKind::Choice
-                    | SemanticKind::Null
+        definition.is_multiple_choice()
+            || matches!(
+                definition.semantic_kind(),
+                Some(
+                    SemanticKind::String
+                        | SemanticKind::Number
+                        | SemanticKind::Integer
+                        | SemanticKind::Boolean
+                        | SemanticKind::Choice
+                        | SemanticKind::Null
+                )
             )
-        )
     }
 }
 
@@ -189,9 +197,7 @@ pub enum ChoiceWidget {
 /// Renders every control kind with the registry's `Field` parts and widgets.
 ///
 /// The renderer owns the whole control region: label, widget, help, findings, and presence
-/// affordances. Should a host register it for a control kind this component does not know, that
-/// control is handed to [`BuiltinControlRenderer`] rather than to an editable widget the mapping
-/// does not cover.
+/// affordances. Unknown future kinds fail visibly rather than silently losing daisyUI presentation.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct DaisyuiControlRenderer {
     choice: ChoiceWidget,
@@ -229,7 +235,9 @@ impl ControlRenderer for DaisyuiControlRenderer {
                 ChoiceWidget::Select => rsx! { SelectControl { context, appearance } },
             },
             ControlKind::Constant => rsx! { ConstantControl { context, appearance } },
-            _ => BuiltinControlRenderer.render(context),
+            ControlKind::MultipleChoice => rsx! { MultipleChoiceControl { context, appearance } },
+            // The upstream enum is non-exhaustive, so stable Rust requires this guard.
+            kind => panic!("schemaform_daisyui does not yet present control kind {kind:?}"),
         }
     }
 }

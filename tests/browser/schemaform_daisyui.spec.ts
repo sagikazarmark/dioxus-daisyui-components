@@ -1,4 +1,5 @@
 import { expect, type Locator, type Page, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
 import { axis, expectVaries, openPreview } from "./preview";
 
@@ -6,8 +7,7 @@ test.beforeEach(async ({ page }) => {
   await openPreview(page, { component: "schemaform_daisyui" });
 });
 
-// Every example on the page is a whole form, and every form has a control bound
-// at `/name`, so a locator is always scoped to the example it means.
+// Each form is independent, so a locator is always scoped to its Example.
 function example(page: Page, slug: string): Locator {
   return page.locator(`[data-example="${slug}"]`);
 }
@@ -56,7 +56,35 @@ test.describe("styling", () => {
   });
 });
 
+for (const theme of ["light", "dark"]) {
+  test(`checkbox groups, format widgets and advisory findings pass axe in ${theme}`, async ({ page }) => {
+    await openPreview(page, { component: "schemaform_daisyui", theme });
+    await example(page, "advisory").locator('button[type="submit"]').click();
+    // Audit each rendered form, independently of the Preview's tab chrome and
+    // the other forms' identically named summary landmarks.
+    for (const slug of ["multiple_choice", "formats", "advisory"]) {
+      const results = await new AxeBuilder({ page })
+        .include(`[data-example="${slug}"] form`)
+        .analyze();
+      expect(results.violations, slug).toEqual([]);
+    }
+  });
+}
+
 test.describe("controls", () => {
+  test("format selects the native input type and write-only takes precedence", async ({ page }) => {
+    const scope = example(page, "formats");
+    for (const [name, type] of Object.entries({
+      email: "email", "idn-email": "email", uri: "url", "uri-reference": "url",
+      iri: "url", "iri-reference": "url", date: "date", "date-time": "datetime-local",
+      time: "time", unknown: "text", plain: "text", number: "text", secret: "password",
+    })) {
+      const input = scope.locator(`input[name="/${name}"]`);
+      await expect(input).toHaveClass(/\binput\b/);
+      await expect(input).toHaveAttribute("type", type);
+    }
+  });
+
   test("the native checkbox writes the boolean", async ({ page }) => {
     const active = example(page, "controls").locator('input[name="/active"]');
     await expect(active).toBeChecked();
@@ -135,6 +163,77 @@ test.describe("controls", () => {
 });
 
 test.describe("arrays", () => {
+  test("a required array does not require individual choices or a nonempty selection", async ({ page }) => {
+    const scope = example(page, "multiple_choice");
+    const group = scope.getByRole("group", { name: /^Channels/ });
+    await expect(group.getByRole("checkbox")).toHaveCount(2);
+    for (const checkbox of await group.getByRole("checkbox").all()) {
+      await expect(checkbox).not.toHaveAttribute("aria-required", "true");
+      await expect(checkbox).not.toHaveAttribute("required");
+      await expect(checkbox).not.toBeChecked();
+    }
+    await expect(group).toHaveAccessibleName("Channels (required)");
+    await expect(group).not.toHaveAttribute("aria-required");
+    await affordance(scope, "Remove Legacy topics").click();
+    await affordance(scope, "Submit").click();
+    await expect.poll(async () => JSON.parse(await scope.getByRole("status", { name: "Submitted topics" }).innerText()).channels)
+      .toEqual([]);
+  });
+
+  test("multiple choice follows the node, toggles by keyboard, and describes every checkbox", async ({ page }) => {
+    const scope = example(page, "multiple_choice");
+    const group = scope.getByRole("group", { name: "Topics", exact: true });
+    const rust = group.getByRole("checkbox", { name: "Rust", exact: true });
+    const dioxus = group.getByRole("checkbox", { name: "Dioxus", exact: true });
+    await expect(rust).toHaveClass(/\bcheckbox\b/);
+    await expect(rust).toBeChecked();
+    await expect(dioxus).not.toBeChecked();
+    await dioxus.focus();
+    await page.keyboard.press("Space");
+    await expect(dioxus).toBeChecked();
+    await rust.uncheck();
+    await affordance(scope, "Reset topics").click();
+    await expect(rust).toBeChecked();
+    await expect(dioxus).not.toBeChecked();
+    for (const checkbox of await group.getByRole("checkbox").all()) {
+      const ids = (await checkbox.getAttribute("aria-describedby"))?.split(/\s+/) ?? [];
+      expect(ids.length).toBeGreaterThan(0);
+      for (const id of ids) await expect(scope.locator(`[id="${id}"]`)).toHaveCount(1);
+    }
+    const legacy = scope.getByRole("group", { name: "Legacy topics", exact: true });
+    await expect(legacy.locator("[data-incompatible-value]")).toContainText("retired");
+    const incompatibleId = await legacy.locator("[data-incompatible-value]").getAttribute("id");
+    await expect(legacy.getByRole("checkbox").first()).toHaveAttribute("aria-describedby", new RegExp(incompatibleId!));
+    await affordance(scope, "Remove Legacy topics").click();
+    await dioxus.check();
+    await affordance(scope, "Submit").click();
+    await expect.poll(async () => JSON.parse(await scope.getByRole("status", { name: "Submitted topics" }).innerText()).topics.sort())
+      .toEqual(["Dioxus", "Rust"]);
+  });
+
+  test("multiple choice can be removed, recreated by a toggle, and focused from a finding", async ({ page }) => {
+    const scope = example(page, "multiple_choice");
+    const group = scope.getByRole("group", { name: "Topics", exact: true });
+    await affordance(scope, "Remove Topics").click();
+    await expect(group.getByRole("checkbox", { checked: true })).toHaveCount(0);
+    const rust = group.getByRole("checkbox", { name: "Rust", exact: true });
+    await rust.check();
+    await rust.uncheck();
+    await affordance(scope, "Submit").click();
+    await scope.locator("[data-finding-summary]").getByRole("button", { name: "Value does not satisfy minItems." }).click();
+    await expect(group.getByRole("checkbox").first()).toBeFocused();
+    for (const checkbox of await group.getByRole("checkbox").all()) {
+      await expect(checkbox).toHaveAttribute("aria-invalid", "true");
+      const errorsId = await checkbox.getAttribute("aria-errormessage");
+      expect(errorsId).toBeTruthy();
+      await expect(scope.locator(`[id="${errorsId}"]`)).toContainText("Value does not satisfy minItems.");
+      expect((await checkbox.getAttribute("aria-describedby"))!.split(/\s+/)).toContain(errorsId);
+      for (const id of (await checkbox.getAttribute("aria-describedby"))!.split(/\s+/)) {
+        await expect(scope.locator(`[id="${id}"]`)).toHaveCount(1);
+      }
+    }
+  });
+
   test("items are cards named by noun and position, with positional actions", async ({ page }) => {
     const scope = example(page, "arrays");
     await expect(scope.getByRole("group", { name: "Tags", exact: true })).toHaveCount(1);
@@ -178,4 +277,23 @@ test.describe("arrays", () => {
     await eventually(() => scope.locator('input[name="/team/1/name"]').count(), (count) => count === 0);
     await expect(affordance(scope, /^Remove Team item/)).toHaveCount(0);
   });
+});
+
+test("advisory submission presents warnings and switching mode restores error framing", async ({ page }) => {
+  const scope = example(page, "advisory");
+  const submit = scope.locator('button[type="submit"]');
+  await expect(submit).toHaveText("Submit");
+  await expect(submit).toHaveClass(/\bbtn-warning\b/);
+  await submit.focus();
+  await page.keyboard.press("Enter");
+  await expect(scope.getByRole("status", { name: "Submission result" })).toHaveText("Advisory submission: 2 findings");
+  await expect(submit).toBeFocused();
+  await expect(scope.locator(".alert-warning")).toBeVisible();
+  await expect(scope.locator('[data-schemaform-daisyui="string"] [data-finding]')).toHaveClass(/\btext-warning\b/);
+  await expect(scope.locator('[data-schemaform-daisyui="collection"] [data-finding]')).toHaveClass(/\btext-warning\b/);
+  await scope.getByRole("checkbox", { name: "Advisory mode" }).click();
+  await expect(submit).toHaveClass(/\bbtn-primary\b/);
+  await expect(scope.locator(".alert-error")).toBeVisible();
+  await expect(scope.locator('[data-schemaform-errors] [data-finding]')).toHaveCount(1);
+  await expect(scope.locator('[data-schemaform-daisyui="collection"] [data-finding]')).toHaveClass(/\btext-error\b/);
 });
