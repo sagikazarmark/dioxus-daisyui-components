@@ -29,14 +29,15 @@ a surface change another.
 
 ## Consequences
 
-- **Every Preview build compiles C for `wasm32-unknown-unknown`.** `dioxus-code` depends on
+- **Every browser Preview build compiles C for `wasm32-unknown-unknown`.** `dioxus-code` depends on
   `arborium`, whose tree-sitter runtime and bundled sysroot are compiled by `cc` for every
   target regardless of features. `cc` reaches for `clang` on a wasm target when no `CC_*`
   variable names another compiler. `devenv.nix` names Nix's unwrapped clang through
   `CC_wasm32_unknown_unknown`, because the wrapped one adds host flags that a wasm target
   rejects; the Dagger `dioxus` container installs Debian's `clang` through a `distro` overlay,
   which targets wasm out of the box. `scripts/check-browser.sh` builds on the host, so it needs
-  the devenv. A Component consumer is unaffected: the feature lives behind `preview`.
+  the devenv. Desktop Preview builds compile the same highlighting with the native C compiler.
+  A Component consumer is unaffected: the feature lives behind `preview`.
 - `dioxus-code` is a direct, `preview`-gated dependency, because the facade re-exports the
   highlighted-source types but not the `Code` component or its palettes. Cargo unifies it with
   the facade's own `dioxus-code`; a version the facade cannot share fails loudly at the type.

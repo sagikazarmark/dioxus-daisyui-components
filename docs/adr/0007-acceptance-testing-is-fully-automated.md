@@ -1,8 +1,10 @@
-# Acceptance testing is fully automated
+# Browser acceptance is automated; desktop evidence is manual
 
-Every acceptance criterion is checked in CI rather than by eye, across exactly two application
-seams. Reusable cross-registry contracts may additionally have focused Rust conformance tests;
-ADR-0028 introduces that genre for the field convention.
+Browser acceptance is checked in CI rather than by eye, across exactly two application
+seams. Desktop/WebView support adds manual evidence at the Preview seam, recorded per WebView
+in the [desktop smoke checklist](../desktop-smoke.md) (#23); it has no automated desktop run
+or screenshot comparisons. Reusable cross-registry contracts may additionally have focused
+Rust conformance tests; ADR-0028 introduces that genre for the field convention.
 
 **Seam 1: installing a component.** `dx components add` runs against the registry by path into
 a checked-in scratch Dioxus app, and the result is compiled. This is the user-facing entry

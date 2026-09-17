@@ -10,6 +10,21 @@ adds no styling layer of its own, so your `[data-theme]` restyles everything at 
 [primitives]: https://github.com/DioxusLabs/components
 [daisyui]: https://daisyui.com
 
+## Supported targets
+
+Components support **browser CSR**. **Desktop/WebView support is pending manual verification**:
+the Preview builds natively and shares the browser code paths, but its first interactive smoke
+run is outstanding. DOM operations use Dioxus's `document::eval` or `MountedData`, which both
+renderers provide.
+
+| Target | Evidence |
+| --- | --- |
+| Browser CSR | Automated Playwright interaction and axe accessibility checks on Chromium, Firefox and WebKit; screenshot comparisons on Chromium. |
+| Desktop/WebView — pending verification | Native build verified; interactive behavior awaits manual smoke checks, recorded per OS and WebView in the [desktop checklist](docs/desktop-smoke.md). There is no automated desktop run and no desktop screenshot diff. |
+
+Native compilation checks that components build on the host; it does not establish WebView
+interaction behavior. The checklist records that evidence separately from browser results.
+
 ## Setup
 
 `dx` runs its own pinned Tailwind (v4.1.5) over a single stylesheet at your crate root, and that
@@ -136,6 +151,18 @@ npm install
 dx serve --package dioxus-daisyui-components --bin preview --features preview --platform web
 ```
 
+For a desktop window, install the [Dioxus desktop prerequisites](https://dioxuslabs.com/learn/0.7/getting_started/)
+for your OS, then run:
+
+```shell
+dx serve --package dioxus-daisyui-components --bin preview --features preview --platform desktop
+```
+
+Linux needs GTK 3, WebKitGTK 4.1, and the app indicator development libraries, plus a graphical
+session. Follow the [desktop smoke checklist](docs/desktop-smoke.md) in that window. `preview`
+enables the shared documentation; `dx` selects `web` or `desktop`. With plain Cargo, select the
+renderer explicitly, for example `cargo check --features desktop --bin preview`.
+
 The preview is a documentation site: a sidebar of component pages, a theme switcher in the
 header, and each page a list of examples shown as a preview and as the code behind it.
 
@@ -160,9 +187,9 @@ same source, so a snippet cannot drift from what it documents and one that stops
 fails the build. See
 [ADR-0009](docs/adr/0009-an-example-is-a-file-that-is-rendered-and-printed.md). The tab is
 syntax-highlighted, and the highlighting is worked out over that same text when the module is
-compiled, so nothing is parsed in the browser; the price is that every Preview build compiles
-tree-sitter's C runtime for `wasm32-unknown-unknown` and needs a `clang` that targets it, which
-`devenv.nix` and the Dagger build container both provide. See
+compiled, so nothing is parsed at page load. Browser Preview builds compile tree-sitter's C
+runtime for `wasm32-unknown-unknown` and need a `clang` that targets it, which `devenv.nix` and
+the Dagger build container both provide. Desktop builds use the native C compiler. See
 [ADR-0033](docs/adr/0033-example-code-is-highlighted-at-compile-time.md). A new example
 is a new file and an entry in the Component's `docs/mod.rs`; the documentation macro declares
 the module, includes its source, and writes its `ExampleSection` into the generated page. The root
@@ -209,6 +236,10 @@ closure it pulls in; `preview:install:registry` lists the Registry, installs all
 the result for the host and for `wasm32-unknown-unknown`. Both install into `tests/fixtures/install`,
 a checked-in scratch app rather than one scaffolded per run, because `dx new` drives its template
 through an interactive prompt and refuses to run without a TTY.
+
+The closure check also installs each date Component independently. Their manifests enable
+`time/wasm-bindgen` so installed browser consumers receive the JS clock; native consumers keep
+the host clock. The fixture supplies only Dioxus, so it cannot fill in that requirement for them.
 
 The Preview's `component_pages!` invocation in `src/preview/pages/mod.rs` is the site configuration.
 It names the root Registry manifest, stable Component group IDs, and default Component module. The

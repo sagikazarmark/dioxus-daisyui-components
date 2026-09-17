@@ -50,6 +50,7 @@ type DioxusDaisyuiComponents {
       .bundle(
         release: true,
         debugSymbols: false,
+        platform: DioxusPlatform.WEB,
       )
   }
 
@@ -85,6 +86,16 @@ type DioxusDaisyuiComponents {
   Tests that run against the Registry source.
   """
   test: Test! { Test(self.dioxus.container) }
+
+  """
+  Install dependency closures and the whole Registry for host and wasm.
+  """
+  install(ws: Workspace!): Install! {
+    Install(
+      Dagger.dioxus(ws.directory("tests/fixtures/install").asWorkspace, rustVersion: self.rustVersion).container,
+      ws.directory("", gitignore: true),
+    )
+  }
 
   """
   Cleanly install the Dioxus DaisyUI components in a fresh application.
@@ -152,6 +163,57 @@ type DioxusDaisyuiComponents {
         manifests.withNewFile(path, contents.replaceMatches(pin, with: `$1"${rev}"`))
       }
       .changes(source)
+  }
+}
+
+type Install {
+  let container: Container!
+  let source: Directory!
+  let registryPath: String! = "/opt/dioxus-daisyui-components"
+
+  new(container: Container!, source: Directory!) {
+    self.source = source
+    self.container = container
+      .withMountedDirectory(self.registryPath, source)
+      # Independent scratch apps share compiled dependencies, but never installed source.
+      .withMountedCache("/target", Dagger.cacheVolume("registry-install-target"))
+      .withEnvVariable("CARGO_PROFILE_DEV_DEBUG", "0")
+      .withEnvVariable("CARGO_INCREMENTAL", "0")
+    self
+  }
+
+  """
+  Install each dependency-bearing Component alone and compile its closure for host and wasm.
+  """
+  closure: String! @check {
+    self.source
+      .glob("src/components/*/component.json")
+      .filter {
+        let manifest = self.source.file(_).contents
+        manifest.matchAll(Regexp(`"componentDependencies"\s*:\s*\[\s*\{`)).length > 0 or
+          manifest.matchAll(Regexp(`"name"\s*:\s*"time"`)).length > 0
+      }
+      .map { path =>
+        let component = path.trimPrefix("src/components/").trimSuffix("/component.json")
+        self.check(self.container.withExec(["dx", "components", "add", "--path", self.registryPath, component]))
+      }
+      .join("\n")
+  }
+
+  """
+  List and install the entire Registry, then compile it for host and wasm.
+  """
+  registry: String! @check {
+    self.check(self.container
+      .withExec(["dx", "components", "list", "--path", self.registryPath])
+      .withExec(["dx", "components", "add", "--all", "--force", "--path", self.registryPath]))
+  }
+
+  let check(app: Container!): String! {
+    app
+      .withExec(["cargo", "check"])
+      .withExec(["cargo", "check", "--target", "wasm32-unknown-unknown"])
+      .combinedOutput
   }
 }
 
