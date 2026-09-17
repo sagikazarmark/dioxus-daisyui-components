@@ -1,6 +1,6 @@
 {
   "name": "schemaform_daisyui",
-  "description": "schemaform-dioxus renderers for daisyUI: a control renderer presenting string, number, integer, boolean, choice, and constant controls with the registry's Field, Input, Checkbox, NativeSelect, RadioGroup, and Select parts; a structure bundle rendering homogeneous arrays as cards with joined item actions and the form shell with a primary submit button; and a finding presenter framing the summary as an alert.",
+  "description": "schemaform-dioxus renderers for daisyUI: format-aware inputs, boolean and multiple-choice checkboxes, choice widgets and constant output inside Field parts; homogeneous arrays as cards with joined item actions; a mode-aware submit button; and error or advisory finding presentation.",
   "exclude": ["component.json", "README.md", "docs"],
   "componentDependencies": [
     {

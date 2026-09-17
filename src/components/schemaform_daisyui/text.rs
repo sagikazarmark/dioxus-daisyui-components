@@ -2,7 +2,7 @@
 
 use dioxus::prelude::*;
 use dioxus_primitives::dioxus_attributes::attributes;
-use schemaform_dioxus::{ControlKind, ControlRenderContext, use_text_edit};
+use schemaform_dioxus::{ControlFacets, ControlKind, ControlRenderContext, use_text_edit};
 
 use super::Appearance;
 use super::mapping::use_text_binding;
@@ -14,6 +14,24 @@ fn input_mode(kind: ControlKind) -> &'static str {
     match kind {
         ControlKind::Number => "decimal",
         ControlKind::Integer => "numeric",
+        _ => "text",
+    }
+}
+
+/// The adapter's format mapping; its `ControlFacets::input_type` is crate-private in 0.4.1.
+fn input_type(control: &ControlFacets) -> &'static str {
+    if control.write_only {
+        return "password";
+    }
+    if control.kind != ControlKind::String {
+        return "text";
+    }
+    match control.format.as_deref() {
+        Some("email" | "idn-email") => "email",
+        Some("uri" | "uri-reference" | "iri" | "iri-reference") => "url",
+        Some("date") => "date",
+        Some("date-time") => "datetime-local",
+        Some("time") => "time",
         _ => "text",
     }
 }
@@ -46,7 +64,7 @@ pub(super) fn TextControl(context: ControlRenderContext, appearance: Appearance)
     // Listeners cannot travel through `extends`, so the composition events reach the native
     // input through the widget's explicit attribute list together with its other attributes.
     let input_attributes = attributes!(input {
-        r#type: if control.write_only { "password" } else { "text" },
+        r#type: input_type(control),
         inputmode: input_mode(control.kind),
         readonly: edit.read_only,
         placeholder,

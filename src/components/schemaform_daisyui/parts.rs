@@ -12,6 +12,7 @@ use schemaform_dioxus::{
 
 use super::Appearance;
 use super::mapping::{field_meta_values, is_field_error};
+use super::shell::advisory_presentation;
 use crate::components::button::{Button, ButtonSize};
 use crate::components::field::{Field, FieldDescription, FieldLabel, FieldRow};
 
@@ -24,9 +25,8 @@ pub(super) fn kind_name(kind: ControlKind) -> &'static str {
         ControlKind::Boolean => "boolean",
         ControlKind::Choice => "choice",
         ControlKind::Constant => "constant",
-        // `ControlKind` is non-exhaustive. The renderer hands a kind this component does not know
-        // to the built-in, so this arm is never reached.
-        _ => "unknown",
+        ControlKind::MultipleChoice => "multiple-choice",
+        kind => panic!("schemaform_daisyui does not yet present control kind {kind:?}"),
     }
 }
 
@@ -135,12 +135,13 @@ pub(super) fn editable_field<T: 'static>(
 /// adapter hands out resolves to an element, plus `data-finding` (the code) and `data-blocking`
 /// as the finding presenter emits them.
 fn finding_descriptions(findings: Vec<FindingDescriptor>, appearance: Appearance) -> Element {
+    let advisory = advisory_presentation();
     rsx! {
         for finding in findings {
             FieldDescription {
                 key: "{finding.stable_id}",
                 id: Rc::from(finding.stable_id.as_str()),
-                class: appearance.utilities(if finding.blocking { "text-error" } else { "text-warning" }),
+                class: appearance.utilities(if finding.blocking && !advisory { "text-error" } else { "text-warning" }),
                 "data-finding": finding.code.clone(),
                 "data-blocking": finding.blocking.to_string(),
                 "{finding.text}"
@@ -156,12 +157,13 @@ fn finding_descriptions(findings: Vec<FindingDescriptor>, appearance: Appearance
 /// through `aria-errormessage`; every other finding is a description the control references
 /// through `aria-describedby`. Both kinds of element carry the finding's stable id.
 pub(super) fn supplements(presentation: &NodePresentation, appearance: Appearance) -> Element {
+    let advisory = advisory_presentation();
     let help = presentation.help.clone();
     let (errors, descriptions): (Vec<_>, Vec<_>) = presentation
         .findings
         .iter()
         .cloned()
-        .partition(is_field_error);
+        .partition(|finding| !advisory && is_field_error(finding));
     let errors_id = format!("{}-errors", presentation.element_id);
     rsx! {
         {help_description(help)}

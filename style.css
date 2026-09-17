@@ -19,6 +19,16 @@
   themes: all;
 }
 
+/* This page uses semantic finding colours as small text. The stock light
+   theme's warning and error colours lack text contrast; this is the Preview
+   host's override, never CSS shipped with the installed Component. */
+:root:has([data-part="themes"] input[value="light"]:checked) [data-page="schemaform_daisyui"] {
+  --color-warning: #854d0e;
+  --color-warning-content: #ffffff;
+  --color-error: #b91c1c;
+  --color-error-content: #ffffff;
+}
+
 /* The hatching behind an example's rendered component, which marks that surface
    as the documentation's rather than the example's, the same pattern daisyUI's
    own component documentation puts behind every preview, and the same
