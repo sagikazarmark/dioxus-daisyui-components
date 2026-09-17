@@ -74,7 +74,7 @@ test.describe("controls", () => {
     await newsletter.click();
     await expect(newsletter).toHaveAttribute("aria-checked", "false");
 
-    await affordance(scope, "Set Newsletter to null").click();
+    await affordance(scope, "Clear Newsletter").click();
     await expect(newsletter).toHaveAttribute("aria-checked", "mixed");
   });
 

@@ -88,3 +88,10 @@ desktop focus/resync no-op implementations.
   `cargo fmt --check`. Playwright attempts were blocked by insufficient disk space during
   container-image extraction and workspace snapshotting; no browser or screenshot result is
   claimed for this change.
+- After disk capacity was freed, the full browser run completed: 1,915 passed, 2 flaky
+  accordion startup cases passed on retry, and the nullable-checkbox test failed on all three
+  engines. Its locator expected `Set Newsletter to null`, but schemaform-dioxus 0.4.1 labels
+  that action `Clear Newsletter`. After correcting the locator, the entire
+  `schemaform_daisyui.spec.ts` passed on Chromium, Firefox, and WebKit with retries disabled.
+  The focused command used `--timeout=300000` to allow the served Preview to finish compiling.
+  Screenshot comparison and interactive desktop smoke remain outstanding.
