@@ -12,7 +12,13 @@ pub fn Example() -> Element {
     let definition = use_hook(|| definition(r#"{
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object", "additionalProperties": false,
+      "required": ["channels"],
       "properties": {
+        "channels": {
+          "type": "array", "title": "Channels", "uniqueItems": true,
+          "description": "This field must be present; choosing a channel is optional.",
+          "items": { "enum": ["Email", "SMS"] }
+        },
         "topics": {
           "type": "array", "title": "Topics", "description": "Choose topics for your badge.",
           "uniqueItems": true, "minItems": 1,
@@ -24,7 +30,7 @@ pub fn Example() -> Element {
         }
       }
     }"#, None));
-    let form = use_form(definition, form_data(r#"{"topics":["Rust"],"legacy":["retired"]}"#))
+    let form = use_form(definition, form_data(r#"{"channels":[],"topics":["Rust"],"legacy":["retired"]}"#))
         .expect("the form should be created");
     let reset = form.clone();
     let mut submitted = use_signal(String::new);

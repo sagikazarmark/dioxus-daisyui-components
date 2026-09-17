@@ -163,6 +163,23 @@ test.describe("controls", () => {
 });
 
 test.describe("arrays", () => {
+  test("a required array does not require individual choices or a nonempty selection", async ({ page }) => {
+    const scope = example(page, "multiple_choice");
+    const group = scope.getByRole("group", { name: /^Channels/ });
+    await expect(group.getByRole("checkbox")).toHaveCount(2);
+    for (const checkbox of await group.getByRole("checkbox").all()) {
+      await expect(checkbox).not.toHaveAttribute("aria-required", "true");
+      await expect(checkbox).not.toHaveAttribute("required");
+      await expect(checkbox).not.toBeChecked();
+    }
+    await expect(group).toHaveAccessibleName("Channels (required)");
+    await expect(group).not.toHaveAttribute("aria-required");
+    await affordance(scope, "Remove Legacy topics").click();
+    await affordance(scope, "Submit").click();
+    await expect.poll(async () => JSON.parse(await scope.getByRole("status", { name: "Submitted topics" }).innerText()).channels)
+      .toEqual([]);
+  });
+
   test("multiple choice follows the node, toggles by keyboard, and describes every checkbox", async ({ page }) => {
     const scope = example(page, "multiple_choice");
     const group = scope.getByRole("group", { name: "Topics", exact: true });

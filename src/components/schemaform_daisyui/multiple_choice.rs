@@ -65,7 +65,12 @@ pub(super) fn MultipleChoiceControl(
                 tabindex: "-1",
                 "data-schemaform-control": "multiple-choice",
                 "data-focus-first-descendant": "",
-                legend { class: "fieldset-legend {label_class(presentation)}", "{presentation.label}" }
+                legend {
+                    class: "fieldset-legend {label_class(presentation)}",
+                    "{presentation.label}"
+                    // Required describes array presence, never each option or its cardinality.
+                    if control.required { " (required)" }
+                }
                 if let Some(status) = control.write_only_status.clone() {
                     output { "data-write-only-status": "", "{status}" }
                 }
@@ -78,7 +83,6 @@ pub(super) fn MultipleChoiceControl(
                             class: "checkbox {color}",
                             checked: selected.contains(&option.identity),
                             disabled: option.disabled,
-                            "aria-required": control.required,
                             "aria-invalid": presentation.invalid,
                             "aria-describedby": described_by.clone(),
                             "aria-errormessage": errors_id.clone(),

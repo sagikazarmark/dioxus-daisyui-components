@@ -115,6 +115,9 @@ toggles resynchronise the correct native element. Membership always follows the 
 the first toggle can create an absent array. Array presence actions and the incompatible
 member readout remain available. Read-only arrays show selected labels as output;
 write-only arrays show the adapter's status with disabled, unchecked options.
+Required array presence is indicated by `(required)` in the group legend, never
+by `required` or `aria-required` on individual options. A required array may be
+empty; `minItems` independently constrains how many options must be selected.
 `format` is presentation-only: schemaform does not validate the annotation.
 
 Write-only booleans and choices never echo their value: the widget rests on the
@@ -325,6 +328,8 @@ Where this component departs from the registry's conventions, and why:
   English string: the localized item noun the context carries is a name, not a
   word a sentence can be built around. An item card's title is the item noun
   followed by its position (`Tags item 2`), a fixed word order.
+  The multiple-choice legend's `(required)` indicator is also fixed English;
+  the adapter currently supplies no localized required-field indicator.
 - **Its own ids.** Beside the ids the adapter reserves, the component derives
   `{element_id}-label`, `{element_id}-errors`, `{element_id}-incompatible`,
   `{element_id}-legend`, and `{row_id}-title` from the adapter's ids, and a
