@@ -72,6 +72,55 @@ for (const theme of ["light", "dark"]) {
 }
 
 test.describe("controls", () => {
+  test("compact density saves height and preserves keyboard presence and findings", async ({ page }) => {
+    const variants = example(page, "density");
+    const compact = variants.locator('[data-value="Compact"]');
+    const normal = variants.locator('[data-value="Default"]');
+    const compactBox = await compact.locator("form").boundingBox();
+    const normalBox = await normal.locator("form").boundingBox();
+    console.log(`density heights: Default=${normalBox!.height}px Compact=${compactBox!.height}px`);
+    expect(compactBox!.height).toBeLessThan(normalBox!.height * 0.85);
+    const name = compact.getByRole("textbox", { name: "Name", exact: true });
+    const set = compact.getByRole("button", { name: "Set Name", exact: true });
+    await expect(compact.locator('[data-schemaform-field-header]').filter({has:page.getByRole("button", {name:"Set Name", exact:true})})).toContainText("Name");
+    await set.focus();
+    await page.keyboard.press("Enter");
+    await expect(name).toHaveValue("");
+    const inputBox = await name.boundingBox();
+    const removeBox = await compact.getByRole("button", {name:"Remove Name",exact:true}).boundingBox();
+    expect(removeBox!.y).toBeLessThan(inputBox!.y);
+    await compact.locator('button[type="submit"]').click();
+    await expect(name).toHaveAttribute("aria-invalid", "true");
+    await name.fill("Ada");
+    await compact.getByRole("button", {name:"Set Active",exact:true}).click();
+    await compact.getByRole("button", {name:"Add Tags",exact:true}).click();
+    await compact.locator('button[type="submit"]').click();
+    await expect(compact.locator('[data-submitted]')).toHaveText('{"active":false,"name":"Ada","tags":[]}');
+    await compact.getByRole("button", {name:"Remove Name",exact:true}).click();
+    await compact.locator('button[type="submit"]').click();
+    await expect(compact.locator('[data-submitted]')).toHaveText('{"active":false,"tags":[]}');
+    for (const option of ["one", "two", "three"]) await compact.getByRole("checkbox", {name:option, exact:true}).check();
+    await compact.locator('button[type="submit"]').click();
+    await compact.locator('[data-finding-summary] button').filter({hasText:"Tags"}).click();
+    await expect(compact.getByRole("checkbox", {name:"one",exact:true})).toBeFocused();
+    await compact.getByRole("button", {name:"Remove Tags",exact:true}).click();
+    await compact.locator('button[type="submit"]').click();
+    await expect(compact.locator('[data-submitted]')).toHaveText('{"active":false}');
+    await compact.getByRole("checkbox", {name:"one",exact:true}).check();
+    await compact.locator('button[type="submit"]').click();
+    await expect(compact.locator('[data-submitted]')).toHaveText('{"active":false,"tags":["one"]}');
+    await compact.getByRole("button", {name:"Set Name",exact:true}).focus();
+    await page.keyboard.press("Tab");
+    await expect(name).toBeFocused();
+    await page.setViewportSize({width:960,height:640});
+    const overflow = await compact.evaluate(element => element.scrollWidth > element.clientWidth);
+    expect(overflow).toBe(false);
+    for (const theme of ["light", "dark"]) {
+      await page.evaluate(theme => document.documentElement.setAttribute("data-theme", theme), theme);
+      const results = await new AxeBuilder({ page }).include('[data-example="density"] [data-value="Compact"] form').analyze();
+      expect(results.violations).toEqual([]);
+    }
+  });
   test("format selects the native input type and write-only takes precedence", async ({ page }) => {
     const scope = example(page, "formats");
     for (const [name, type] of Object.entries({

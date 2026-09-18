@@ -29,5 +29,8 @@ dioxus_registry_preview::component! {
         appearance {
             description: "Every value of the appearance axis on the same form: Default emits the package's layout utilities, None leaves daisyUI's component classes alone.",
         },
+        density {
+            description: "Default keeps presence operations below each field. Compact puts them beside labels, preserves explicit empty values, and wraps multiple-choice options.",
+        },
     },
 }

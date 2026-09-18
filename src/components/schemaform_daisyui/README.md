@@ -230,6 +230,25 @@ state, not by state kept in this component.
 
 ## Axes
 
+- `density: Density`: `Default` retains presence operations below each field;
+  `Compact` places them beside the label, uses extra-small presence buttons,
+  removes the layout box of empty error regions while retaining their live-region
+  elements, and lays multiple-choice options out as wrapping rows. Presence
+  operations retain their original labels, IDs and behavior: Set can explicitly
+  materialize an empty string or false, Add an empty array, and Remove returns a
+  property to absence. No operation is hidden behind a disclosure. Keyboard order
+  follows the compact DOM order (label-row presence controls before the input).
+  Read-only and constant fields use the same compact header; checkboxes keep their
+  native label row. `Density::ALL` lists both values. Density is fixed at bind.
+
+  `configuration_with_density(appearance, density)` and
+  `controls_with_density(appearance, density)` configure the composed seams;
+  `DaisyuiControlRenderer::density` sets it on a standalone control renderer.
+  Existing factories keep Default. `Appearance::None` still emits no package
+  layout utilities: hosts style `[data-schemaform-density="compact"]`,
+  `[data-schemaform-field-header]`, `[data-schemaform-presence]`,
+  `[data-schemaform-options]` and `[data-schemaform-errors]` themselves.
+
 - `appearance: Appearance`: `Default` emits the Tailwind utilities the package
   lays itself out with (gaps, borders, widths, the semantic text colours);
   `None` emits none of them. The daisyUI component classes — `fieldset`,
