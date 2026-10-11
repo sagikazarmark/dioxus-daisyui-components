@@ -15,8 +15,10 @@ target/
 # Node
 node_modules/
 
-# Generated Tailwind CSS
-assets/style.css
+# The generated Tailwind CSS (assets/style.css) is deliberately not listed in
+# any .gitignore, which Dagger applies when it builds the Preview: `npm run
+# build` adds it to the clone's .git/info/exclude instead. See
+# scripts/exclude-generated.mjs.
 
 # Playwright's output. The screenshot baselines are rendered from the base
 # commit at the start of every run rather than stored, so they are output too.
