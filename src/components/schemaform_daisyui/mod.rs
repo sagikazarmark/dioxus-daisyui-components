@@ -7,6 +7,7 @@
 
 mod appearance;
 mod boolean;
+mod buttons;
 mod choice;
 mod collection;
 mod component;
@@ -15,14 +16,17 @@ mod density;
 mod findings;
 mod mapping;
 mod multiple_choice;
+mod options;
 mod parts;
 mod shell;
 mod text;
 
 pub use appearance::Appearance;
+pub use buttons::ButtonClasses;
 pub use collection::DaisyuiCollection;
 pub use component::*;
 pub use density::Density;
 pub use findings::DaisyuiFindings;
 pub use mapping::*;
+pub use options::Options;
 pub use shell::{AdvisoryPresentation, DaisyuiShell};

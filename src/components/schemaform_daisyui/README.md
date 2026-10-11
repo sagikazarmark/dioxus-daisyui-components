@@ -68,9 +68,10 @@ worth drawing:
   primitive at the revision they all pin, and the `schemaform` and
   `schemaform-dioxus` release that ships the headless edit hooks and the
   structure seams; the registry's own `Cargo.toml` requires the same.
-- `mod.rs`, `component.rs`, `appearance.rs`, `mapping.rs`, `parts.rs`,
-  `text.rs`, `boolean.rs`, `choice.rs`, `multiple_choice.rs`, `constant.rs`, `collection.rs`,
-  `shell.rs`, and `findings.rs` are what an install copies. None of them
+- `mod.rs`, `component.rs`, `options.rs`, `appearance.rs`, `density.rs`,
+  `buttons.rs`, `mapping.rs`, `parts.rs`, `text.rs`, `boolean.rs`, `choice.rs`,
+  `multiple_choice.rs`, `constant.rs`, `collection.rs`, `shell.rs`, and
+  `findings.rs` are what an install copies. None of them
   contains test code. `docs/` holds the page's examples and, with this file and
   the manifest, is excluded from installs.
 - The tests are split the way the registry splits every form control's. The
@@ -246,8 +247,10 @@ state, not by state kept in this component.
   Read-only and constant fields use the same compact header; checkboxes keep their
   native label row. `Density::ALL` lists both values. Density is fixed at bind.
 
+  `Options::density` configures the composed seams through
+  `configuration_with` and `controls_with`, as do the shorthands
   `configuration_with_density(appearance, density)` and
-  `controls_with_density(appearance, density)` configure the composed seams;
+  `controls_with_density(appearance, density)`;
   `DaisyuiControlRenderer::density` sets it on a standalone control renderer.
   Existing factories keep Default. `Appearance::None` still emits no package
   layout utilities: hosts style `[data-schemaform-density="compact"]`,
@@ -263,12 +266,54 @@ state, not by state kept in this component.
   package's own utilities would tie with theirs. The same elements, ids, and
   markers render under both values.
 
-The axis is fixed when a form is bound, like the renderers: it is a prop of
-`SchemaformDaisyui`, an argument of `configuration_with`, `controls_with`,
-`structure_with`, and `findings_with`, and a builder method on
-`DaisyuiControlRenderer`, `DaisyuiCollection`, `DaisyuiShell`, and
+The axes are fixed when a form is bound, like the renderers: each is a prop of
+`SchemaformDaisyui`, a field of the `Options` that `configuration_with`,
+`controls_with`, and `structure_with` take (an `Appearance` converts into
+`Options` with the rest at their defaults), and a builder method on
+`DaisyuiControlRenderer`; the appearance is also an argument of `findings_with`
+and a builder method on `DaisyuiCollection`, `DaisyuiShell`, and
 `DaisyuiFindings`. `Appearance::ALL` lists both values. The registry parts the
 controls compose keep their own appearance axes at their defaults.
+
+## Button classes
+
+A host whose design system has its own button variants gives the buttons the
+renderers draw themselves its classes through `ButtonClasses`, one optional
+class per role:
+
+| Role | Buttons | Package's own look |
+| --- | --- | --- |
+| `presence` | Set, Clear, Remove … beside or below a field, and on a collection | `btn-sm`, `btn-xs` under `Density::Compact` |
+| `item` | a collection item's insert, move and remove actions | `join-item btn-square btn-sm` |
+| `append` | a collection's append button | `btn-outline btn-sm` |
+| `submit` | the submit button, gated mode | `btn-primary` |
+| `advisory_submit` | the submit button, advisory mode | `btn-warning` |
+
+An unset role keeps the package's look. A role given a class renders `btn`
+plus that class in place of the package's colour, size, and variant, so a
+host's `btn-quiet` never fights `btn-primary` or `btn-sm`. Include a size class
+where the role needs one: `Density::Compact`'s `btn-xs` no longer applies to a
+presence button the host styles. Structural classes stay (`join-item
+btn-square` on item actions), and the `Appearance` axis still governs the
+layout utilities (`w-fit`).
+
+```rust
+let options = Options::from(Appearance::None)
+    .density(Density::Compact)
+    .buttons(ButtonClasses::default().presence("btn-quiet btn-xs"));
+let controls = schemaform_daisyui::controls_with(options);
+```
+
+`ButtonClasses` is a prop of `SchemaformDaisyui`, a field of `Options`, and a
+builder method on `DaisyuiControlRenderer`, `DaisyuiCollection`, and
+`DaisyuiShell`. The classes are `&'static str`: Tailwind finds class names by
+scanning source, so a host's classes appear there as literals anyway.
+
+Every button the package draws also carries `data-schemaform-button` naming its
+role — `presence`, `item`, `append`, `submit` — for a host that styles them
+from its stylesheet instead. The finding summary's focus-to-target buttons
+carry `finding` and take no class: they are daisyUI `link`s styled as the
+alert's text, not `btn`s.
 
 ## Usage
 

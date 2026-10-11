@@ -14,7 +14,6 @@ use schemaform_dioxus::{
     SchemaForm, StructureRenderers, SubmissionMode,
 };
 
-use super::Appearance;
 use super::boolean::BooleanControl;
 use super::choice::{NativeSelectControl, RadioGroupControl, SelectControl};
 use super::collection::DaisyuiCollection;
@@ -23,7 +22,8 @@ use super::findings::DaisyuiFindings;
 use super::multiple_choice::MultipleChoiceControl;
 use super::shell::DaisyuiShell;
 use super::text::TextControl;
-use super::{Density, density::DensityScope};
+use super::{Appearance, ButtonClasses, Options};
+use super::{Density, density::ControlScope};
 
 /// A form rendered through every seam this package fills: the daisyUI control registry, the
 /// structure bundle, and the finding presenter in both presenter slots.
@@ -57,9 +57,12 @@ pub fn SchemaformDaisyui(
     /// Field layout, fixed at mount like the renderer configuration.
     #[props(default)]
     density: Density,
+    /// Classes for the buttons the renderers draw themselves, fixed at mount like the rest.
+    #[props(default)]
+    buttons: ButtonClasses,
 ) -> Element {
     let bound = use_hook(|| {
-        configuration_with_density(appearance, density)
+        configuration_with(Options::from(appearance).density(density).buttons(buttons))
             .bind(&form)
             .map_err(Rc::new)
     });
@@ -78,19 +81,21 @@ pub fn configuration() -> RenderConfiguration {
     configuration_with(Appearance::default())
 }
 
-/// [`configuration`] with every renderer at `appearance`.
-pub fn configuration_with(appearance: Appearance) -> RenderConfiguration {
-    configuration_with_density(appearance, Density::Default)
+/// [`configuration`] with every renderer built with `options`: an [`Appearance`] alone, or
+/// [`Options`] carrying density and button classes as well.
+pub fn configuration_with(options: impl Into<Options>) -> RenderConfiguration {
+    let options = options.into();
+    RenderConfiguration::builder()
+        .controls(controls_with(options))
+        .structure(structure_with(options))
+        .summary_presenter(findings_with(options.appearance))
+        .local_presenter(findings_with(options.appearance))
+        .build()
 }
 
-/// Configure field density without changing collection or shell presentation.
+/// [`configuration_with`] at `appearance` and `density`.
 pub fn configuration_with_density(appearance: Appearance, density: Density) -> RenderConfiguration {
-    RenderConfiguration::builder()
-        .controls(controls_with_density(appearance, density))
-        .structure(structure_with(appearance))
-        .summary_presenter(findings_with(appearance))
-        .local_presenter(findings_with(appearance))
-        .build()
+    configuration_with(Options::from(appearance).density(density))
 }
 
 /// Matcher priority at which [`controls`] registers [`DaisyuiControlRenderer`].
@@ -115,17 +120,20 @@ pub fn controls() -> ControlRegistry {
     controls_with(Appearance::default())
 }
 
-/// [`controls`] with every renderer at `appearance`.
-pub fn controls_with(appearance: Appearance) -> ControlRegistry {
-    controls_with_density(appearance, Density::Default)
+/// [`controls_with`] at `appearance` and `density`.
+pub fn controls_with_density(appearance: Appearance, density: Density) -> ControlRegistry {
+    controls_with(Options::from(appearance).density(density))
 }
 
-/// Controls with an explicit, bind-fixed field density.
-pub fn controls_with_density(appearance: Appearance, density: Density) -> ControlRegistry {
+/// [`controls`] with every renderer built with `options`: an [`Appearance`] alone, or [`Options`]
+/// carrying density and button classes as well.
+pub fn controls_with(options: impl Into<Options>) -> ControlRegistry {
+    let options = options.into();
     let renderer = |choice| {
         DaisyuiControlRenderer::with_choice_widget(choice)
-            .appearance(appearance)
-            .density(density)
+            .appearance(options.appearance)
+            .density(options.density)
+            .buttons(options.buttons)
     };
     ControlRegistry::with_builtins()
         .matcher(
@@ -158,11 +166,21 @@ pub fn structure() -> StructureRenderers {
     structure_with(Appearance::default())
 }
 
-/// [`structure`] with both renderers at `appearance`.
-pub fn structure_with(appearance: Appearance) -> StructureRenderers {
+/// [`structure`] with both renderers built with `options`: an [`Appearance`] alone, or
+/// [`Options`] carrying button classes as well. Neither renderer has a density.
+pub fn structure_with(options: impl Into<Options>) -> StructureRenderers {
+    let options = options.into();
     StructureRenderers::default()
-        .with_shell(DaisyuiShell::default().appearance(appearance))
-        .with_collection(DaisyuiCollection::default().appearance(appearance))
+        .with_shell(
+            DaisyuiShell::default()
+                .appearance(options.appearance)
+                .buttons(options.buttons),
+        )
+        .with_collection(
+            DaisyuiCollection::default()
+                .appearance(options.appearance)
+                .buttons(options.buttons),
+        )
 }
 
 /// The finding presenter for both presenter slots of a render configuration.
@@ -224,6 +242,7 @@ pub struct DaisyuiControlRenderer {
     choice: ChoiceWidget,
     appearance: Appearance,
     density: Density,
+    buttons: ButtonClasses,
 }
 
 impl DaisyuiControlRenderer {
@@ -233,6 +252,7 @@ impl DaisyuiControlRenderer {
             choice,
             appearance: Appearance::default(),
             density: Density::default(),
+            buttons: ButtonClasses::default(),
         }
     }
 
@@ -241,8 +261,14 @@ impl DaisyuiControlRenderer {
         Self { appearance, ..self }
     }
 
+    /// The same renderer at `density`.
     pub fn density(self, density: Density) -> Self {
         Self { density, ..self }
+    }
+
+    /// The same renderer with `buttons` for the presence operations it draws.
+    pub fn buttons(self, buttons: ButtonClasses) -> Self {
+        Self { buttons, ..self }
     }
 }
 
@@ -266,6 +292,6 @@ impl ControlRenderer for DaisyuiControlRenderer {
             // The upstream enum is non-exhaustive, so stable Rust requires this guard.
             kind => panic!("schemaform_daisyui does not yet present control kind {kind:?}"),
         };
-        rsx! { DensityScope { density: self.density, {body} } }
+        rsx! { ControlScope { density: self.density, buttons: self.buttons, {body} } }
     }
 }

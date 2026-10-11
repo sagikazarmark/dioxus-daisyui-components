@@ -5,6 +5,7 @@ use dioxus_field::FieldContext;
 use schemaform_dioxus::{ControlRenderContext, use_multiple_choice_edit};
 
 use super::Appearance;
+use super::buttons;
 use super::mapping::field_meta_values;
 use super::parts::{
     incompatible_description, label_class, presence_affordances, read_only_field, supplements,
@@ -89,7 +90,7 @@ pub(super) fn MultipleChoiceControl(
                         "{presentation.label}"
                         if control.required { " (required)" }
                     }
-                    {presence_affordances(&presentation.presence, appearance)}
+                    {presence_affordances(&presentation.presence, appearance, buttons::current())}
                 }
             }
             fieldset {

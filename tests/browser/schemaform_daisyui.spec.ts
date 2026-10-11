@@ -383,3 +383,44 @@ test("advisory submission presents warnings and switching mode restores error fr
   await expect(scope.locator('[data-schemaform-errors] [data-finding]')).toHaveCount(1);
   await expect(scope.locator('[data-schemaform-daisyui="collection"] [data-finding]')).toHaveClass(/\btext-error\b/);
 });
+
+test.describe("button classes", () => {
+  // Every button the renderers draw names its role; a role the host left alone
+  // keeps the package's own classes.
+  test("every renderer button carries its role and, unset, the package's look", async ({ page }) => {
+    const overview = example(page, "overview");
+    const presence = overview.locator('[data-schemaform-button="presence"]').first();
+    await expect(presence).toHaveClass(/\bbtn-sm\b/);
+    const item = overview.locator('[data-schemaform-button="item"]').first();
+    await expect(item).toHaveClass(/\bjoin-item\b/);
+    await expect(item).toHaveClass(/\bbtn-sm\b/);
+    await expect(overview.locator('[data-schemaform-button="append"]')).toHaveClass(/\bbtn-outline\b/);
+    await expect(overview.locator('[data-schemaform-button="submit"]')).toHaveClass(/\bbtn-primary\b/);
+
+    const advisory = example(page, "advisory");
+    await advisory.locator('[data-schemaform-button="submit"]').click();
+    await expect(advisory.locator('[data-schemaform-button="finding"]').first()).toHaveClass(/\blink\b/);
+  });
+
+  test("a role given a class renders btn and the class in place of the package's look", async ({ page }) => {
+    const scope = example(page, "buttons");
+    const presence = scope.locator('[data-schemaform-button="presence"]').first();
+    await expect(presence).toHaveClass(/\bbtn\b/);
+    await expect(presence).toHaveClass(/\bbtn-ghost\b/);
+    await expect(presence).toHaveClass(/\bbtn-xs\b/);
+    await expect(presence).not.toHaveClass(/\bbtn-sm\b/);
+
+    const item = scope.locator('[data-schemaform-button="item"]').first();
+    for (const kept of ["btn", "join-item", "btn-square", "btn-soft", "btn-sm"]) {
+      await expect(item).toHaveClass(new RegExp(`\\b${kept}\\b`));
+    }
+
+    const append = scope.locator('[data-schemaform-button="append"]');
+    await expect(append).toHaveClass(/\bbtn-accent\b/);
+    await expect(append).not.toHaveClass(/\bbtn-outline\b/);
+
+    const submit = scope.locator('[data-schemaform-button="submit"]');
+    await expect(submit).toHaveClass(/\bbtn-secondary\b/);
+    await expect(submit).not.toHaveClass(/\bbtn-primary\b/);
+  });
+});

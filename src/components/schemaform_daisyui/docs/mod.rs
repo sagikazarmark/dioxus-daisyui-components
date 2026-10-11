@@ -32,5 +32,8 @@ dioxus_registry_preview::component! {
         density {
             description: "Default keeps presence operations below each field. Compact puts them beside labels, preserves explicit empty values, and wraps multiple-choice options.",
         },
+        buttons {
+            description: "A host's own classes on the buttons the renderers draw: presence operations, item actions, the append button and submit. A role given a class drops the package's colour, size and variant.",
+        },
     },
 }

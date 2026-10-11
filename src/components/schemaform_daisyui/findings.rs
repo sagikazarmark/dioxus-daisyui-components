@@ -75,6 +75,7 @@ fn summary(context: FindingCollectionContext, appearance: Appearance) -> Element
                         button {
                             r#type: "button",
                             class: "link {link_class}",
+                            "data-schemaform-button": "finding",
                             onclick: move |_| target_focus.focus(),
                             "{finding.text}"
                         }

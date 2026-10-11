@@ -8,6 +8,7 @@ use schemaform_dioxus::{
 };
 
 use super::Appearance;
+use super::buttons::{ButtonClasses, ButtonRole};
 use super::parts::{icon, presence_affordances};
 use crate::components::button::{Button, ButtonSize};
 
@@ -36,12 +37,18 @@ const EMPTY_STATE: &str = "Nothing here yet.";
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct DaisyuiCollection {
     appearance: Appearance,
+    buttons: ButtonClasses,
 }
 
 impl DaisyuiCollection {
     /// The same renderer at `appearance`.
     pub fn appearance(self, appearance: Appearance) -> Self {
-        Self { appearance }
+        Self { appearance, ..self }
+    }
+
+    /// The same renderer with `buttons` for its item, append and presence buttons.
+    pub fn buttons(self, buttons: ButtonClasses) -> Self {
+        Self { buttons, ..self }
     }
 }
 
@@ -85,7 +92,7 @@ impl CollectionRenderer for DaisyuiCollection {
                 if let Some(value) = incompatible_value {
                     output { class: readout_class, "data-incompatible-value": "", "{value}" }
                 }
-                {presence_affordances(&presentation.presence, appearance)}
+                {presence_affordances(&presentation.presence, appearance, self.buttons)}
                 if empty {
                     p {
                         class: empty_class,
@@ -95,7 +102,7 @@ impl CollectionRenderer for DaisyuiCollection {
                 }
                 div { class: items_class, {context.items} }
                 if let Some(append) = context.append {
-                    {append_button(append, append_class)}
+                    {append_button(append, append_class, self.buttons)}
                 }
                 div { class: announcement_class, {context.announcement} }
                 {findings}
@@ -137,7 +144,7 @@ impl CollectionRenderer for DaisyuiCollection {
                         if !actions.is_empty() {
                             div { class: "join",
                                 for affordance in actions {
-                                    {item_affordance(affordance, appearance)}
+                                    {item_affordance(affordance, appearance, self.buttons)}
                                 }
                             }
                         }
@@ -149,15 +156,21 @@ impl CollectionRenderer for DaisyuiCollection {
     }
 }
 
-/// The append affordance as an outline button below the items.
-fn append_button(append: Affordance, class: &'static str) -> Element {
+/// The append affordance as an outline button below the items, or `btn` with the host's class
+/// when it set one; `layout` is the package's width utility either way.
+fn append_button(append: Affordance, layout: &'static str, buttons: ButtonClasses) -> Element {
     let invoke = append.clone();
+    let (size, variant) = match buttons.class(ButtonRole::Append) {
+        Some(host) => (ButtonSize::Default, host),
+        None => (ButtonSize::Sm, "btn-outline"),
+    };
     rsx! {
         Button {
             id: append.id.clone(),
             r#type: "button",
-            size: ButtonSize::Sm,
-            class: "btn-outline {class}",
+            size,
+            class: "{variant} {layout}",
+            "data-schemaform-button": "append",
             onclick: move |_| invoke.invoke(),
             "{append.label}"
         }
@@ -168,21 +181,34 @@ fn append_button(append: Affordance, class: &'static str) -> Element {
 ///
 /// The button carries the affordance id (focus after a move targets it), the positional
 /// accessible name as its `aria-label`, and the shorter visible label as its `title`, so the
-/// icon-only button still reads in full to assistive technology and on hover.
-fn item_affordance(affordance: Affordance, appearance: Appearance) -> Element {
+/// icon-only button still reads in full to assistive technology and on hover. A host's item class
+/// replaces the small size; `join-item btn-square` stay.
+fn item_affordance(
+    affordance: Affordance,
+    appearance: Appearance,
+    buttons: ButtonClasses,
+) -> Element {
     let name = affordance
         .accessible_name
         .clone()
         .unwrap_or_else(|| affordance.label.clone());
     let glyph = icon_path(affordance.kind);
     let invoke = affordance.clone();
+    let host = buttons.class(ButtonRole::Item);
+    let size = if host.is_some() {
+        ButtonSize::Default
+    } else {
+        ButtonSize::Sm
+    };
+    let host = host.unwrap_or_default();
     rsx! {
         Button {
             key: "{affordance.id}",
             id: affordance.id.clone(),
             r#type: "button",
-            size: ButtonSize::Sm,
-            class: "join-item btn-square",
+            size,
+            class: "join-item btn-square {host}",
+            "data-schemaform-button": "item",
             "aria-label": name,
             title: affordance.label.clone(),
             onclick: move |_| invoke.invoke(),
