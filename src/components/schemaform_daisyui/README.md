@@ -74,7 +74,7 @@ component's, and shrinks as further structure seams ship.
 
 Browser CSR is supported; desktop/WebView support is pending manual verification.
 Both targets share one code path. The `schemaform` and
-`schemaform-dioxus` 0.5.0 requirements in the manifest and root `Cargo.toml`
+`schemaform-dioxus` 0.6.1 requirements in the manifest and root `Cargo.toml`
 include the platform-neutral DOM bridge from
 [schemaform#29](https://github.com/sagikazarmark/schemaform/issues/29): rejected
 writes resynchronise the DOM and focus moves through `document::eval`. The
@@ -382,7 +382,7 @@ component does not implement stays the built-in. `findings()` is one presenter
 for both presenter slots; it tells the summary from a local collection by
 `FindingCollectionContext::is_summary`.
 
-The control dispatcher handles every kind in schemaform-dioxus 0.5.0 explicitly.
+The control dispatcher handles every kind in schemaform-dioxus 0.6.1 explicitly.
 Its upstream `ControlKind` is still `#[non_exhaustive]`, so stable Rust requires
 an unknown-kind guard: that guard fails visibly instead of silently rendering an
 unstyled built-in. Compile-time exhaustiveness across future kinds requires an

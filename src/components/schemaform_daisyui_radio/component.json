@@ -17,7 +17,7 @@
   "cargoDependencies": [
     {
       "name": "dioxus-field",
-      "version": "0.7.0"
+      "version": "0.8.0"
     },
     {
       "name": "dioxus-primitives",
@@ -28,12 +28,12 @@
     },
     {
       "name": "schemaform",
-      "version": "0.5.0",
+      "version": "0.6.1",
       "default_features": true
     },
     {
       "name": "schemaform-dioxus",
-      "version": "0.5.0",
+      "version": "0.6.1",
       "default_features": true
     }
   ]

@@ -151,7 +151,7 @@ fn field_aware_components_declare_the_field_dependency_identically() {
     let root = root();
     let expected = serde_json::json!({
         "name": "dioxus-field",
-        "version": "0.7.0"
+        "version": "0.8.0"
     });
 
     for component in [
