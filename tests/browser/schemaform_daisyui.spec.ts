@@ -143,6 +143,43 @@ test.describe("controls", () => {
     await expect(active).not.toBeChecked();
   });
 
+  test("a boolean the data leaves out is indeterminate until a click sets true", async ({ page }) => {
+    const scope = example(page, "controls");
+    const terms = scope.locator('input[name="/terms"]');
+    const indeterminate = () => terms.evaluate((element) => (element as HTMLInputElement).indeterminate);
+    // The data holds no boolean, so the box must not read as false.
+    await expect.poll(indeterminate).toBe(true);
+    await expect(terms).not.toBeChecked();
+    await expect(terms).toHaveJSProperty("indeterminate", true);
+    await expect(terms).toHaveAttribute("aria-required", "true");
+    // Assistive technology hears the state as mixed; the description says what it means.
+    await expect(terms).toHaveAccessibleDescription("Not set");
+
+    // The first click sets true; the next sets false; neither is indeterminate.
+    await terms.click();
+    await expect(terms).toBeChecked();
+    await expect.poll(indeterminate).toBe(false);
+    await expect(terms).not.toHaveAccessibleDescription("Not set");
+    await terms.click();
+    await expect(terms).not.toBeChecked();
+    await expect.poll(indeterminate).toBe(false);
+  });
+
+  test("removing an optional boolean returns it to indeterminate", async ({ page }) => {
+    const scope = example(page, "controls");
+    const marketing = scope.locator('input[name="/marketing"]');
+    const indeterminate = () => marketing.evaluate((element) => (element as HTMLInputElement).indeterminate);
+    await expect.poll(indeterminate).toBe(true);
+
+    await marketing.click();
+    await expect(marketing).toBeChecked();
+    await expect.poll(indeterminate).toBe(false);
+
+    await affordance(scope, "Remove Marketing email").click();
+    await expect(marketing).not.toBeChecked();
+    await expect.poll(indeterminate).toBe(true);
+  });
+
   test("the nullable checkbox shows null as indeterminate and reaches it through set-null", async ({ page }) => {
     const scope = example(page, "controls");
     const newsletter = scope.locator('[role="checkbox"][name="/newsletter"]');

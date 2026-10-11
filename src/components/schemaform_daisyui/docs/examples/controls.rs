@@ -10,9 +10,10 @@ use crate::examples::schemaform_daisyui::schemas::{
 ///
 /// Strings, the integer and the number are `Input`s; the write-only string is
 /// a password input labelled with its replacement action. The non-nullable
-/// boolean is a native checkbox, the nullable one the registry `Checkbox` with
-/// null as its indeterminate state, the write-only one a replacement select
-/// over the localized labels. The plan is a native select with the null option
+/// boolean is a native checkbox, indeterminate while the data holds none, as
+/// for the two booleans the data leaves out; the nullable one is the registry
+/// `Checkbox` with null as its indeterminate state; the write-only one a
+/// replacement select over the localized labels. The plan is a native select with the null option
 /// as an ordinary option; the billing cycle asks for `daisyui:radio` and the
 /// region for `daisyui:select` in the UI schema. The reference is read-only
 /// output, the tier a constant. Presence affordances appear where the core

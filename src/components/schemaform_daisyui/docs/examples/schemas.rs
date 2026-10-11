@@ -32,13 +32,14 @@ pub fn form_data(form_data: &str) -> serde_json::Value {
 
 /// Every control kind the renderer presents: strings, an integer and a number; a nullable string
 /// with presence operations; a write-only string; a read-only string; a non-nullable, a nullable
-/// and a write-only boolean; a nullable choice, a write-only choice, and a constant; and two more
-/// choices the UI schema renders as a radio group and as the compound select.
+/// and a write-only boolean, and two booleans the data leaves out, one of them required; a
+/// nullable choice, a write-only choice, and a constant; and two more choices the UI schema renders
+/// as a radio group and as the compound select.
 pub const CONTROLS_SCHEMA: &str = r##"{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["name", "quantity", "price", "active", "plan", "billing", "region"],
+  "required": ["name", "quantity", "price", "active", "terms", "plan", "billing", "region"],
   "properties": {
     "name": { "type": "string", "title": "Name", "description": "Shown on the badge.", "minLength": 2 },
     "quantity": { "type": "integer", "title": "Quantity", "minimum": 0 },
@@ -49,6 +50,8 @@ pub const CONTROLS_SCHEMA: &str = r##"{
     "active": { "type": "boolean", "title": "Active" },
     "newsletter": { "type": ["boolean", "null"], "title": "Newsletter", "description": "Null means undecided." },
     "mfa": { "type": "boolean", "title": "MFA", "writeOnly": true },
+    "terms": { "type": "boolean", "title": "Accept terms" },
+    "marketing": { "type": "boolean", "title": "Marketing email" },
     "plan": { "type": ["string", "null"], "title": "Plan", "enum": ["starter", "team", null] },
     "recovery": { "title": "Recovery", "enum": ["email", "sms"], "writeOnly": true },
     "tier": { "title": "Tier", "const": "standard" },

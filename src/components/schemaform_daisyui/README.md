@@ -92,7 +92,7 @@ worth drawing:
 | --- | --- |
 | string, number, integer | `Input` (`type="password"` when write-only) |
 | string with `format` | `email` / `idn-email` → `type="email"`; `uri`, `uri-reference`, `iri`, `iri-reference` → `url`; `date` → `date`; `date-time` → `datetime-local`; `time` → `time`; unknown or absent formats → `text`. Write-only takes precedence; numbers and integers stay `text`. |
-| boolean, not nullable | native `input type="checkbox"` with daisyUI's `checkbox` class, driven by `use_boolean_edit` |
+| boolean, not nullable | native `input type="checkbox"` with daisyUI's `checkbox` class, driven by `use_boolean_edit`; indeterminate, with a visually hidden "Not set" description, while the data holds no boolean (missing or null) |
 | boolean, nullable | registry `Checkbox`; JSON null is the indeterminate state |
 | boolean, write-only | `NativeSelect<bool>` over the localized false/true labels, resting on the replacement placeholder |
 | choice | `NativeSelect<ChoiceIdentity>` by default |
@@ -105,7 +105,12 @@ worth drawing:
 The null option of a nullable choice is an ordinary option in all three choice
 widgets; selecting it sets null. A non-nullable boolean keeps the built-in's
 native semantics on purpose: a native checkbox is what browsers, assistive
-technology, and the existing tests expect. The nullable checkbox reaches null
+technology, and the existing tests expect. While the data holds no boolean,
+missing or null, it is indeterminate rather than unchecked, since unchecked
+reads as `false` and nothing would be sent: the first click sets `true`, the
+next `false`. The `indeterminate` property has no HTML attribute, so the
+checkbox sets it through `document::eval` after every change. The nullable
+checkbox reaches null
 through the set-null presence affordance, since a click from either boolean
 state yields a boolean; the `CheckboxState` mapping lives in this component
 only, never in the published crates.
@@ -349,9 +354,11 @@ Where this component departs from the registry's conventions, and why:
   followed by its position (`Tags item 2`), a fixed word order.
   The multiple-choice legend's `(required)` indicator is also fixed English;
   the adapter currently supplies no localized required-field indicator.
+  A checkbox holding no boolean is described as "Not set", also fixed
+  English, for the same reason.
 - **Its own ids.** Beside the ids the adapter reserves, the component derives
   `{element_id}-label`, `{element_id}-errors`, `{element_id}-incompatible`,
-  `{element_id}-legend`, and `{row_id}-title` from the adapter's ids, and a
+  `{element_id}-unset`, `{element_id}-legend`, and `{row_id}-title` from the adapter's ids, and a
   radio item's id from the control's element id and the option's identity.
   Multiple-choice option ids come directly from the edit hook.
 - **Error colour contrast is the theme's.** Findings, the error region, and the
