@@ -1,9 +1,0 @@
-# Generated Tailwind CSS (`npm run build`).
-#
-# The rule lives here rather than in the root .gitignore on purpose: Dagger's
-# workspace reads (`Workspace.directory(gitignore: true)`, which the Dioxus
-# module builds from) apply the root .gitignore, so a rule there drops the
-# stylesheet `dagger.dang` generates and overlays into the workspace, and the
-# Preview fails to compile on Dagger Cloud with "Asset at assets/style.css
-# doesn't exist". Git applies this file all the same.
-style.css

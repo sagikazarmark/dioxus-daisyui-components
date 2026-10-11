@@ -24,9 +24,6 @@ type DioxusDaisyuiComponents {
       .directory("assets")
       .filter(include: ["style.css"])
 
-    # The overlay only survives the Dioxus module's gitignore-filtered read
-    # because the stylesheet's ignore rule lives in assets/.gitignore rather
-    # than the root .gitignore; see that file.
     ws = ws.withDirectory("assets", assets)
 
     self.dioxus = Dagger.dioxus(
