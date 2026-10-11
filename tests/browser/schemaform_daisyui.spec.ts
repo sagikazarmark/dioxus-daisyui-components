@@ -123,12 +123,17 @@ test.describe("controls", () => {
     const scope = example(page, "formats");
     for (const [name, type] of Object.entries({
       email: "email", "idn-email": "email", uri: "url", "uri-reference": "url",
-      iri: "url", "iri-reference": "url", date: "date", "date-time": "datetime-local",
-      time: "time", unknown: "text", plain: "text", number: "text", secret: "password",
+      iri: "url", "iri-reference": "url", date: "date", "date-time": "text",
+      time: "text", unknown: "text", plain: "text", number: "text", secret: "password",
     })) {
       const input = scope.locator(`input[name="/${name}"]`);
       await expect(input).toHaveClass(/\binput\b/);
       await expect(input).toHaveAttribute("type", type);
+    }
+    // No browser picker writes an RFC 3339 zone offset, so these are text with
+    // the adapter's placeholder showing the shape.
+    for (const name of ["date-time", "time"]) {
+      await expect(scope.locator(`input[name="/${name}"]`)).toHaveAttribute("placeholder", /\S/);
     }
   });
 

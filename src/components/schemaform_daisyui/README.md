@@ -130,7 +130,7 @@ worth drawing:
 | Control kind | Widget |
 | --- | --- |
 | string, number, integer | `Input` (`type="password"` when write-only) |
-| string with `format` | `email` / `idn-email` → `type="email"`; `uri`, `uri-reference`, `iri`, `iri-reference` → `url`; `date` → `date`; `date-time` → `datetime-local`; `time` → `time`; unknown or absent formats → `text`. Write-only takes precedence; numbers and integers stay `text`. |
+| string with `format` | the adapter's resolved `ControlFacets::input_type`: `email` / `idn-email` → `type="email"`; `uri`, `uri-reference`, `iri`, `iri-reference` → `url`; `date` → `date`; `date-time` and `time` → `text` with the adapter's RFC 3339 placeholder, since no browser picker writes a zone offset; unknown or absent formats → `text`. Write-only takes precedence; numbers and integers stay `text`; a host's `RenderConfigurationBuilder::format_input_type` overrides apply. |
 | boolean, nullable or not | native `input type="checkbox"` with daisyUI's `checkbox` class, driven by `use_boolean_edit`; indeterminate, with a visually hidden "Not set" description, while the data holds no boolean (missing or null) |
 | boolean, write-only | `NativeSelect<bool>` over the localized false/true labels, resting on the replacement placeholder |
 | choice | `NativeSelect<ChoiceIdentity>`; a UI schema widget symbol selects an add-on's widget instead |

@@ -12,7 +12,7 @@ dioxus_registry_preview::component! {
             description: "Every control kind: inputs, native checkboxes (indeterminate while they hold no boolean), the replacement select of a write-only boolean, a native select, read-only output and a constant.",
         },
         formats {
-            description: "The adapter's format-to-widget mapping: email, URL, date and time inputs, with text fallbacks and password precedence for write-only values.",
+            description: "The adapter's format-to-widget mapping: email, URL and date inputs, RFC 3339 text for date-time and time, text fallbacks and password precedence for write-only values.",
         },
         multiple_choice {
             description: "A checkbox per option, with array presence actions and an incompatible-value readout. Reset shows the checkboxes following the form's node; submit shows the host's received data.",
