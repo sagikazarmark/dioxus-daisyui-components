@@ -179,6 +179,12 @@ on the transparent inner element, a fringe box inside the wrapper's border.
 exists only on the bare arm, and the calendar-picker indicator sits at `inset-inline-end: .75em`
 bare but `-.15em` adorned for date and time types. Both are daisyUI's own per-arm rules.
 
+**`alt`, `autofocus`, `height`, `spellcheck`, `tabindex` and `width` name the input's attributes.**
+dioxus-html defines each both as a global and as an `input` attribute, so naming one on a
+Component that extends both sets would be ambiguous (E0034). `Input` and `InputField` carry a
+forwarding method for each that resolves it to the `input` attribute, as `input { .. }` does, so
+`InputField { autofocus: true, spellcheck: false, .. }` reaches the native input (ADR-0034).
+
 ## daisyUI classes deliberately not used
 
 - `input-md` - the default size emits nothing, and daisyUI renders an unmodified input at that

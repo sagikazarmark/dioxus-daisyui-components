@@ -99,6 +99,11 @@ the field convention takes the breaking migration rather than retaining two call
 native event. Callers receive the resulting `String` directly; `on_commit` separately reports the
 native `change` event.
 
+**`autofocus` and `spellcheck` name the textarea's attributes.** dioxus-html defines both as globals and
+as `textarea` attributes, so naming one on a Component that extends both sets would be
+ambiguous (E0034). `Textarea` and `TextareaField` carry a forwarding method for each that
+resolves it to the `textarea` attribute (ADR-0034).
+
 ## daisyUI classes deliberately not used
 
 - `textarea-md` - the default size emits nothing, and daisyUI renders an unmodified textarea at

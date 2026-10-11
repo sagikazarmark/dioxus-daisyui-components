@@ -36,6 +36,11 @@ every axis value and the browser specs assert computed styles over the same rend
 None from daisyUI: this component reproduces daisyUI's own `button.btn` markup exactly. None
 from a primitive either, because it wraps none.
 
+**`autofocus` names the button's attribute.** dioxus-html defines it as a global and as a `button`
+attribute, so naming it on a Component that extends both sets would be ambiguous (E0034).
+`Button` carries a forwarding method that resolves it to the `button` attribute, as do the
+registry's other parts that extend `button` (ADR-0034).
+
 ## daisyUI classes deliberately not used
 
 - `btn-outline`, `btn-dash`, `btn-soft`, `btn-ghost`, `btn-link`: daisyUI's third,

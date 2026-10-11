@@ -327,6 +327,21 @@ pub fn MenubarTrigger(
     }
 }
 
+// `GlobalAttributes` and `button` both define `autofocus`, so naming it on `MenubarTrigger` would
+// be ambiguous (E0034, DioxusLabs/dioxus#5271). Inherent methods win method resolution and forward
+// to the element's own attribute, as `button { .. }` resolves it. Unused, they would warn in an
+// app that installs this Component. Remove once upstream resolves the conflict (ADR-0034).
+#[allow(dead_code)]
+impl<F> MenubarTriggerPropsBuilder<F>
+where
+    Self: dioxus_elements::extensions::ButtonExtension,
+{
+    /// The `button` element's `autofocus` attribute.
+    pub fn autofocus(self, value: impl dioxus::dioxus_core::IntoAttributeValue) -> Self {
+        dioxus_elements::extensions::ButtonExtension::autofocus(self, value)
+    }
+}
+
 /// The popup one menu opens, holding the `menu` list.
 ///
 /// This is the split ADR-0005 exists for, in the third place it applies. daisyUI
