@@ -6,22 +6,22 @@
     {
       "name": "field",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
     },
     {
       "name": "input",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
     },
     {
       "name": "native_select",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
     },
     {
       "name": "button",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
     }
   ],
   "cargoDependencies": [

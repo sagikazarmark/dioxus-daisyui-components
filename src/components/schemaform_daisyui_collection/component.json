@@ -6,12 +6,12 @@
     {
       "name": "schemaform_daisyui",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "ba2ec57ed8a4725ca404f7317bba5261a8651a23"
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
     },
     {
       "name": "button",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
     }
   ],
   "cargoDependencies": [
