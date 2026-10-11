@@ -6,7 +6,7 @@
     {
       "name": "field",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
+      "rev": "992e995e5483e334dc7de151bad9d00d5560acff"
     }
   ],
   "cargoDependencies": [
