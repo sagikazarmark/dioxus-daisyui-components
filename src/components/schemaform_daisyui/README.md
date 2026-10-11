@@ -188,11 +188,10 @@ affordance beside them discards.
 In advisory mode, the summary and local findings use `alert-warning` and
 `text-warning`, including findings that would block gated submission. Field findings
 are descriptions instead of error-region entries. The adapter's validation facts
-(`aria-invalid` and `data-blocking`) remain intact. `DaisyuiShell` provides a reactive
-`AdvisoryPresentation` context from the submit affordance, so mode changes update
-both presenters and Field supplements. A host composing these presenters with its
-own shell can provide `AdvisoryPresentation(ReadSignal<bool>)` around its body and
-summary; without it the presenters use gated presentation.
+(`aria-invalid` and `data-blocking`) remain intact. The mode comes from the adapter:
+the presenter reads `FindingCollectionContext::submission_mode` and the controls
+`NodePresentation::submission_mode`, both reactive, so switching the `SchemaForm`
+prop updates the presenters and the Field supplements whatever shell the host uses.
 
 Every button carries its affordance id; every finding element carries its stable id, so ids the
 adapter hands out in `aria-describedby` resolve. Identity, keying, focus after a

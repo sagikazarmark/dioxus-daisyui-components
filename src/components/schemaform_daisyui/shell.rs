@@ -52,16 +52,6 @@ impl ShellRenderer for DaisyuiShell {
     }
 }
 
-/// The adapter exposes mode on the shell affordance, but not on finding contexts.
-/// A reactive scope lets both presenter slots and Field supplements follow a mode
-/// change on the mounted form. A host using its own shell can provide the same scope.
-#[derive(Clone, Copy)]
-pub struct AdvisoryPresentation(pub ReadSignal<bool>);
-
-pub(super) fn advisory_presentation() -> bool {
-    try_consume_context::<AdvisoryPresentation>().is_some_and(|mode| (mode.0)())
-}
-
 #[component]
 fn ShellContents(
     submit: Affordance,
@@ -71,8 +61,6 @@ fn ShellContents(
     body: Element,
 ) -> Element {
     let advisory = submit.kind == AffordanceKind::AdvisorySubmit;
-    let mode = use_memo(use_reactive!(|(advisory)| advisory));
-    use_context_provider(|| AdvisoryPresentation(mode.into()));
     let (role, color) = if advisory {
         (ButtonRole::AdvisorySubmit, ButtonColor::Warning)
     } else {

@@ -29,7 +29,7 @@ pub use density::Density;
 pub use findings::DaisyuiFindings;
 pub use mapping::*;
 pub use options::Options;
-pub use shell::{AdvisoryPresentation, DaisyuiShell};
+pub use shell::DaisyuiShell;
 
 // The parts the add-on Components build on. Every installed Component lives in the host's crate,
 // so these reach the add-ons without joining this package's public surface.

@@ -7,15 +7,21 @@ use dioxus::prelude::*;
 use dioxus_field::{Binding, FieldContext, use_error_id_registration, use_field_meta};
 use schemaform_dioxus::{
     ControlFacets, ControlKind, ControlRenderContext, NodePresentation, NodeProjection,
+    SubmissionMode,
     render::{Affordance, FindingDescriptor, Help},
 };
 
 use super::Appearance;
 use super::buttons::{self, ButtonClasses, ButtonRole};
 use super::mapping::{field_meta_values, is_field_error};
-use super::shell::advisory_presentation;
 use crate::components::button::{Button, ButtonSize};
 use crate::components::field::{Field, FieldDescription, FieldLabel, FieldRow};
+
+/// Whether the form presents findings as advice: in advisory submission mode nothing is refused,
+/// so no finding is an error. A reactive read, so the control follows a mode switch.
+pub(super) fn is_advisory(presentation: &NodePresentation) -> bool {
+    presentation.submission_mode() == SubmissionMode::Advisory
+}
 
 /// The kind's name for the `data-schemaform-control` marker the built-in also emits.
 pub(crate) fn kind_name(kind: ControlKind) -> &'static str {
@@ -143,8 +149,11 @@ pub(crate) fn editable_field<T: 'static>(
 /// A description part per finding, each carrying the finding's stable id so every id the
 /// adapter hands out resolves to an element, plus `data-finding` (the code) and `data-blocking`
 /// as the finding presenter emits them.
-fn finding_descriptions(findings: Vec<FindingDescriptor>, appearance: Appearance) -> Element {
-    let advisory = advisory_presentation();
+fn finding_descriptions(
+    findings: Vec<FindingDescriptor>,
+    advisory: bool,
+    appearance: Appearance,
+) -> Element {
     rsx! {
         for finding in findings {
             FieldDescription {
@@ -166,7 +175,7 @@ fn finding_descriptions(findings: Vec<FindingDescriptor>, appearance: Appearance
 /// through `aria-errormessage`; every other finding is a description the control references
 /// through `aria-describedby`. Both kinds of element carry the finding's stable id.
 pub(super) fn supplements(presentation: &NodePresentation, appearance: Appearance) -> Element {
-    let advisory = advisory_presentation();
+    let advisory = is_advisory(presentation);
     let help = presentation.help.clone();
     let (errors, descriptions): (Vec<_>, Vec<_>) = presentation
         .findings
@@ -176,7 +185,7 @@ pub(super) fn supplements(presentation: &NodePresentation, appearance: Appearanc
     let errors_id = format!("{}-errors", presentation.element_id);
     rsx! {
         {help_description(help)}
-        {finding_descriptions(descriptions, appearance)}
+        {finding_descriptions(descriptions, advisory, appearance)}
         FindingErrors { id: errors_id, findings: errors, appearance }
         if !super::density::compact() { {presence_affordances(&presentation.presence, appearance, buttons::current())} }
     }
@@ -357,7 +366,7 @@ pub(super) fn read_only_field(
                 "{text}"
             }
             {help_description(help)}
-            {finding_descriptions(findings, appearance)}
+            {finding_descriptions(findings, is_advisory(presentation), appearance)}
             if !compact { {presence_affordances(presence, appearance, buttons::current())} }
         }
     }

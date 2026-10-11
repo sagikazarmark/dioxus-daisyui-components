@@ -8,9 +8,9 @@ use super::Appearance;
 use super::buttons;
 use super::mapping::field_meta_values;
 use super::parts::{
-    incompatible_description, label_class, presence_affordances, read_only_field, supplements,
+    incompatible_description, is_advisory, label_class, presence_affordances, read_only_field,
+    supplements,
 };
-use super::shell::advisory_presentation;
 use crate::components::field::Field;
 
 #[component]
@@ -45,7 +45,7 @@ pub(super) fn MultipleChoiceControl(
     let mut described_by = presentation.described_by().unwrap_or_default();
     // Native options share the Field's error region, whose id `supplements`
     // registers for Field-aware widgets. Raw inputs must project it explicitly.
-    let errors_id = (presentation.invalid && !advisory_presentation())
+    let errors_id = (presentation.invalid && !is_advisory(presentation))
         .then(|| format!("{}-errors", presentation.element_id));
     if let Some(id) = &errors_id {
         if !described_by.is_empty() {
