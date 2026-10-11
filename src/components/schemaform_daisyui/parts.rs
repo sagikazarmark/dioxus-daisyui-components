@@ -1,10 +1,10 @@
 //! Presentation parts shared by every daisyUI control kind: the editable frame around a widget,
 //! the read-only field, the descriptions and errors under a widget, and the presence affordances.
 
-use std::{cell::RefCell, rc::Rc};
+use std::rc::Rc;
 
 use dioxus::prelude::*;
-use dioxus_field::{Binding, FieldContext, FieldMeta, FieldMetaIdRegistration, use_field_meta};
+use dioxus_field::{Binding, FieldContext, use_error_id_registration, use_field_meta};
 use schemaform_dioxus::{
     ControlFacets, ControlKind, ControlRenderContext, NodePresentation, NodeProjection,
     render::{Affordance, FindingDescriptor, Help},
@@ -196,8 +196,9 @@ fn help_description(help: Option<Help>) -> Element {
 /// finding carrying the finding's stable id.
 ///
 /// The registry's `FieldError` reads its text from the field metadata and renders it without
-/// ids, so this part registers the same error id with the surrounding `Field`'s metadata and
-/// renders the findings itself. It is always mounted so the live region exists before the first
+/// ids, so this part registers the same error id with the surrounding `Field`'s metadata through
+/// `dioxus-field`'s `use_error_id_registration`, as `FieldError` does, and renders the findings
+/// itself. It is always mounted so the live region exists before the first
 /// error arrives; it is empty while nothing blocks.
 #[component]
 fn FindingErrors(id: String, findings: Vec<FindingDescriptor>, appearance: Appearance) -> Element {
@@ -221,31 +222,6 @@ fn FindingErrors(id: String, findings: Vec<FindingDescriptor>, appearance: Appea
             }
         }
     }
-}
-
-/// Keeps `id` registered as the error element of `meta` for as long as this component lives,
-/// re-registering when either changes, as `dioxus-field`'s own parts do.
-fn use_error_id_registration(meta: FieldMeta, id: Rc<str>) {
-    let active = use_hook(|| Rc::new(RefCell::new(None::<ActiveErrorRegistration>)));
-    let should_replace = active
-        .borrow()
-        .as_ref()
-        .is_none_or(|active| active.meta != meta || active.id != id);
-    if should_replace {
-        let mut writable = meta;
-        let registration = writable.register_error_id(Rc::clone(&id));
-        active.borrow_mut().replace(ActiveErrorRegistration {
-            meta,
-            id,
-            _registration: registration,
-        });
-    }
-}
-
-struct ActiveErrorRegistration {
-    meta: FieldMeta,
-    id: Rc<str>,
-    _registration: FieldMetaIdRegistration,
 }
 
 /// The current data shown beside a widget that cannot show it itself, as the built-in shows it
