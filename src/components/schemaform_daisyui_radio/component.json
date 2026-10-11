@@ -6,12 +6,12 @@
     {
       "name": "schemaform_daisyui",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "992e995e5483e334dc7de151bad9d00d5560acff"
+      "rev": "000474c101fe26583e443b57d7014516360257a4"
     },
     {
       "name": "radio_group",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "992e995e5483e334dc7de151bad9d00d5560acff"
+      "rev": "000474c101fe26583e443b57d7014516360257a4"
     }
   ],
   "cargoDependencies": [
