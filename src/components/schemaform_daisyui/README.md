@@ -136,7 +136,7 @@ worth drawing:
 | choice | `NativeSelect<ChoiceIdentity>`; a UI schema widget symbol selects an add-on's widget instead |
 | multiple choice (`uniqueItems` array of finite choices) | a `Field` containing a `fieldset` and one native `checkbox` per option, driven by `use_multiple_choice_edit` |
 | constant | read-only `output` from presentation and facets |
-| any read-only node | read-only `output` inside the same `Field` |
+| any read-only node, including every node of a form made read-only with `FormHandle::set_read_only` | read-only `output` inside the same `Field`, in the tab order (`tabindex="0"`) so the value stays reachable; a constant that is not read-only keeps `tabindex="-1"` |
 
 The null option of a nullable choice is an ordinary option, as in the add-ons'
 widgets; selecting it sets null. A boolean keeps the built-in's native
@@ -181,6 +181,7 @@ affordance beside them discards.
 | Node | Presentation |
 | --- | --- |
 | form shell, gated mode | a `grid gap-4` of the adapter's summary region, the body, and the submit affordance as `btn btn-primary` of `type="submit"` |
+| form shell, read-only form | the summary and the body without the submit button, as `ShellContext::read_only` asks; presence and collection affordances are not offered |
 | form shell, advisory mode | `btn btn-warning` with the adapter's localized affordance label; delivers data and findings through `on_advisory_submit`, without blocking or moving focus |
 | finding summary | nothing while empty; otherwise `alert alert-soft`, `alert-error` while any finding blocks submission and `alert-warning` otherwise, with one `link` button per finding that reveals and focuses its target |
 | node-local findings | one `p` per finding in `text-error` or `text-warning` |

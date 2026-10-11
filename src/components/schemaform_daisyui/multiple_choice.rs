@@ -33,7 +33,7 @@ pub(super) fn MultipleChoiceControl(
             .map(|option| option.label.as_str())
             .collect::<Vec<_>>()
             .join(", ");
-        return read_only_field(presentation, control, appearance, labels, &[]);
+        return read_only_field(presentation, control, appearance, labels, &[], true);
     }
     let field_context =
         FieldContext::empty().with_meta_values(field_meta_values(presentation, control));

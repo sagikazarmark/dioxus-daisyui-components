@@ -81,6 +81,7 @@ pub(crate) fn editable(
             appearance,
             projection.display_text(),
             &[],
+            true,
         ));
     }
     Ok(projection)
@@ -330,12 +331,19 @@ pub(crate) fn icon(path: &'static str, class: &'static str) -> Element {
 /// carries the adapter's own `aria-describedby`. A read-only node passes no affordances, as the
 /// built-in offers none for it; a constant passes its own, which materialize or remove the fixed
 /// value.
+///
+/// A read-only node's output stays in the tab order (`tabindex="0"`), as the built-in's does and
+/// as a native `readonly` input would, so a keyboard or screen-reader user can still reach the
+/// value; that holds for a node annotated `readOnly` and for every node of a form made read-only
+/// with `set_read_only`. A constant that is not read-only keeps `tabindex="-1"`: focusable for a
+/// finding's focus-to-target, but not a stop of its own.
 pub(super) fn read_only_field(
     presentation: &NodePresentation,
     control: &ControlFacets,
     appearance: Appearance,
     text: String,
     presence: &[Affordance],
+    read_only: bool,
 ) -> Element {
     let field_context =
         FieldContext::empty().with_meta_values(field_meta_values(presentation, control));
@@ -358,7 +366,7 @@ pub(super) fn read_only_field(
                 id: element_id,
                 name: control.name.clone(),
                 class: appearance.utilities("min-w-0 py-2"),
-                tabindex: "-1",
+                tabindex: if read_only { "0" } else { "-1" },
                 "data-read-only": "",
                 "data-schemaform-control": kind,
                 "aria-invalid": presentation.invalid,

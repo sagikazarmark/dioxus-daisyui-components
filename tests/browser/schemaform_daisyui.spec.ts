@@ -354,3 +354,28 @@ test.describe("button classes", () => {
     await expect(submit).not.toHaveClass(/\bbtn-primary\b/);
   });
 });
+
+test.describe("read-only", () => {
+  test("read-only values stay in the tab order and a constant does not", async ({ page }) => {
+    const scope = example(page, "controls");
+    await expect(scope.locator('output[name="/reference"]')).toHaveAttribute("tabindex", "0");
+    await expect(scope.locator('output[name="/tier"]')).toHaveAttribute("tabindex", "-1");
+  });
+
+  test("a read-only form shows output, offers no presence or submit, and comes back", async ({ page }) => {
+    const scope = example(page, "read_only");
+    const name = scope.locator('output[name="/name"]');
+    await expect(name).toHaveText("Ada");
+    await expect(name).toHaveAttribute("tabindex", "0");
+    await expect(scope.locator('[data-schemaform-button="presence"]')).toHaveCount(0);
+    await expect(scope.locator('[data-schemaform-button="submit"]')).toHaveCount(0);
+
+    // Keyboard users still reach the values.
+    await name.focus();
+    await expect(name).toBeFocused();
+
+    await scope.getByRole("checkbox", { name: "Read-only" }).click();
+    await expect(scope.locator('input[name="/name"]')).toHaveValue("Ada");
+    await expect(scope.locator('[data-schemaform-button="submit"]')).toHaveCount(1);
+  });
+});

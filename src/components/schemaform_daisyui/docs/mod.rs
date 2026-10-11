@@ -32,5 +32,8 @@ dioxus_registry_preview::component! {
         buttons {
             description: "A host's own classes on the buttons the renderers draw: presence operations and submit. A role given a class drops the package's colour, size and variant.",
         },
+        read_only {
+            description: "A whole form made read-only through its handle: every value is output that stays in the tab order, presence operations disappear, and the shell omits its submit button.",
+        },
     },
 }

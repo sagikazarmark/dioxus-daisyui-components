@@ -16,6 +16,9 @@ use crate::components::button::{Button, ButtonColor};
 /// pressing Enter in a text control takes the same path. The summary arrives with its
 /// adapter-owned region wrapper; this component's finding presenter ([`super::findings`]) is what
 /// frames the findings inside it as an alert, since the shell cannot see whether there are any.
+/// A read-only form (`FormHandle::set_read_only`) submits nothing, so the shell omits the button
+/// while `ShellContext::read_only` holds, as the built-in shell does.
+///
 /// The [`Appearance`] axis switches the grid and the button's width utility off.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct DaisyuiShell {
@@ -43,6 +46,7 @@ impl ShellRenderer for DaisyuiShell {
         rsx! {
             ShellContents {
                 submit,
+                read_only: context.read_only,
                 appearance,
                 buttons,
                 summary: context.summary,
@@ -55,6 +59,7 @@ impl ShellRenderer for DaisyuiShell {
 #[component]
 fn ShellContents(
     submit: Affordance,
+    read_only: bool,
     appearance: Appearance,
     buttons: ButtonClasses,
     summary: Element,
@@ -76,14 +81,16 @@ fn ShellContents(
         div { class: appearance.utilities("grid gap-4"), "data-schemaform-daisyui": "shell",
             {summary}
             {body}
-            Button {
-                id: submit.id.clone(),
-                r#type: "submit",
-                color,
-                class: "{host} {layout}",
-                "data-schemaform-button": "submit",
-                "aria-label": submit.accessible_name.clone(),
-                "{submit.label}"
+            if !read_only {
+                Button {
+                    id: submit.id.clone(),
+                    r#type: "submit",
+                    color,
+                    class: "{host} {layout}",
+                    "data-schemaform-button": "submit",
+                    "aria-label": submit.accessible_name.clone(),
+                    "{submit.label}"
+                }
             }
         }
     }
