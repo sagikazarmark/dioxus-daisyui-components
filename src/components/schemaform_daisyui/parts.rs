@@ -18,7 +18,7 @@ use crate::components::button::{Button, ButtonSize};
 use crate::components::field::{Field, FieldDescription, FieldLabel, FieldRow};
 
 /// The kind's name for the `data-schemaform-control` marker the built-in also emits.
-pub(super) fn kind_name(kind: ControlKind) -> &'static str {
+pub(crate) fn kind_name(kind: ControlKind) -> &'static str {
     match kind {
         ControlKind::String => "string",
         ControlKind::Number => "number",
@@ -61,7 +61,7 @@ pub(super) fn widget_label(presentation: &NodePresentation, control: &ControlFac
 /// Call it after the component's hooks, so the hook order is the same on every render. The
 /// read-only rule lives here once: a read-only node is noninteractive `output` of its display
 /// text with no presence affordances, as the built-in offers none for it.
-pub(super) fn editable(
+pub(crate) fn editable(
     context: &ControlRenderContext,
     appearance: Appearance,
 ) -> Result<NodeProjection, Element> {
@@ -82,7 +82,7 @@ pub(super) fn editable(
 
 /// Where an editable widget sits relative to its label.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum WidgetLayout {
+pub(crate) enum WidgetLayout {
     /// The label above the widget, as for an input or a select.
     Stacked,
     /// A checkable widget beside its label in a `FieldRow`.
@@ -97,7 +97,7 @@ pub(super) enum WidgetLayout {
 /// node's label. The readout is [`NodePresentation::incompatible_value`], so a widget that cannot
 /// show the data it would replace (an input holding a number where the schema wants a string, a
 /// checkbox holding a string) still tells the user what the replace affordance discards.
-pub(super) fn editable_field<T: 'static>(
+pub(crate) fn editable_field<T: 'static>(
     context: &ControlRenderContext,
     appearance: Appearance,
     binding: Binding<T>,
@@ -276,7 +276,7 @@ pub(super) fn incompatible_description(
 ///
 /// Presence affordances carry no accessible name today; should one arrive, it names the button
 /// as the adapter intends.
-pub(super) fn presence_affordances(
+pub(crate) fn presence_affordances(
     presence: &[Affordance],
     appearance: Appearance,
     buttons: ButtonClasses,
@@ -321,7 +321,7 @@ fn presence_button(affordance: Affordance, buttons: ButtonClasses) -> Element {
 /// A decorative Heroicons outline icon: `path` is the icon's path data, `class` sizes it. Hidden
 /// from assistive technology, so the element it decorates must carry its own name. The `width`
 /// and `height` attributes give it an intrinsic `1em` size for when no class sizes it.
-pub(super) fn icon(path: &'static str, class: &'static str) -> Element {
+pub(crate) fn icon(path: &'static str, class: &'static str) -> Element {
     rsx! {
         svg {
             class,

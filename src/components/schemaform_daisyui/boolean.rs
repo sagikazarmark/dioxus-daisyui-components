@@ -12,27 +12,23 @@ use schemaform::form::ScalarValueState;
 use schemaform_dioxus::{ControlRenderContext, use_boolean_edit};
 
 use super::Appearance;
-use super::mapping::{use_boolean_binding, use_checkbox_binding};
+use super::mapping::use_boolean_binding;
 use super::parts::{WidgetLayout, editable, editable_field, kind_name};
-use crate::components::checkbox::Checkbox;
 use crate::components::field::FieldDescription;
 use crate::components::native_select::{NativeSelect, NativeSelectOption};
 
 /// One daisyUI boolean control: the renderer's hook-safe child component.
 ///
 /// A write-only boolean is a replacement select over the localized false and true labels, so the
-/// value it holds is never shown; the tri-state binding never reads a value for it either. A
-/// nullable boolean is the registry's `Checkbox` bound to the tri-state view of the edit, so
-/// JSON null shows as the indeterminate state and the set-null affordance is how it is reached;
-/// a click from either boolean state makes it a boolean again, as the widget defines toggling.
-/// A non-nullable boolean is a native checkbox carrying daisyUI's `checkbox` class, which keeps
-/// the built-in's native semantics; its two-state view of the edit is the tri-state binding with
-/// null read as unchecked, which such a node never holds.
+/// value it holds is never shown; the tri-state binding never reads a value for it either. Every
+/// other boolean, nullable or not, is a native checkbox carrying daisyUI's `checkbox` class, which
+/// keeps the built-in's native semantics. While the data holds no boolean, missing or null, it is
+/// indeterminate; a nullable one reaches null through the set-null affordance, and a click from
+/// any state makes it a boolean, as the native control defines toggling.
 #[component]
 pub(super) fn BooleanControl(context: ControlRenderContext, appearance: Appearance) -> Element {
     let edit = use_boolean_edit(&context);
     let binding = use_boolean_binding(edit);
-    let checkbox = use_checkbox_binding(edit);
     let projection = match editable(&context, appearance) {
         Ok(projection) => projection,
         Err(rendered) => return rendered,
@@ -73,18 +69,6 @@ pub(super) fn BooleanControl(context: ControlRenderContext, appearance: Appearan
         );
     }
 
-    if control.nullable {
-        return editable_field(
-            &context,
-            appearance,
-            checkbox,
-            WidgetLayout::Row,
-            rsx! {
-                Checkbox { "data-schemaform-control": kind }
-            },
-        );
-    }
-
     editable_field(
         &context,
         appearance,
@@ -104,7 +88,12 @@ fn unset_description(context: &ControlRenderContext, unset: bool) -> Element {
     let id = format!("{}-unset", context.presentation().element_id);
     rsx! {
         if unset {
-            FieldDescription { id: Rc::from(id.as_str()), class: "sr-only", "data-schemaform-unset": "", "{UNSET}" }
+            FieldDescription {
+                id: Rc::from(id.as_str()),
+                class: "sr-only",
+                "data-schemaform-unset": "",
+                "{UNSET}"
+            }
         }
     }
 }

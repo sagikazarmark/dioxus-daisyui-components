@@ -19,10 +19,11 @@
   themes: all;
 }
 
-/* This page uses semantic finding colours as small text. The stock light
-   theme's warning and error colours lack text contrast; this is the Preview
-   host's override, never CSS shipped with the installed Component. */
-:root:has([data-part="themes"] input[value="light"]:checked) [data-page="schemaform_daisyui"] {
+/* These pages, schemaform_daisyui and its add-ons, use semantic finding colours
+   as small text. The stock light theme's warning and error colours lack text
+   contrast; this is the Preview host's override, never CSS shipped with an
+   installed Component. */
+:root:has([data-part="themes"] input[value="light"]:checked) [data-page^="schemaform_daisyui"] {
   --color-warning: #854d0e;
   --color-warning-content: #ffffff;
   --color-error: #b91c1c;

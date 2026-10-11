@@ -12,7 +12,6 @@ use std::{cell::RefCell, collections::HashMap, rc::Rc, sync::Arc};
 use dioxus::core::{NoOpMutations, ScopeId, VirtualDom};
 use dioxus::prelude::*;
 use dioxus_field::{Binding, ChangeOrigin, FieldMetaValues};
-use dioxus_primitives::checkbox::CheckboxState;
 use schemaform::{
     ExternalFinding, ExternalFindingBatch, FormDefinition, JsonPointer,
     definition::{DefinitionNodeView, SemanticKind},
@@ -25,9 +24,9 @@ use schemaform_dioxus::{
 use serde_json::json;
 
 use dioxus_daisyui_components::components::schemaform_daisyui::{
-    field_meta_values, use_boolean_binding, use_checkbox_binding, use_choice_binding,
-    use_radio_binding, use_text_binding,
+    field_meta_values, use_boolean_binding, use_choice_binding, use_text_binding,
 };
+use dioxus_daisyui_components::components::schemaform_daisyui_radio::use_radio_binding;
 
 /// The hook result and the bindings the mapping built from it, per control kind.
 #[derive(Clone)]
@@ -38,7 +37,6 @@ enum CapturedEdit {
     },
     Boolean {
         binding: Binding<Option<bool>>,
-        checkbox: Binding<CheckboxState>,
     },
     Choice {
         edit: ChoiceEdit,
@@ -95,8 +93,7 @@ fn CapturingTextControl(props: CapturingControlProps) -> Element {
 fn CapturingBooleanControl(props: CapturingControlProps) -> Element {
     let edit = use_boolean_edit(&props.context);
     let binding = use_boolean_binding(edit);
-    let checkbox = use_checkbox_binding(edit);
-    capture(&props, CapturedEdit::Boolean { binding, checkbox });
+    capture(&props, CapturedEdit::Boolean { binding });
     rsx! {}
 }
 
@@ -317,14 +314,7 @@ impl MountedMapping {
 
     fn boolean_binding(&self, name: &str) -> Binding<Option<bool>> {
         match self.captured(name).edit {
-            CapturedEdit::Boolean { binding, .. } => binding,
-            _ => panic!("{name} should be a boolean control"),
-        }
-    }
-
-    fn checkbox_binding(&self, name: &str) -> Binding<CheckboxState> {
-        match self.captured(name).edit {
-            CapturedEdit::Boolean { checkbox, .. } => checkbox,
+            CapturedEdit::Boolean { binding } => binding,
             _ => panic!("{name} should be a boolean control"),
         }
     }
@@ -609,34 +599,20 @@ fn an_advisory_finding_alone_leaves_the_field_valid_with_no_errors() {
 }
 
 #[test]
-fn the_checkbox_binding_reads_null_as_indeterminate_and_booleans_as_their_state() {
-    let mounted = MountedMapping::mount();
-
-    assert_eq!(
-        mounted.read(&mounted.checkbox_binding("/flag")),
-        CheckboxState::Indeterminate
-    );
-    assert_eq!(
-        mounted.read(&mounted.checkbox_binding("/enabled")),
-        CheckboxState::Checked
-    );
-}
-
-#[test]
-fn writing_a_checkbox_state_sets_the_boolean_and_indeterminate_sets_null() {
+fn writing_a_boolean_sets_it_and_writing_none_sets_null() {
     let mut mounted = MountedMapping::mount();
-    let flag = mounted.checkbox_binding("/flag");
+    let flag = mounted.boolean_binding("/flag");
 
-    mounted.drive(|| flag.write(CheckboxState::Checked, ChangeOrigin::User));
+    mounted.drive(|| flag.write(Some(true), ChangeOrigin::User));
     assert_eq!(mounted.form_data()["flag"], json!(true));
-    assert_eq!(mounted.read(&flag), CheckboxState::Checked);
+    assert_eq!(mounted.read(&flag), Some(true));
 
-    mounted.drive(|| flag.write(CheckboxState::Unchecked, ChangeOrigin::User));
+    mounted.drive(|| flag.write(Some(false), ChangeOrigin::User));
     assert_eq!(mounted.form_data()["flag"], json!(false));
 
-    mounted.drive(|| flag.write(CheckboxState::Indeterminate, ChangeOrigin::User));
+    mounted.drive(|| flag.write(None, ChangeOrigin::User));
     assert_eq!(mounted.form_data()["flag"], json!(null));
-    assert_eq!(mounted.read(&flag), CheckboxState::Indeterminate);
+    assert_eq!(mounted.read(&flag), None);
     assert!(mounted.errors.borrow().is_empty());
 }
 
@@ -667,10 +643,6 @@ fn a_write_only_boolean_is_written_but_never_read_back() {
 
     assert_eq!(mounted.form_data()["secret_flag"], json!(false));
     assert_eq!(mounted.read(&secret), None);
-    assert_eq!(
-        mounted.read(&mounted.checkbox_binding("/secret_flag")),
-        CheckboxState::Indeterminate
-    );
 }
 
 #[test]
@@ -686,8 +658,8 @@ fn boolean_focus_exit_marks_the_control_touched_and_commit_changes_nothing() {
     mounted.drive(|| binding.focus_exit());
     assert!(mounted.captured("/enabled").meta.touched);
 
-    let checkbox = mounted.checkbox_binding("/flag");
-    mounted.drive(|| checkbox.focus_exit());
+    let flag = mounted.boolean_binding("/flag");
+    mounted.drive(|| flag.focus_exit());
     assert!(mounted.captured("/flag").meta.touched);
     assert!(mounted.errors.borrow().is_empty());
 }
@@ -696,13 +668,11 @@ fn boolean_focus_exit_marks_the_control_touched_and_commit_changes_nothing() {
 fn boolean_bindings_keep_their_identity_across_renders() {
     let mut mounted = MountedMapping::mount();
     let binding = mounted.boolean_binding("/flag");
-    let checkbox = mounted.checkbox_binding("/flag");
 
-    mounted.drive(|| checkbox.write(CheckboxState::Checked, ChangeOrigin::User));
+    mounted.drive(|| binding.write(Some(true), ChangeOrigin::User));
     mounted.drive(|| binding.focus_exit());
 
     assert_eq!(mounted.boolean_binding("/flag"), binding);
-    assert_eq!(mounted.checkbox_binding("/flag"), checkbox);
     assert_eq!(mounted.read(&binding), Some(true));
 }
 

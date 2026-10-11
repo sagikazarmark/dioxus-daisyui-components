@@ -162,6 +162,8 @@ fn field_aware_components_declare_the_field_dependency_identically() {
         "src/components/native_select",
         "src/components/otp",
         "src/components/radio_group",
+        "src/components/schemaform_daisyui",
+        "src/components/schemaform_daisyui_radio",
         "src/components/switch",
         "src/components/textarea",
         "src/components/select",

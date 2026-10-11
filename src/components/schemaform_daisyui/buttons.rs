@@ -70,7 +70,7 @@ impl ButtonClasses {
         }
     }
 
-    pub(super) const fn class(self, role: ButtonRole) -> Option<&'static str> {
+    pub(crate) const fn class(self, role: ButtonRole) -> Option<&'static str> {
         match role {
             ButtonRole::Presence => self.presence,
             ButtonRole::Item => self.item,
@@ -83,7 +83,7 @@ impl ButtonClasses {
 
 /// A button the package draws itself.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum ButtonRole {
+pub(crate) enum ButtonRole {
     Presence,
     Item,
     Append,

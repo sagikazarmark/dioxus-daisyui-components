@@ -6,17 +6,16 @@ use crate::examples::schemaform_daisyui::schemas::{
     OVERVIEW_DATA, OVERVIEW_SCHEMA, definition, form_data,
 };
 
-/// The host's own classes on every button the renderers draw: ghost presence operations,
-/// soft item actions, an accent append button and a secondary submit. A role given a class drops
-/// the package's colour, size and variant for it, so the classes carry their own sizes.
+/// The host's own classes on the buttons the renderers draw: ghost presence operations and a
+/// secondary submit. A role given a class drops the package's colour, size and variant for it, so
+/// the classes carry their own sizes. The collection add-on's item and append roles are on its
+/// page.
 #[component]
 pub fn Example() -> Element {
     let definition = use_hook(|| definition(OVERVIEW_SCHEMA, None));
     let form = use_form(definition, form_data(OVERVIEW_DATA)).expect("the form should be created");
     let buttons = ButtonClasses::default()
         .presence("btn-ghost btn-xs")
-        .item("btn-soft btn-sm")
-        .append("btn-accent btn-sm")
         .submit("btn-secondary");
 
     rsx! {

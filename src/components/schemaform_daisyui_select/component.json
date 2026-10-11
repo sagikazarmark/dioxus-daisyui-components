@@ -1,0 +1,36 @@
+{
+  "name": "schemaform_daisyui_select",
+  "description": "A schemaform_daisyui add-on that registers the daisyui:select widget symbol, presenting a choice as the registry's compound select.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "componentDependencies": [
+    {
+      "name": "schemaform_daisyui",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "ba2ec57ed8a4725ca404f7317bba5261a8651a23"
+    },
+    {
+      "name": "select",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
+    }
+  ],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    },
+    {
+      "name": "schemaform",
+      "version": "0.5.0",
+      "default_features": true
+    },
+    {
+      "name": "schemaform-dioxus",
+      "version": "0.5.0",
+      "default_features": true
+    }
+  ]
+}

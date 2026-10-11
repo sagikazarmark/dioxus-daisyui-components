@@ -9,9 +9,9 @@ use super::{Appearance, ButtonClasses, Density};
 /// `configuration_with(Appearance::None)` reads as it always has.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Options {
-    pub(super) appearance: Appearance,
-    pub(super) density: Density,
-    pub(super) buttons: ButtonClasses,
+    pub(crate) appearance: Appearance,
+    pub(crate) density: Density,
+    pub(crate) buttons: ButtonClasses,
 }
 
 impl Options {

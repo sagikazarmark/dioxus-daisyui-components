@@ -135,6 +135,13 @@ than a Primitive's composition. This is distinct from a Native control, where th
 behaviour. See ADR-0023.
 _Avoid_: primitive-free component, CSS-only component
 
+**Add-on**:
+A Component that extends another Component through a seam that one declares, rather than standing
+alone, so a host installs the weight only when it reaches it. It depends on the Component it
+extends and builds on parts that one shares as crate-visible items, outside its public API. Today:
+the radio, compound select and collection add-ons of `schemaform_daisyui`. See ADR-0035.
+_Avoid_: plugin, extension, feature
+
 ### Fields
 
 **Field**:

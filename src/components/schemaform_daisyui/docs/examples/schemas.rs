@@ -33,13 +33,12 @@ pub fn form_data(form_data: &str) -> serde_json::Value {
 /// Every control kind the renderer presents: strings, an integer and a number; a nullable string
 /// with presence operations; a write-only string; a read-only string; a non-nullable, a nullable
 /// and a write-only boolean, and two booleans the data leaves out, one of them required; a
-/// nullable choice, a write-only choice, and a constant; and two more choices the UI schema renders
-/// as a radio group and as the compound select.
+/// nullable choice, a write-only choice, and a constant.
 pub const CONTROLS_SCHEMA: &str = r##"{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["name", "quantity", "price", "active", "terms", "plan", "billing", "region"],
+  "required": ["name", "quantity", "price", "active", "terms", "plan"],
   "properties": {
     "name": { "type": "string", "title": "Name", "description": "Shown on the badge.", "minLength": 2 },
     "quantity": { "type": "integer", "title": "Quantity", "minimum": 0 },
@@ -54,37 +53,7 @@ pub const CONTROLS_SCHEMA: &str = r##"{
     "marketing": { "type": "boolean", "title": "Marketing email" },
     "plan": { "type": ["string", "null"], "title": "Plan", "enum": ["starter", "team", null] },
     "recovery": { "title": "Recovery", "enum": ["email", "sms"], "writeOnly": true },
-    "tier": { "title": "Tier", "const": "standard" },
-    "billing": { "type": ["string", "null"], "title": "Billing", "enum": ["monthly", "yearly", null] },
-    "region": { "title": "Region", "enum": ["eu", "us", "apac"] }
-  }
-}"##;
-
-/// The controls in data-schema order, except that the billing cycle asks for the radio widget
-/// and the region for the compound select.
-pub const CONTROLS_UI_SCHEMA: &str = r##"{
-  "version": 1,
-  "root": {
-    "type": "stack",
-    "value": {
-      "children": [
-        {
-          "type": "auto",
-          "value": {
-            "binding": { "origin": "root", "pointer": "" },
-            "properties": { "exclude": ["billing", "region"] }
-          }
-        },
-        {
-          "type": "control",
-          "value": { "binding": { "origin": "root", "pointer": "/billing" }, "widget": "daisyui:radio" }
-        },
-        {
-          "type": "control",
-          "value": { "binding": { "origin": "root", "pointer": "/region" }, "widget": "daisyui:select" }
-        }
-      ]
-    }
+    "tier": { "title": "Tier", "const": "standard" }
   }
 }"##;
 
@@ -101,72 +70,27 @@ pub const CONTROLS_DATA: &str = r##"{
   "mfa": true,
   "plan": "team",
   "recovery": "sms",
-  "tier": "standard",
-  "billing": "yearly",
-  "region": "eu"
-}"##;
-
-/// Two array shapes: string items, optional with a seed default and a `maxItems`, so the
-/// container's presence operations have a target and append is withdrawn when the array is
-/// full; and fixed-object items, required with `minItems`, so the sole item cannot be removed.
-pub const ARRAYS_SCHEMA: &str = r##"{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "additionalProperties": false,
-  "required": ["name", "team"],
-  "properties": {
-    "name": { "type": "string", "title": "Name", "minLength": 2 },
-    "tags": {
-      "type": "array",
-      "title": "Tags",
-      "description": "Keywords for the badge.",
-      "default": ["seed"],
-      "maxItems": 3,
-      "items": { "type": "string", "title": "Tag", "default": "fresh" }
-    },
-    "team": {
-      "type": "array",
-      "title": "Team",
-      "minItems": 1,
-      "maxItems": 4,
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["name", "role"],
-        "properties": {
-          "name": { "type": "string", "title": "Member", "default": "New member" },
-          "role": { "title": "Role", "enum": ["engineering", "design", "operations"], "default": "engineering" }
-        }
-      }
-    }
-  }
-}"##;
-
-/// Baseline data for [`ARRAYS_SCHEMA`].
-pub const ARRAYS_DATA: &str = r##"{
-  "name": "Ada",
-  "tags": ["rust", "dioxus"],
-  "team": [{ "name": "Ada", "role": "engineering" }, { "name": "Lin", "role": "design" }]
+  "tier": "standard"
 }"##;
 
 /// A small form for the overview and the appearance axis: a validated string, a nullable string,
-/// a boolean, a choice, and one array.
+/// a boolean, a choice, and a multiple choice that needs one topic.
 pub const OVERVIEW_SCHEMA: &str = r##"{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["name", "plan", "tags"],
+  "required": ["name", "plan", "topics"],
   "properties": {
     "name": { "type": "string", "title": "Display name", "description": "At least three characters.", "minLength": 3 },
     "nickname": { "type": ["string", "null"], "title": "Nickname" },
     "newsletter": { "type": "boolean", "title": "Product newsletter" },
     "plan": { "title": "Plan", "enum": ["starter", "team", "enterprise"] },
-    "tags": {
+    "topics": {
       "type": "array",
-      "title": "Tags",
+      "title": "Topics",
+      "uniqueItems": true,
       "minItems": 1,
-      "maxItems": 5,
-      "items": { "type": "string", "default": "new-tag" }
+      "items": { "enum": ["rust", "dioxus", "daisyui"] }
     }
   }
 }"##;
@@ -177,7 +101,7 @@ pub const OVERVIEW_DATA: &str = r##"{
   "nickname": null,
   "newsletter": true,
   "plan": "team",
-  "tags": ["rust", "dioxus"]
+  "topics": ["rust", "dioxus"]
 }"##;
 
 /// The Example this module renders: nothing. The schemas are text a page shows as source.
