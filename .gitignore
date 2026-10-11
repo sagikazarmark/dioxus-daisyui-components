@@ -15,8 +15,7 @@ target/
 # Node
 node_modules/
 
-# Generated Tailwind CSS
-assets/style.css
+# Generated Tailwind CSS: ignored by assets/.gitignore, not here; see that file.
 
 # Playwright's output. The screenshot baselines are rendered from the base
 # commit at the start of every run rather than stored, so they are output too.
