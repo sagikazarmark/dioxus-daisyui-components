@@ -33,6 +33,8 @@ const rendering = "**/rendering.spec.ts";
 
 export default defineConfig({
   testDir: ".",
+  // Warms a wired Preview service before the first spec; see global-setup.ts.
+  globalSetup: "./global-setup.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
