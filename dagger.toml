@@ -2,6 +2,7 @@ ignore = [".devenv", "target"]
 
 [modules.preview]
 source = "."
+entrypoint = true
 
 [modules.preview.settings]
 rustVersion = "1.98-trixie"
@@ -20,7 +21,7 @@ source = "github.com/dagger/playwright"
 
 [modules.playwright.settings]
 sourcePath = "/tests/browser"
-service = "preview:service"
+service = "dag://service"
 serviceHostname = "preview"
 
 [modules.rust]
@@ -32,7 +33,7 @@ settings.version = "1.98-trixie"
 source = "github.com/sagikazarmark/daggerverse-beta/worker"
 
 [modules.worker.settings]
-bundleAsContainer = "preview:worker-bundle-as-container"
+bundle = "dag://worker-bundle"
 config = "wrangler.toml"
 
 [modules.dagger-gha]
