@@ -44,7 +44,7 @@ type DioxusDaisyuiComponents {
   """
   Build the preview application.
   """
-  build: Directory! @check {
+  build: Directory! {
     self
       .dioxus
       .bundle(
@@ -52,6 +52,12 @@ type DioxusDaisyuiComponents {
         debugSymbols: false,
         platform: DioxusPlatform.WEB,
       )
+  }
+
+  buildCheck: Void @check {
+    self.build.sync
+
+    null
   }
 
   """
@@ -64,7 +70,7 @@ type DioxusDaisyuiComponents {
     )
   }
 
-  workerBundle: Directory! @check {
+  workerBundle: Directory! {
     let client = self
       .dioxus
       .bundle(
@@ -78,8 +84,10 @@ type DioxusDaisyuiComponents {
       .withDirectory("dist", client)
   }
 
-  workerBundleAsContainer: Container! {
-    Dagger.container.withDirectory("", self.workerBundle)
+  workerBundleCheck: Void @check {
+    self.workerBundle.sync
+
+    null
   }
 
   """
@@ -100,7 +108,7 @@ type DioxusDaisyuiComponents {
   """
   Cleanly install the Dioxus DaisyUI components in a fresh application.
   """
-  cleanInstall(ws: Workspace!): Directory! @check {
+  cleanInstall(ws: Workspace!): Directory! {
     let components = ws
       .directory("src/components", gitignore: true)
       .entries
@@ -120,6 +128,12 @@ type DioxusDaisyuiComponents {
       }
       .withExec(["cargo", "check"])
       .directory("")
+  }
+
+  cleanInstallCheck(ws: Workspace!): Void @check {
+    self.cleanInstall(ws).sync
+
+    null
   }
 
   """
@@ -185,7 +199,7 @@ type Install {
   """
   Install each dependency-bearing Component alone and compile its closure for host and wasm.
   """
-  closure: String! @check {
+  closure: Void @check {
     self.source
       .glob("src/components/*/component.json")
       .filter {
@@ -198,15 +212,19 @@ type Install {
         self.check(self.container.withExec(["dx", "components", "add", "--path", self.registryPath, component]))
       }
       .join("\n")
+
+    null
   }
 
   """
   List and install the entire Registry, then compile it for host and wasm.
   """
-  registry: String! @check {
+  registry: Void @check {
     self.check(self.container
       .withExec(["dx", "components", "list", "--path", self.registryPath])
       .withExec(["dx", "components", "add", "--all", "--force", "--path", self.registryPath]))
+
+    null
   }
 
   let check(app: Container!): String! {
@@ -234,15 +252,19 @@ type Test {
   """
   Every component documents its tier and pins the primitive identically.
   """
-  registryPolicy: String! @check {
+  registryPolicy: Void @check {
     self.run("registry_policy")
+
+    null
   }
 
   """
   Form controls honor the field convention.
   """
-  conformance: String! @check {
+  conformance: Void @check {
     self.run("conformance")
+
+    null
   }
 
   let run(name: String!): String! {

@@ -3,8 +3,12 @@
 {
   dotenv.enable = true;
 
-  dagger.enable = true;
-  env.DAGGER_X_RELEASE = "v1.0.0-beta.11";
+  dagger = {
+    enable = true;
+    version = "v1.0.0-beta.15";
+
+    dang.enable = true;
+  };
 
   # The Preview's syntax highlighting compiles arborium's tree-sitter runtime
   # for wasm32, and `cc` needs a clang that targets it. Nix's wrapped clang
@@ -16,12 +20,19 @@
     lld
     cargo-audit
     cargo-deny
-    cargo-dist
     cargo-release
     cargo-watch
 
     dioxus-cli
   ];
+
+  dioxus = {
+    enable = true;
+  };
+
+  worker-build = {
+    enable = true;
+  };
 
   languages = {
     rust = {
@@ -34,6 +45,10 @@
       enable = true;
 
       npm.enable = true;
+    };
+
+    tailwindcss = {
+      enable = true;
     };
   };
 }
