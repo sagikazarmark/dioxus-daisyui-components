@@ -16,6 +16,9 @@ use crate::components::button::{Button, ButtonColor};
 /// pressing Enter in a text control takes the same path. The summary arrives with its
 /// adapter-owned region wrapper; this component's finding presenter ([`super::findings`]) is what
 /// frames the findings inside it as an alert, since the shell cannot see whether there are any.
+/// A read-only form (`FormHandle::set_read_only`) submits nothing, so the shell omits the button
+/// while `ShellContext::read_only` holds, as the built-in shell does.
+///
 /// The [`Appearance`] axis switches the grid and the button's width utility off.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct DaisyuiShell {
@@ -43,6 +46,7 @@ impl ShellRenderer for DaisyuiShell {
         rsx! {
             ShellContents {
                 submit,
+                read_only: context.read_only,
                 appearance,
                 buttons,
                 summary: context.summary,
@@ -52,27 +56,16 @@ impl ShellRenderer for DaisyuiShell {
     }
 }
 
-/// The adapter exposes mode on the shell affordance, but not on finding contexts.
-/// A reactive scope lets both presenter slots and Field supplements follow a mode
-/// change on the mounted form. A host using its own shell can provide the same scope.
-#[derive(Clone, Copy)]
-pub struct AdvisoryPresentation(pub ReadSignal<bool>);
-
-pub(super) fn advisory_presentation() -> bool {
-    try_consume_context::<AdvisoryPresentation>().is_some_and(|mode| (mode.0)())
-}
-
 #[component]
 fn ShellContents(
     submit: Affordance,
+    read_only: bool,
     appearance: Appearance,
     buttons: ButtonClasses,
     summary: Element,
     body: Element,
 ) -> Element {
     let advisory = submit.kind == AffordanceKind::AdvisorySubmit;
-    let mode = use_memo(use_reactive!(|(advisory)| advisory));
-    use_context_provider(|| AdvisoryPresentation(mode.into()));
     let (role, color) = if advisory {
         (ButtonRole::AdvisorySubmit, ButtonColor::Warning)
     } else {
@@ -88,14 +81,16 @@ fn ShellContents(
         div { class: appearance.utilities("grid gap-4"), "data-schemaform-daisyui": "shell",
             {summary}
             {body}
-            Button {
-                id: submit.id.clone(),
-                r#type: "submit",
-                color,
-                class: "{host} {layout}",
-                "data-schemaform-button": "submit",
-                "aria-label": submit.accessible_name.clone(),
-                "{submit.label}"
+            if !read_only {
+                Button {
+                    id: submit.id.clone(),
+                    r#type: "submit",
+                    color,
+                    class: "{host} {layout}",
+                    "data-schemaform-button": "submit",
+                    "aria-label": submit.accessible_name.clone(),
+                    "{submit.label}"
+                }
             }
         }
     }

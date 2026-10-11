@@ -53,6 +53,16 @@ crate, so they reach the add-ons without joining the base's public API. The add-
 `componentDependencies` pin `schemaform_daisyui` to a revision of this Registry, like every other
 dependency on it, so an add-on and its base always share one contract.
 
+The add-ons make the Registry's dependency chains three hops long: an add-on reaches
+`schemaform_daisyui`, which reaches `input` and `native_select`, which reach `field`. `dx
+components add` fetches each hop at the revision the previous hop's manifest pins, and a pin round
+(`pinComponentDependencies`) moves every manifest to one revision whose own manifests carry the
+previous round's pins. So a change reaches the end of a chain only after one round per hop: three
+today. Fewer rounds leave an install mixing revisions. After the move to dioxus-field 0.8, two
+rounds left the select and collection add-ons fetching a `field` that still declared 0.7, and
+`dx components add` resolved the whole app to the older release. The `install/closure` check
+installs each Component alone, so it catches a missing round.
+
 ## Consequences
 
 - A UI schema naming a widget symbol whose add-on is not installed fails to bind with the

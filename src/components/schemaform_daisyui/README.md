@@ -74,7 +74,7 @@ component's, and shrinks as further structure seams ship.
 
 Browser CSR is supported; desktop/WebView support is pending manual verification.
 Both targets share one code path. The `schemaform` and
-`schemaform-dioxus` 0.5.0 requirements in the manifest and root `Cargo.toml`
+`schemaform-dioxus` 0.6.1 requirements in the manifest and root `Cargo.toml`
 include the platform-neutral DOM bridge from
 [schemaform#29](https://github.com/sagikazarmark/schemaform/issues/29): rejected
 writes resynchronise the DOM and focus moves through `document::eval`. The
@@ -130,13 +130,13 @@ worth drawing:
 | Control kind | Widget |
 | --- | --- |
 | string, number, integer | `Input` (`type="password"` when write-only) |
-| string with `format` | `email` / `idn-email` → `type="email"`; `uri`, `uri-reference`, `iri`, `iri-reference` → `url`; `date` → `date`; `date-time` → `datetime-local`; `time` → `time`; unknown or absent formats → `text`. Write-only takes precedence; numbers and integers stay `text`. |
+| string with `format` | the adapter's resolved `ControlFacets::input_type`: `email` / `idn-email` → `type="email"`; `uri`, `uri-reference`, `iri`, `iri-reference` → `url`; `date` → `date`; `date-time` and `time` → `text` with the adapter's RFC 3339 placeholder, since no browser picker writes a zone offset; unknown or absent formats → `text`. Write-only takes precedence; numbers and integers stay `text`; a host's `RenderConfigurationBuilder::format_input_type` overrides apply. |
 | boolean, nullable or not | native `input type="checkbox"` with daisyUI's `checkbox` class, driven by `use_boolean_edit`; indeterminate, with a visually hidden "Not set" description, while the data holds no boolean (missing or null) |
 | boolean, write-only | `NativeSelect<bool>` over the localized false/true labels, resting on the replacement placeholder |
 | choice | `NativeSelect<ChoiceIdentity>`; a UI schema widget symbol selects an add-on's widget instead |
 | multiple choice (`uniqueItems` array of finite choices) | a `Field` containing a `fieldset` and one native `checkbox` per option, driven by `use_multiple_choice_edit` |
 | constant | read-only `output` from presentation and facets |
-| any read-only node | read-only `output` inside the same `Field` |
+| any read-only node, including every node of a form made read-only with `FormHandle::set_read_only` | read-only `output` inside the same `Field`, in the tab order (`tabindex="0"`) so the value stays reachable; a constant that is not read-only keeps `tabindex="-1"` |
 
 The null option of a nullable choice is an ordinary option, as in the add-ons'
 widgets; selecting it sets null. A boolean keeps the built-in's native
@@ -181,6 +181,7 @@ affordance beside them discards.
 | Node | Presentation |
 | --- | --- |
 | form shell, gated mode | a `grid gap-4` of the adapter's summary region, the body, and the submit affordance as `btn btn-primary` of `type="submit"` |
+| form shell, read-only form | the summary and the body without the submit button, as `ShellContext::read_only` asks; presence and collection affordances are not offered |
 | form shell, advisory mode | `btn btn-warning` with the adapter's localized affordance label; delivers data and findings through `on_advisory_submit`, without blocking or moving focus |
 | finding summary | nothing while empty; otherwise `alert alert-soft`, `alert-error` while any finding blocks submission and `alert-warning` otherwise, with one `link` button per finding that reveals and focuses its target |
 | node-local findings | one `p` per finding in `text-error` or `text-warning` |
@@ -188,11 +189,10 @@ affordance beside them discards.
 In advisory mode, the summary and local findings use `alert-warning` and
 `text-warning`, including findings that would block gated submission. Field findings
 are descriptions instead of error-region entries. The adapter's validation facts
-(`aria-invalid` and `data-blocking`) remain intact. `DaisyuiShell` provides a reactive
-`AdvisoryPresentation` context from the submit affordance, so mode changes update
-both presenters and Field supplements. A host composing these presenters with its
-own shell can provide `AdvisoryPresentation(ReadSignal<bool>)` around its body and
-summary; without it the presenters use gated presentation.
+(`aria-invalid` and `data-blocking`) remain intact. The mode comes from the adapter:
+the presenter reads `FindingCollectionContext::submission_mode` and the controls
+`NodePresentation::submission_mode`, both reactive, so switching the `SchemaForm`
+prop updates the presenters and the Field supplements whatever shell the host uses.
 
 Every button carries its affordance id; every finding element carries its stable id, so ids the
 adapter hands out in `aria-describedby` resolve. Identity, keying, focus after a
@@ -382,7 +382,7 @@ component does not implement stays the built-in. `findings()` is one presenter
 for both presenter slots; it tells the summary from a local collection by
 `FindingCollectionContext::is_summary`.
 
-The control dispatcher handles every kind in schemaform-dioxus 0.5.0 explicitly.
+The control dispatcher handles every kind in schemaform-dioxus 0.6.1 explicitly.
 Its upstream `ControlKind` is still `#[non_exhaustive]`, so stable Rust requires
 an unknown-kind guard: that guard fails visibly instead of silently rendering an
 unstyled built-in. Compile-time exhaustiveness across future kinds requires an

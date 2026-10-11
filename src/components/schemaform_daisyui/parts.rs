@@ -1,21 +1,27 @@
 //! Presentation parts shared by every daisyUI control kind: the editable frame around a widget,
 //! the read-only field, the descriptions and errors under a widget, and the presence affordances.
 
-use std::{cell::RefCell, rc::Rc};
+use std::rc::Rc;
 
 use dioxus::prelude::*;
-use dioxus_field::{Binding, FieldContext, FieldMeta, FieldMetaIdRegistration, use_field_meta};
+use dioxus_field::{Binding, FieldContext, use_error_id_registration, use_field_meta};
 use schemaform_dioxus::{
     ControlFacets, ControlKind, ControlRenderContext, NodePresentation, NodeProjection,
+    SubmissionMode,
     render::{Affordance, FindingDescriptor, Help},
 };
 
 use super::Appearance;
 use super::buttons::{self, ButtonClasses, ButtonRole};
 use super::mapping::{field_meta_values, is_field_error};
-use super::shell::advisory_presentation;
 use crate::components::button::{Button, ButtonSize};
 use crate::components::field::{Field, FieldDescription, FieldLabel, FieldRow};
+
+/// Whether the form presents findings as advice: in advisory submission mode nothing is refused,
+/// so no finding is an error. A reactive read, so the control follows a mode switch.
+pub(super) fn is_advisory(presentation: &NodePresentation) -> bool {
+    presentation.submission_mode() == SubmissionMode::Advisory
+}
 
 /// The kind's name for the `data-schemaform-control` marker the built-in also emits.
 pub(crate) fn kind_name(kind: ControlKind) -> &'static str {
@@ -75,6 +81,7 @@ pub(crate) fn editable(
             appearance,
             projection.display_text(),
             &[],
+            true,
         ));
     }
     Ok(projection)
@@ -143,8 +150,11 @@ pub(crate) fn editable_field<T: 'static>(
 /// A description part per finding, each carrying the finding's stable id so every id the
 /// adapter hands out resolves to an element, plus `data-finding` (the code) and `data-blocking`
 /// as the finding presenter emits them.
-fn finding_descriptions(findings: Vec<FindingDescriptor>, appearance: Appearance) -> Element {
-    let advisory = advisory_presentation();
+fn finding_descriptions(
+    findings: Vec<FindingDescriptor>,
+    advisory: bool,
+    appearance: Appearance,
+) -> Element {
     rsx! {
         for finding in findings {
             FieldDescription {
@@ -166,7 +176,7 @@ fn finding_descriptions(findings: Vec<FindingDescriptor>, appearance: Appearance
 /// through `aria-errormessage`; every other finding is a description the control references
 /// through `aria-describedby`. Both kinds of element carry the finding's stable id.
 pub(super) fn supplements(presentation: &NodePresentation, appearance: Appearance) -> Element {
-    let advisory = advisory_presentation();
+    let advisory = is_advisory(presentation);
     let help = presentation.help.clone();
     let (errors, descriptions): (Vec<_>, Vec<_>) = presentation
         .findings
@@ -176,7 +186,7 @@ pub(super) fn supplements(presentation: &NodePresentation, appearance: Appearanc
     let errors_id = format!("{}-errors", presentation.element_id);
     rsx! {
         {help_description(help)}
-        {finding_descriptions(descriptions, appearance)}
+        {finding_descriptions(descriptions, advisory, appearance)}
         FindingErrors { id: errors_id, findings: errors, appearance }
         if !super::density::compact() { {presence_affordances(&presentation.presence, appearance, buttons::current())} }
     }
@@ -196,8 +206,9 @@ fn help_description(help: Option<Help>) -> Element {
 /// finding carrying the finding's stable id.
 ///
 /// The registry's `FieldError` reads its text from the field metadata and renders it without
-/// ids, so this part registers the same error id with the surrounding `Field`'s metadata and
-/// renders the findings itself. It is always mounted so the live region exists before the first
+/// ids, so this part registers the same error id with the surrounding `Field`'s metadata through
+/// `dioxus-field`'s `use_error_id_registration`, as `FieldError` does, and renders the findings
+/// itself. It is always mounted so the live region exists before the first
 /// error arrives; it is empty while nothing blocks.
 #[component]
 fn FindingErrors(id: String, findings: Vec<FindingDescriptor>, appearance: Appearance) -> Element {
@@ -221,31 +232,6 @@ fn FindingErrors(id: String, findings: Vec<FindingDescriptor>, appearance: Appea
             }
         }
     }
-}
-
-/// Keeps `id` registered as the error element of `meta` for as long as this component lives,
-/// re-registering when either changes, as `dioxus-field`'s own parts do.
-fn use_error_id_registration(meta: FieldMeta, id: Rc<str>) {
-    let active = use_hook(|| Rc::new(RefCell::new(None::<ActiveErrorRegistration>)));
-    let should_replace = active
-        .borrow()
-        .as_ref()
-        .is_none_or(|active| active.meta != meta || active.id != id);
-    if should_replace {
-        let mut writable = meta;
-        let registration = writable.register_error_id(Rc::clone(&id));
-        active.borrow_mut().replace(ActiveErrorRegistration {
-            meta,
-            id,
-            _registration: registration,
-        });
-    }
-}
-
-struct ActiveErrorRegistration {
-    meta: FieldMeta,
-    id: Rc<str>,
-    _registration: FieldMetaIdRegistration,
 }
 
 /// The current data shown beside a widget that cannot show it itself, as the built-in shows it
@@ -345,12 +331,19 @@ pub(crate) fn icon(path: &'static str, class: &'static str) -> Element {
 /// carries the adapter's own `aria-describedby`. A read-only node passes no affordances, as the
 /// built-in offers none for it; a constant passes its own, which materialize or remove the fixed
 /// value.
+///
+/// A read-only node's output stays in the tab order (`tabindex="0"`), as the built-in's does and
+/// as a native `readonly` input would, so a keyboard or screen-reader user can still reach the
+/// value; that holds for a node annotated `readOnly` and for every node of a form made read-only
+/// with `set_read_only`. A constant that is not read-only keeps `tabindex="-1"`: focusable for a
+/// finding's focus-to-target, but not a stop of its own.
 pub(super) fn read_only_field(
     presentation: &NodePresentation,
     control: &ControlFacets,
     appearance: Appearance,
     text: String,
     presence: &[Affordance],
+    read_only: bool,
 ) -> Element {
     let field_context =
         FieldContext::empty().with_meta_values(field_meta_values(presentation, control));
@@ -373,7 +366,7 @@ pub(super) fn read_only_field(
                 id: element_id,
                 name: control.name.clone(),
                 class: appearance.utilities("min-w-0 py-2"),
-                tabindex: "-1",
+                tabindex: if read_only { "0" } else { "-1" },
                 "data-read-only": "",
                 "data-schemaform-control": kind,
                 "aria-invalid": presentation.invalid,
@@ -381,7 +374,7 @@ pub(super) fn read_only_field(
                 "{text}"
             }
             {help_description(help)}
-            {finding_descriptions(findings, appearance)}
+            {finding_descriptions(findings, is_advisory(presentation), appearance)}
             if !compact { {presence_affordances(presence, appearance, buttons::current())} }
         }
     }

@@ -4,8 +4,11 @@ use schemaform_dioxus::use_form;
 use crate::components::schemaform_daisyui::SchemaformDaisyui;
 use crate::examples::schemaform_daisyui::schemas::{definition, form_data};
 
-/// Format is a widget annotation, not a validation rule. Unknown formats and
-/// numeric controls stay text inputs; write-only strings always use password.
+/// Format is a widget annotation, not a validation rule, unless the host asserts
+/// it when compiling. The input type is the adapter's: `date-time` and `time`
+/// are text inputs with a placeholder showing the RFC 3339 shape, since no
+/// browser picker writes a zone offset. Unknown formats and numeric controls stay
+/// text inputs; write-only strings always use password.
 #[component]
 pub fn Example() -> Element {
     let definition = use_hook(|| {
