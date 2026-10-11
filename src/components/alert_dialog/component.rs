@@ -473,6 +473,21 @@ pub fn AlertDialogAction(
     }
 }
 
+// `GlobalAttributes` and `button` both define `autofocus`, so naming it on `AlertDialogAction`
+// would be ambiguous (E0034, DioxusLabs/dioxus#5271). Inherent methods win method resolution and
+// forward to the element's own attribute, as `button { .. }` resolves it. Unused, they would warn
+// in an app that installs this Component. Remove once upstream resolves the conflict (ADR-0034).
+#[allow(dead_code)]
+impl<F> AlertDialogActionPropsBuilder<F>
+where
+    Self: dioxus_elements::extensions::ButtonExtension,
+{
+    /// The `button` element's `autofocus` attribute.
+    pub fn autofocus(self, value: impl dioxus::dioxus_core::IntoAttributeValue) -> Self {
+        dioxus_elements::extensions::ButtonExtension::autofocus(self, value)
+    }
+}
+
 /// The button that declines it, carrying daisyUI's `btn` class.
 ///
 /// It closes the dialog the same way [`AlertDialogAction`] does. The two are
@@ -500,6 +515,21 @@ pub fn AlertDialogCancel(
 
     rsx! {
         alert_dialog::AlertDialogCancel { on_click, attributes: merged, {children} }
+    }
+}
+
+// `GlobalAttributes` and `button` both define `autofocus`, so naming it on `AlertDialogCancel`
+// would be ambiguous (E0034, DioxusLabs/dioxus#5271). Inherent methods win method resolution and
+// forward to the element's own attribute, as `button { .. }` resolves it. Unused, they would warn
+// in an app that installs this Component. Remove once upstream resolves the conflict (ADR-0034).
+#[allow(dead_code)]
+impl<F> AlertDialogCancelPropsBuilder<F>
+where
+    Self: dioxus_elements::extensions::ButtonExtension,
+{
+    /// The `button` element's `autofocus` attribute.
+    pub fn autofocus(self, value: impl dioxus::dioxus_core::IntoAttributeValue) -> Self {
+        dioxus_elements::extensions::ButtonExtension::autofocus(self, value)
     }
 }
 

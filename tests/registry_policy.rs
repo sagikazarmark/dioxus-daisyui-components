@@ -162,6 +162,8 @@ fn field_aware_components_declare_the_field_dependency_identically() {
         "src/components/native_select",
         "src/components/otp",
         "src/components/radio_group",
+        "src/components/schemaform_daisyui",
+        "src/components/schemaform_daisyui_radio",
         "src/components/switch",
         "src/components/textarea",
         "src/components/select",
@@ -406,4 +408,119 @@ fn commits_in_focus_handlers(source: &str) -> Vec<(String, usize)> {
     }
 
     found
+}
+
+/// Attribute names that dioxus-html 0.7.10 defines both in `GlobalAttributes` (its style
+/// attributes included) and on an element, per element. Recompute it when dioxus-html moves.
+const COLLIDING_ATTRIBUTES: &[(&str, &[&str])] = &[
+    (
+        "input",
+        &[
+            "alt",
+            "autofocus",
+            "height",
+            "size",
+            "spellcheck",
+            "tabindex",
+            "width",
+        ],
+    ),
+    ("textarea", &["autofocus", "spellcheck"]),
+    ("select", &["autofocus", "size"]),
+    ("button", &["autofocus"]),
+    ("img", &["alt", "height", "width"]),
+];
+
+#[test]
+fn components_extending_two_attribute_sets_disambiguate_their_collisions() {
+    let manifest: Value = read_json(&root().join("component.json"));
+    let mut ambiguous = Vec::new();
+
+    for member in manifest["members"].as_array().unwrap() {
+        let path = root().join(member.as_str().unwrap()).join("component.rs");
+        let source = fs::read_to_string(&path).unwrap();
+        let props = component_props(&source);
+        for (component, element) in double_extends(&source) {
+            let Some((_, names)) = COLLIDING_ATTRIBUTES
+                .iter()
+                .find(|(colliding, _)| *colliding == element)
+            else {
+                continue;
+            };
+            let own_props = props
+                .iter()
+                .find(|(name, _)| *name == component)
+                .map(|(_, props)| props.as_slice())
+                .unwrap_or_default();
+            let methods = builder_methods(&source, &component);
+            for name in names.iter() {
+                let shadowed = own_props.iter().any(|prop| prop.name == *name);
+                if !shadowed && !methods.iter().any(|method| method == name) {
+                    ambiguous.push(format!("{}: {component}.{name}", path.display()));
+                }
+            }
+        }
+    }
+
+    assert!(
+        ambiguous.is_empty(),
+        "a Component that extends `GlobalAttributes` and an element needs an inherent builder \
+         method for every name both define, or naming it is E0034 (ADR-0034):\n{}",
+        ambiguous.join("\n")
+    );
+}
+
+/// Every `#[component]` that extends `GlobalAttributes` and an element, with that element.
+fn double_extends(source: &str) -> Vec<(String, String)> {
+    let name_of = Regex::new(r"^pub fn (\w+)").unwrap();
+    let element = Regex::new(r"extends\s*=\s*([a-z]\w*)").unwrap();
+    let mut found = Vec::new();
+    let mut lines = source.lines();
+
+    while let Some(line) = lines.next() {
+        if line.trim() != "#[component]" {
+            continue;
+        }
+        let Some(signature) = lines.find(|line| line.starts_with("pub fn ")) else {
+            break;
+        };
+        let component = name_of.captures(signature).unwrap()[1].to_string();
+        let mut text = signature.to_string();
+        if !signature.contains(") ->") {
+            for line in lines.by_ref() {
+                text.push('\n');
+                text.push_str(line);
+                if line.starts_with(") ->") {
+                    break;
+                }
+            }
+        }
+        if text.contains("extends = GlobalAttributes")
+            && let Some(captures) = element.captures(&text)
+        {
+            found.push((component, captures[1].to_string()));
+        }
+    }
+
+    found
+}
+
+/// The methods of every inherent `impl` on `component`'s props builder in `source`.
+fn builder_methods(source: &str, component: &str) -> Vec<String> {
+    let header = Regex::new(&format!(r"^impl<[^\n]*> {component}PropsBuilder<")).unwrap();
+    let method = Regex::new(r"^\s*pub fn (\w+)\(").unwrap();
+    let mut methods = Vec::new();
+    let mut inside = false;
+
+    for line in source.lines() {
+        if header.is_match(line) {
+            inside = true;
+        } else if inside && line == "}" {
+            inside = false;
+        } else if inside && let Some(captures) = method.captures(line) {
+            methods.push(captures[1].to_string());
+        }
+    }
+
+    methods
 }

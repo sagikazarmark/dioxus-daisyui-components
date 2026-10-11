@@ -130,6 +130,11 @@ requires a native select to display something; only a disabled placeholder optio
 "nothing chosen". The component documents the rule rather than inventing a hidden option the
 caller did not write.
 
+**`autofocus` names the select's attribute.** dioxus-html defines it as a global and as a `select`
+attribute, so naming it on a Component that extends both sets would be ambiguous (E0034).
+`NativeSelect` and `NativeSelectField` carry a forwarding method that resolves it to the
+`select` attribute; `size` needs none, being the size axis (ADR-0034).
+
 ## daisyUI classes deliberately not used
 
 - `select-md` - the default size emits nothing, and daisyUI renders an unmodified select at that

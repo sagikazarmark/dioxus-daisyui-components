@@ -8,8 +8,8 @@ use crate::examples::schemaform_daisyui::schemas::{
 
 /// A form bound through every seam the package fills, in one component.
 ///
-/// The controls render as daisyUI fields, the array as a fieldset of item
-/// cards, the shell lays the summary, the body and a primary submit button out,
+/// The controls render as daisyUI fields, the topics as a checkbox group, the
+/// shell lays the summary, the body and a primary submit button out,
 /// and the finding presenter frames the summary as an alert once something
 /// blocks submission — clear the display name and press Submit to see it. The
 /// core owns every piece of state; a submission hands back an immutable

@@ -1,0 +1,40 @@
+{
+  "name": "schemaform_daisyui_radio",
+  "description": "A schemaform_daisyui add-on that registers the daisyui:radio widget symbol, presenting a choice as the registry's radio group.",
+  "exclude": ["component.json", "README.md", "docs"],
+  "componentDependencies": [
+    {
+      "name": "schemaform_daisyui",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
+    },
+    {
+      "name": "radio_group",
+      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
+    }
+  ],
+  "cargoDependencies": [
+    {
+      "name": "dioxus-field",
+      "version": "0.7.0"
+    },
+    {
+      "name": "dioxus-primitives",
+      "git": "https://github.com/DioxusLabs/components",
+      "rev": "bf007c15d0cf4d04d3181cc46cf12325aa773955",
+      "default_features": false,
+      "features": ["router"]
+    },
+    {
+      "name": "schemaform",
+      "version": "0.5.0",
+      "default_features": true
+    },
+    {
+      "name": "schemaform-dioxus",
+      "version": "0.5.0",
+      "default_features": true
+    }
+  ]
+}

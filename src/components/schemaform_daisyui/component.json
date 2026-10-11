@@ -1,42 +1,27 @@
 {
   "name": "schemaform_daisyui",
-  "description": "schemaform-dioxus renderers for daisyUI: format-aware inputs, boolean and multiple-choice checkboxes, choice widgets and constant output inside Field parts; homogeneous arrays as cards with joined item actions; a mode-aware submit button; and error or advisory finding presentation.",
+  "description": "schemaform-dioxus renderers for daisyUI: format-aware inputs, native checkboxes that show a missing or null boolean as indeterminate, native selects for choices, multiple-choice checkbox groups and constant output inside Field parts; a mode-aware submit button with host-classable buttons; error or advisory finding presentation; and the seam the radio, compound select and collection add-ons extend.",
   "exclude": ["component.json", "README.md", "docs"],
   "componentDependencies": [
     {
       "name": "field",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
     },
     {
       "name": "input",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
-    },
-    {
-      "name": "checkbox",
-      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
     },
     {
       "name": "native_select",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
-    },
-    {
-      "name": "radio_group",
-      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
-    },
-    {
-      "name": "select",
-      "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
     },
     {
       "name": "button",
       "git": "https://github.com/sagikazarmark/dioxus-daisyui-components.git",
-      "rev": "3dfbfd2521e06e539767d10fbf0dfa2171d290ed"
+      "rev": "5f0488ff71d257fa4f7be5157ca1010d89dbb0b0"
     }
   ],
   "cargoDependencies": [

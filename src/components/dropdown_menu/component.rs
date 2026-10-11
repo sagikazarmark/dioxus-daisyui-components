@@ -283,6 +283,21 @@ pub fn DropdownMenuTrigger(
     }
 }
 
+// `GlobalAttributes` and `button` both define `autofocus`, so naming it on `DropdownMenuTrigger`
+// would be ambiguous (E0034, DioxusLabs/dioxus#5271). Inherent methods win method resolution and
+// forward to the element's own attribute, as `button { .. }` resolves it. Unused, they would warn
+// in an app that installs this Component. Remove once upstream resolves the conflict (ADR-0034).
+#[allow(dead_code)]
+impl<F> DropdownMenuTriggerPropsBuilder<F>
+where
+    Self: dioxus_elements::extensions::ButtonExtension,
+{
+    /// The `button` element's `autofocus` attribute.
+    pub fn autofocus(self, value: impl dioxus::dioxus_core::IntoAttributeValue) -> Self {
+        dioxus_elements::extensions::ButtonExtension::autofocus(self, value)
+    }
+}
+
 /// The box a dropdown menu's items sit in, carrying daisyUI's
 /// `dropdown-content` class and holding the `menu` list.
 ///

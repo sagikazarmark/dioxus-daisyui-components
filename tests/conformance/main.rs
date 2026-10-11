@@ -1,5 +1,6 @@
 mod harness;
 
+mod attribute_names;
 mod attribute_parity;
 mod checkbox;
 mod combobox;

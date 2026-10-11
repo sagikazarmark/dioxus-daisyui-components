@@ -237,6 +237,26 @@ pub fn AvatarImage(
     }
 }
 
+// `GlobalAttributes` and `img` both define `height` and `width`, so naming one on `AvatarImage`
+// would be ambiguous (E0034, DioxusLabs/dioxus#5271). Inherent methods win method resolution and
+// forward to the element's own attribute, as `img { .. }` resolves it. Unused, they would warn in
+// an app that installs this Component. Remove once upstream resolves the conflict (ADR-0034).
+#[allow(dead_code)]
+impl<F> AvatarImagePropsBuilder<F>
+where
+    Self: dioxus_elements::extensions::ImgExtension,
+{
+    /// The `img` element's `height` attribute.
+    pub fn height(self, value: impl dioxus::dioxus_core::IntoAttributeValue) -> Self {
+        dioxus_elements::extensions::ImgExtension::height(self, value)
+    }
+
+    /// The `img` element's `width` attribute.
+    pub fn width(self, value: impl dioxus::dioxus_core::IntoAttributeValue) -> Self {
+        dioxus_elements::extensions::ImgExtension::width(self, value)
+    }
+}
+
 /// What an avatar shows when it has no image: initials, an icon, whatever the
 /// caller writes.
 ///

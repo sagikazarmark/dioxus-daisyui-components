@@ -15,9 +15,6 @@ target/
 # Node
 node_modules/
 
-# Generated Tailwind CSS
-assets/style.css
-
 # Playwright's output. The screenshot baselines are rendered from the base
 # commit at the start of every run rather than stored, so they are output too.
 tests/browser/screenshots/

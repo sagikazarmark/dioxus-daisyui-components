@@ -11,13 +11,14 @@ use schemaform_dioxus::{
 };
 
 use super::Appearance;
+use super::buttons::{self, ButtonClasses, ButtonRole};
 use super::mapping::{field_meta_values, is_field_error};
 use super::shell::advisory_presentation;
 use crate::components::button::{Button, ButtonSize};
 use crate::components::field::{Field, FieldDescription, FieldLabel, FieldRow};
 
 /// The kind's name for the `data-schemaform-control` marker the built-in also emits.
-pub(super) fn kind_name(kind: ControlKind) -> &'static str {
+pub(crate) fn kind_name(kind: ControlKind) -> &'static str {
     match kind {
         ControlKind::String => "string",
         ControlKind::Number => "number",
@@ -60,7 +61,7 @@ pub(super) fn widget_label(presentation: &NodePresentation, control: &ControlFac
 /// Call it after the component's hooks, so the hook order is the same on every render. The
 /// read-only rule lives here once: a read-only node is noninteractive `output` of its display
 /// text with no presence affordances, as the built-in offers none for it.
-pub(super) fn editable(
+pub(crate) fn editable(
     context: &ControlRenderContext,
     appearance: Appearance,
 ) -> Result<NodeProjection, Element> {
@@ -81,7 +82,7 @@ pub(super) fn editable(
 
 /// Where an editable widget sits relative to its label.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum WidgetLayout {
+pub(crate) enum WidgetLayout {
     /// The label above the widget, as for an input or a select.
     Stacked,
     /// A checkable widget beside its label in a `FieldRow`.
@@ -96,7 +97,7 @@ pub(super) enum WidgetLayout {
 /// node's label. The readout is [`NodePresentation::incompatible_value`], so a widget that cannot
 /// show the data it would replace (an input holding a number where the schema wants a string, a
 /// checkbox holding a string) still tells the user what the replace affordance discards.
-pub(super) fn editable_field<T: 'static>(
+pub(crate) fn editable_field<T: 'static>(
     context: &ControlRenderContext,
     appearance: Appearance,
     binding: Binding<T>,
@@ -120,7 +121,7 @@ pub(super) fn editable_field<T: 'static>(
                     if compact {
                         div { "data-schemaform-field-header": "", class: appearance.utilities("flex min-w-0 flex-wrap items-center justify-between gap-2"),
                             FieldLabel { id: label_id, class: label_class, "{label}" }
-                            {presence_affordances(&presentation.presence, appearance)}
+                            {presence_affordances(&presentation.presence, appearance, buttons::current())}
                         }
                     } else { FieldLabel { id: label_id, class: label_class, "{label}" } }
                     {widget}
@@ -129,7 +130,7 @@ pub(super) fn editable_field<T: 'static>(
                     FieldRow {
                         {widget}
                         FieldLabel { id: label_id, class: label_class, "{label}" }
-                        if compact { {presence_affordances(&presentation.presence, appearance)} }
+                        if compact { {presence_affordances(&presentation.presence, appearance, buttons::current())} }
                     }
                 },
             }
@@ -177,7 +178,7 @@ pub(super) fn supplements(presentation: &NodePresentation, appearance: Appearanc
         {help_description(help)}
         {finding_descriptions(descriptions, appearance)}
         FindingErrors { id: errors_id, findings: errors, appearance }
-        if !super::density::compact() { {presence_affordances(&presentation.presence, appearance)} }
+        if !super::density::compact() { {presence_affordances(&presentation.presence, appearance, buttons::current())} }
     }
 }
 
@@ -270,32 +271,46 @@ pub(super) fn incompatible_description(
     }
 }
 
-/// The presence affordances, rendered as daisyUI buttons carrying the ids the adapter expects.
+/// The presence affordances, rendered as daisyUI buttons carrying the ids the adapter expects,
+/// with the host's presence class from `buttons` when it set one.
 ///
 /// Presence affordances carry no accessible name today; should one arrive, it names the button
 /// as the adapter intends.
-pub(super) fn presence_affordances(presence: &[Affordance], appearance: Appearance) -> Element {
+pub(crate) fn presence_affordances(
+    presence: &[Affordance],
+    appearance: Appearance,
+    buttons: ButtonClasses,
+) -> Element {
     let presence = presence.to_vec();
     rsx! {
         if !presence.is_empty() {
             div { "data-schemaform-presence": "", class: appearance.utilities("flex flex-wrap gap-2"),
                 for affordance in presence {
-                    {presence_button(affordance)}
+                    {presence_button(affordance, buttons)}
                 }
             }
         }
     }
 }
 
-/// One presence affordance as a small daisyUI button carrying its id.
-fn presence_button(affordance: Affordance) -> Element {
+/// One presence affordance as a small daisyUI button carrying its id, or `btn` with the host's
+/// class in place of the size when it set one.
+fn presence_button(affordance: Affordance, buttons: ButtonClasses) -> Element {
     let invoke = affordance.clone();
+    let host = buttons.class(ButtonRole::Presence);
+    let size = match host {
+        Some(_) => ButtonSize::Default,
+        None if super::density::compact() => ButtonSize::Xs,
+        None => ButtonSize::Sm,
+    };
     rsx! {
         Button {
             key: "{affordance.id}",
             id: affordance.id.clone(),
             r#type: "button",
-            size: if super::density::compact() { ButtonSize::Xs } else { ButtonSize::Sm },
+            size,
+            class: host.unwrap_or_default(),
+            "data-schemaform-button": "presence",
             "aria-label": affordance.accessible_name.clone(),
             onclick: move |_| invoke.invoke(),
             "{affordance.label}"
@@ -306,7 +321,7 @@ fn presence_button(affordance: Affordance) -> Element {
 /// A decorative Heroicons outline icon: `path` is the icon's path data, `class` sizes it. Hidden
 /// from assistive technology, so the element it decorates must carry its own name. The `width`
 /// and `height` attributes give it an intrinsic `1em` size for when no class sizes it.
-pub(super) fn icon(path: &'static str, class: &'static str) -> Element {
+pub(crate) fn icon(path: &'static str, class: &'static str) -> Element {
     rsx! {
         svg {
             class,
@@ -351,7 +366,7 @@ pub(super) fn read_only_field(
             if compact {
                 div { "data-schemaform-field-header": "", class: appearance.utilities("flex min-w-0 flex-wrap items-center justify-between gap-2"),
                     FieldLabel { id: label_id(presentation), class: label_class(presentation), "{label}" }
-                    {presence_affordances(presence, appearance)}
+                    {presence_affordances(presence, appearance, buttons::current())}
                 }
             } else { FieldLabel { id: label_id(presentation), class: label_class(presentation), "{label}" } }
             output {
@@ -367,7 +382,7 @@ pub(super) fn read_only_field(
             }
             {help_description(help)}
             {finding_descriptions(findings, appearance)}
-            if !compact { {presence_affordances(presence, appearance)} }
+            if !compact { {presence_affordances(presence, appearance, buttons::current())} }
         }
     }
 }

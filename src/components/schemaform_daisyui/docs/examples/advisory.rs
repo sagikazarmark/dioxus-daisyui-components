@@ -9,7 +9,7 @@ use crate::examples::schemaform_daisyui::schemas::{OVERVIEW_SCHEMA, definition, 
 #[component]
 pub fn Example() -> Element {
     let definition = use_hook(|| definition(OVERVIEW_SCHEMA, None));
-    let form = use_form(definition, form_data(r#"{"name":"A","plan":"team","tags":[]}"#))
+    let form = use_form(definition, form_data(r#"{"name":"A","plan":"team","topics":[]}"#))
         .expect("the form should be created");
     let mut advisory = use_signal(|| true);
     let mut submitted = use_signal(String::new);

@@ -231,6 +231,21 @@ pub fn CollapsibleTrigger(
     }
 }
 
+// `GlobalAttributes` and `button` both define `autofocus`, so naming it on `CollapsibleTrigger`
+// would be ambiguous (E0034, DioxusLabs/dioxus#5271). Inherent methods win method resolution and
+// forward to the element's own attribute, as `button { .. }` resolves it. Unused, they would warn
+// in an app that installs this Component. Remove once upstream resolves the conflict (ADR-0034).
+#[allow(dead_code)]
+impl<F> CollapsibleTriggerPropsBuilder<F>
+where
+    Self: dioxus_elements::extensions::ButtonExtension,
+{
+    /// The `button` element's `autofocus` attribute.
+    pub fn autofocus(self, value: impl dioxus::dioxus_core::IntoAttributeValue) -> Self {
+        dioxus_elements::extensions::ButtonExtension::autofocus(self, value)
+    }
+}
+
 /// The panel the trigger reveals, carrying daisyUI's `collapse-content` class.
 ///
 /// The element itself is always in the document (it is a row of daisyUI's grid

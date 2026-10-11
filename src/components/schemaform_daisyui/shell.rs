@@ -6,6 +6,7 @@ use schemaform_dioxus::render::{Affordance, AffordanceKind};
 use schemaform_dioxus::{ShellContext, ShellRenderer};
 
 use super::Appearance;
+use super::buttons::{ButtonClasses, ButtonRole};
 use crate::components::button::{Button, ButtonColor};
 
 /// Lays the form's contents out as a vertical grid — the finding summary, then the body, then a
@@ -19,12 +20,18 @@ use crate::components::button::{Button, ButtonColor};
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct DaisyuiShell {
     appearance: Appearance,
+    buttons: ButtonClasses,
 }
 
 impl DaisyuiShell {
     /// The same shell at `appearance`.
     pub fn appearance(self, appearance: Appearance) -> Self {
-        Self { appearance }
+        Self { appearance, ..self }
+    }
+
+    /// The same shell with `buttons` for its submit button.
+    pub fn buttons(self, buttons: ButtonClasses) -> Self {
+        Self { buttons, ..self }
     }
 }
 
@@ -32,8 +39,15 @@ impl ShellRenderer for DaisyuiShell {
     fn shell(&self, context: ShellContext) -> Element {
         let submit = context.submit;
         let appearance = self.appearance;
+        let buttons = self.buttons;
         rsx! {
-            ShellContents { submit, appearance, summary: context.summary, body: context.body }
+            ShellContents {
+                submit,
+                appearance,
+                buttons,
+                summary: context.summary,
+                body: context.body,
+            }
         }
     }
 }
@@ -52,12 +66,24 @@ pub(super) fn advisory_presentation() -> bool {
 fn ShellContents(
     submit: Affordance,
     appearance: Appearance,
+    buttons: ButtonClasses,
     summary: Element,
     body: Element,
 ) -> Element {
     let advisory = submit.kind == AffordanceKind::AdvisorySubmit;
     let mode = use_memo(use_reactive!(|(advisory)| advisory));
     use_context_provider(|| AdvisoryPresentation(mode.into()));
+    let (role, color) = if advisory {
+        (ButtonRole::AdvisorySubmit, ButtonColor::Warning)
+    } else {
+        (ButtonRole::Submit, ButtonColor::Primary)
+    };
+    // A host class replaces the mode's colour; the width utility stays the Appearance axis's.
+    let (color, host) = match buttons.class(role) {
+        Some(host) => (ButtonColor::Default, host),
+        None => (color, ""),
+    };
+    let layout = appearance.utilities("w-fit");
     rsx! {
         div { class: appearance.utilities("grid gap-4"), "data-schemaform-daisyui": "shell",
             {summary}
@@ -65,8 +91,9 @@ fn ShellContents(
             Button {
                 id: submit.id.clone(),
                 r#type: "submit",
-                color: if advisory { ButtonColor::Warning } else { ButtonColor::Primary },
-                class: appearance.utilities("w-fit"),
+                color,
+                class: "{host} {layout}",
+                "data-schemaform-button": "submit",
                 "aria-label": submit.accessible_name.clone(),
                 "{submit.label}"
             }

@@ -28,16 +28,14 @@ async function eventually<T>(probe: () => Promise<T>, predicate: (value: T) => b
 test.describe("styling", () => {
   // The axis row renders one whole form per value; what differs is the layout
   // utilities on the elements the package renders itself, read here off the
-  // collection fieldset, which carries the most of them.
-  test("every appearance renders the collection differently", async ({ page }) => {
+  // shell, whose grid gap is one of them.
+  test("every appearance renders the shell differently", async ({ page }) => {
     const rendered = await axis(page, "appearance")
-      .locator('fieldset[data-schemaform-daisyui="collection"]')
-      .evaluateAll((fieldsets) =>
-        fieldsets.map((fieldset) => {
-          const style = getComputedStyle(fieldset);
-          return [style.paddingTop, style.borderTopWidth, style.rowGap].join(" ");
-        }),
-      );
+      .locator('[data-schemaform-daisyui="shell"]')
+      .evaluateAll((shells) => shells.map((shell) => {
+        const style = getComputedStyle(shell);
+        return [style.display, style.rowGap].join(" ");
+      }));
 
     expectVaries(rendered, "appearance");
   });
@@ -46,12 +44,12 @@ test.describe("styling", () => {
     const plain = axis(page, "appearance").nth(1);
     await expect(plain).toHaveAttribute("data-value", "None");
 
-    const fieldset = plain.locator('fieldset[data-schemaform-daisyui="collection"]');
-    expect(((await fieldset.getAttribute("class")) ?? "").trim()).toBe("fieldset");
+    const shell = plain.locator('[data-schemaform-daisyui="shell"]');
+    expect(((await shell.getAttribute("class")) ?? "").trim()).toBe("");
 
-    const card = plain.locator('[data-schemaform-daisyui="collection-item"]').first();
-    expect(((await card.getAttribute("class")) ?? "").trim().split(/\s+/).sort()).toEqual(
-      ["card", "card-border", "card-sm"],
+    const submit = plain.locator('[data-schemaform-button="submit"]');
+    expect(((await submit.getAttribute("class")) ?? "").trim().split(/\s+/).sort()).toEqual(
+      ["btn", "btn-primary"],
     );
   });
 });
@@ -143,38 +141,57 @@ test.describe("controls", () => {
     await expect(active).not.toBeChecked();
   });
 
+  test("a boolean the data leaves out is indeterminate until a click sets true", async ({ page }) => {
+    const scope = example(page, "controls");
+    const terms = scope.locator('input[name="/terms"]');
+    const indeterminate = () => terms.evaluate((element) => (element as HTMLInputElement).indeterminate);
+    // The data holds no boolean, so the box must not read as false.
+    await expect.poll(indeterminate).toBe(true);
+    await expect(terms).not.toBeChecked();
+    await expect(terms).toHaveJSProperty("indeterminate", true);
+    await expect(terms).toHaveAttribute("aria-required", "true");
+    // Assistive technology hears the state as mixed; the description says what it means.
+    await expect(terms).toHaveAccessibleDescription("Not set");
+
+    // The first click sets true; the next sets false; neither is indeterminate.
+    await terms.click();
+    await expect(terms).toBeChecked();
+    await expect.poll(indeterminate).toBe(false);
+    await expect(terms).not.toHaveAccessibleDescription("Not set");
+    await terms.click();
+    await expect(terms).not.toBeChecked();
+    await expect.poll(indeterminate).toBe(false);
+  });
+
+  test("removing an optional boolean returns it to indeterminate", async ({ page }) => {
+    const scope = example(page, "controls");
+    const marketing = scope.locator('input[name="/marketing"]');
+    const indeterminate = () => marketing.evaluate((element) => (element as HTMLInputElement).indeterminate);
+    await expect.poll(indeterminate).toBe(true);
+
+    await marketing.click();
+    await expect(marketing).toBeChecked();
+    await expect.poll(indeterminate).toBe(false);
+
+    await affordance(scope, "Remove Marketing email").click();
+    await expect(marketing).not.toBeChecked();
+    await expect.poll(indeterminate).toBe(true);
+  });
+
   test("the nullable checkbox shows null as indeterminate and reaches it through set-null", async ({ page }) => {
     const scope = example(page, "controls");
-    const newsletter = scope.locator('[role="checkbox"][name="/newsletter"]');
-    await expect(newsletter).toHaveAttribute("aria-checked", "mixed");
+    const newsletter = scope.locator('input[type="checkbox"][name="/newsletter"]');
+    const indeterminate = () => newsletter.evaluate((element) => (element as HTMLInputElement).indeterminate);
+    await expect.poll(indeterminate).toBe(true);
 
+    // From null, a click makes it a boolean, as the native control toggles.
     await newsletter.click();
-    await expect(newsletter).toHaveAttribute("aria-checked", "false");
+    await expect(newsletter).toBeChecked();
+    await expect.poll(indeterminate).toBe(false);
 
     await affordance(scope, "Clear Newsletter").click();
-    await expect(newsletter).toHaveAttribute("aria-checked", "mixed");
-  });
-
-  test("the radio widget selects an option per item", async ({ page }) => {
-    const scope = example(page, "controls");
-    const yearly = scope.getByRole("radio", { name: "yearly", exact: true });
-    const monthly = scope.getByRole("radio", { name: "monthly", exact: true });
-    await expect(yearly).toHaveAttribute("aria-checked", "true");
-
-    await monthly.click();
-    await expect(monthly).toHaveAttribute("aria-checked", "true");
-    await expect(yearly).toHaveAttribute("aria-checked", "false");
-  });
-
-  test("the compound select shows the chosen option on its trigger", async ({ page }) => {
-    const scope = example(page, "controls");
-    const region = scope.locator('button[name="/region"]');
-    await expect(region).toContainText("eu");
-
-    await region.click();
-    await page.getByRole("option", { name: "us", exact: true }).click();
-    await expect(region).toContainText("us");
-    await expect(region).toHaveAttribute("aria-expanded", "false");
+    await expect.poll(indeterminate).toBe(true);
+    await expect(newsletter).not.toBeChecked();
   });
 
   test("write-only widgets rest on their placeholder after every write", async ({ page }) => {
@@ -283,49 +300,6 @@ test.describe("arrays", () => {
     }
   });
 
-  test("items are cards named by noun and position, with positional actions", async ({ page }) => {
-    const scope = example(page, "arrays");
-    await expect(scope.getByRole("group", { name: "Tags", exact: true })).toHaveCount(1);
-    await expect(scope.getByRole("group", { name: "Tags item 1", exact: true })).toHaveCount(1);
-    await expect(scope.getByRole("group", { name: "Tags item 2", exact: true })).toHaveCount(1);
-
-    // The adapter's gating shows in which buttons exist.
-    await expect(affordance(scope, "Move Tags item at position 1 up")).toHaveCount(0);
-    await expect(affordance(scope, "Move Tags item at position 1 down")).toHaveCount(1);
-    await expect(affordance(scope, "Move Tags item at position 2 down")).toHaveCount(0);
-  });
-
-  test("insert seeds an item, focuses it and announces it", async ({ page }) => {
-    const scope = example(page, "arrays");
-    await affordance(scope, "Insert Tags item before position 1").click();
-
-    const inserted = scope.locator('input[name="/tags/0"]');
-    await expect(inserted).toHaveValue("fresh");
-    await expect(inserted).toBeFocused();
-    await expect(scope.locator('input[name="/tags/1"]')).toHaveValue("rust");
-    await expect(
-      scope.getByRole("group", { name: "Tags", exact: true }).locator("[data-array-status]"),
-    ).toHaveText("Tags item inserted at position 1.");
-  });
-
-  test("emptying the collection shows its empty state and keeps append", async ({ page }) => {
-    const scope = example(page, "arrays");
-    await affordance(scope, "Remove Tags item at position 1").click();
-    await eventually(() => scope.locator('input[name="/tags/1"]').count(), (count) => count === 0);
-    await affordance(scope, "Remove Tags item at position 1").click();
-
-    const empty = scope.locator('[data-schemaform-daisyui="collection-empty"]');
-    await expect(empty).toHaveText("Nothing here yet.");
-    await expect(scope.locator('input[name="/tags/0"]')).toHaveCount(0);
-    await expect(affordance(scope, "Add Tags item")).toHaveCount(1);
-  });
-
-  test("removal is withdrawn at minItems", async ({ page }) => {
-    const scope = example(page, "arrays");
-    await affordance(scope, "Remove Team item at position 2").click();
-    await eventually(() => scope.locator('input[name="/team/1/name"]').count(), (count) => count === 0);
-    await expect(affordance(scope, /^Remove Team item/)).toHaveCount(0);
-  });
 });
 
 test("advisory submission presents warnings and switching mode restores error framing", async ({ page }) => {
@@ -339,10 +313,39 @@ test("advisory submission presents warnings and switching mode restores error fr
   await expect(submit).toBeFocused();
   await expect(scope.locator(".alert-warning")).toBeVisible();
   await expect(scope.locator('[data-schemaform-daisyui="string"] [data-finding]')).toHaveClass(/\btext-warning\b/);
-  await expect(scope.locator('[data-schemaform-daisyui="collection"] [data-finding]')).toHaveClass(/\btext-warning\b/);
+  await expect(scope.locator('[data-schemaform-daisyui="multiple-choice"] [data-finding]')).toHaveClass(/\btext-warning\b/);
   await scope.getByRole("checkbox", { name: "Advisory mode" }).click();
   await expect(submit).toHaveClass(/\bbtn-primary\b/);
   await expect(scope.locator(".alert-error")).toBeVisible();
-  await expect(scope.locator('[data-schemaform-errors] [data-finding]')).toHaveCount(1);
-  await expect(scope.locator('[data-schemaform-daisyui="collection"] [data-finding]')).toHaveClass(/\btext-error\b/);
+  // Both findings block gated submission and concern the entered value, so both are errors.
+  await expect(scope.locator('[data-schemaform-errors] [data-finding]')).toHaveCount(2);
+  await expect(scope.locator('[data-schemaform-daisyui="multiple-choice"] [data-schemaform-errors]')).toHaveClass(/\btext-error\b/);
+});
+
+test.describe("button classes", () => {
+  // Every button the renderers draw names its role; a role the host left alone
+  // keeps the package's own classes.
+  test("every renderer button carries its role and, unset, the package's look", async ({ page }) => {
+    const overview = example(page, "overview");
+    const presence = overview.locator('[data-schemaform-button="presence"]').first();
+    await expect(presence).toHaveClass(/\bbtn-sm\b/);
+    await expect(overview.locator('[data-schemaform-button="submit"]')).toHaveClass(/\bbtn-primary\b/);
+
+    const advisory = example(page, "advisory");
+    await advisory.locator('[data-schemaform-button="submit"]').click();
+    await expect(advisory.locator('[data-schemaform-button="finding"]').first()).toHaveClass(/\blink\b/);
+  });
+
+  test("a role given a class renders btn and the class in place of the package's look", async ({ page }) => {
+    const scope = example(page, "buttons");
+    const presence = scope.locator('[data-schemaform-button="presence"]').first();
+    await expect(presence).toHaveClass(/\bbtn\b/);
+    await expect(presence).toHaveClass(/\bbtn-ghost\b/);
+    await expect(presence).toHaveClass(/\bbtn-xs\b/);
+    await expect(presence).not.toHaveClass(/\bbtn-sm\b/);
+
+    const submit = scope.locator('[data-schemaform-button="submit"]');
+    await expect(submit).toHaveClass(/\bbtn-secondary\b/);
+    await expect(submit).not.toHaveClass(/\bbtn-primary\b/);
+  });
 });
