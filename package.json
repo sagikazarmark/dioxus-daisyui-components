@@ -3,9 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prebuild": "node scripts/exclude-generated.mjs",
     "build": "tailwindcss -i style.css -o assets/style.css --minify",
-    "prewatch": "node scripts/exclude-generated.mjs",
     "watch": "tailwindcss -i style.css -o assets/style.css --watch"
   },
   "devDependencies": {
